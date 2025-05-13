@@ -1,0 +1,82 @@
+.navbar {
+  background-color: #ffffff;
+  height: 92px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  padding: 0 32px;
+}
+
+.navbar-logo {
+  color: #0f123f;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  margin-left: 24px;
+}
+
+.nav-links {
+  color: #333;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.nav-links:hover {
+  color: #0f123f;
+}
+
+.nav-auth {
+  display: flex;
+  align-items: center;
+}
+
+.nav-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 24px;
+  height: 40px;
+  margin-left: 16px;
+  background-color: #0f123f;
+  color: #e2e5e9;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+  background-color: #1a1f5a;
+  color: #ffffff;
+}

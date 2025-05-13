@@ -1,0 +1,193 @@
+.dashboard-layout {
+  display: flex;
+  background-color: #e0f0fc;
+  min-height: calc(100vh - 92px);
+}
+
+.dashboard-content {
+  flex: 1;
+  margin-left: 270px;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+/* 사용자 환영 섹션 */
+.user-welcome {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.user-avatar {
+  width: 75px;
+  height: 74px;
+  border-radius: 42px;
+  background-color: #ccc;
+  margin-right: 16px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.welcome-text {
+  font-size: 27px;
+  font-weight: bold;
+  color: #ee786c;
+  margin-bottom: 6px;
+}
+
+.user-email {
+  font-size: 17px;
+  color: #babec6;
+}
+
+/* 카드 공통 스타일 */
+.team-card, .meetings-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.card-title {
+  font-size: 23px;
+  font-weight: 600;
+  color: #0f123f;
+}
+
+.add-icon {
+  cursor: pointer;
+  font-size: 20px;
+  color: #0f123f;
+}
+
+.card-subtitle {
+  font-size: 17px;
+  color: #babec6;
+  margin-bottom: 20px;
+}
+
+/* 팀 목록 스타일 */
+.team-list, .meetings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.team-item, .meeting-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.team-item:last-child, .meeting-item:last-child {
+  border-bottom: none;
+}
+
+.team-info, .meeting-info {
+  display: grid;
+  grid-template-columns: 150px 300px 100px 150px;
+  gap: 10px;
+  align-items: center;
+}
+
+.team-label, .meeting-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #0f123f;
+}
+
+.team-members, .meeting-attendees {
+  font-size: 15px;
+  color: #0f123f;
+}
+
+.team-role, .meeting-host {
+  font-size: 15px;
+  color: #0f123f;
+}
+
+.team-date, .meeting-date {
+  font-size: 15px;
+  color: #0f123f;
+}
+
+.team-actions, .meeting-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.view-details-btn {
+  background-color: #0f123f;
+  color: #babec6;
+  border: none;
+  border-radius: 10px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.more-icon {
+  cursor: pointer;
+  color: #babec6;
+  font-size: 14px;
+}
+
+/* 회의 상태 태그 */
+.status-tag {
+  padding: 5px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-tag.completed {
+  background-color: #0f123f;
+  color: #babec6;
+}
+
+.status-tag.ongoing {
+  border: 1px solid #0f123f;
+  color: #0f123f;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 1200px) {
+  .team-info, .meeting-info {
+    grid-template-columns: 120px 250px 80px 120px;
+  }
+}
+
+@media (max-width: 992px) {
+  .dashboard-content {
+    margin-left: 0;
+    padding-top: 70px;
+  }
+  
+  .team-info, .meeting-info {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .team-item, .meeting-item {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .team-actions, .meeting-actions {
+    justify-content: flex-end;
+  }
+}
