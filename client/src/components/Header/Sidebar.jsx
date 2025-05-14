@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaUser, FaListAlt, FaCalendarAlt, FaComments, FaChartBar } from 'react-icons/fa';
-import '../styles/Sidebar.css';
+import '../../styles/Sidebar.css';
 
 const Sidebar = () => {
   const location = useLocation();
