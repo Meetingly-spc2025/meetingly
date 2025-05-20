@@ -1,0 +1,83 @@
+/* styles/Main.css */
+.main-scroll-container {
+  height: 100vh;
+  width: 100%;
+  scroll-snap-type: y mandatory;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+  padding-top: var(--header-height);
+}
+
+.main-section {
+  height: 100vh;
+  width: 100%;
+  scroll-snap-align: start;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 0 2rem;
+}
+
+.main-section-inner {
+  text-align: center;
+  padding: 2rem;
+}
+
+img {
+  width: 30rem;
+  height: 6rem;
+}
+
+/* Intro 스타일 */
+.main-intro-section {
+  background-color: #ffffff;
+}
+
+.intro-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.intro-logo {
+  width: 100px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.intro-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #0f123f;
+  margin-bottom: 0.5rem;
+}
+
+.intro-subtitle {
+  font-size: 1.25rem;
+  color: #3e46b4;
+  margin-bottom: 2rem;
+}
+
+.intro-content {
+  font-size: 1rem;
+  color: #475569;
+  margin-bottom: 2rem;
+}
+
+.intro-button {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  background-color: #0f123f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.intro-button:hover {
+  background-color: #ffa3a3;
+}
