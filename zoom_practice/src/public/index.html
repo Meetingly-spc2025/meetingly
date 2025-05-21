@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Noom - 화상 회의 생성</title>
+    <link rel="stylesheet" href="https://unpkg.com/mvp.css" />
+	<link rel="stylesheet" href="./css/roommain.css">
+</head>
+<body>
+    <h1>화상 회의 생성</h1>
+
+    <div id="nickname-section">
+    	<label for="nickname">닉네임</label>
+    	<form id="nickname-form">
+        	<input type="text" id="nickname" placeholder="닉네임을 입력하세요." required />
+        	<button type="submit">다음</button>
+    	</form>
+    </div>
+
+    <div id="room-section" style="display: none">
+    	<form id="room-form">
+        	<label for="roomTitle">회의 제목</label>
+        	<input type="text" id="roomTitle" placeholder="회의 제목을 입력하세요." required />
+
+        	<label for="roomSubject">회의 주제</label>
+        	<input type="text" id="roomSubject" placeholder="회의 주제를 입력하세요." required />
+
+        	<label for="roomDate">회의 날짜</label>
+        	<input type="date" id="roomDate" required />
+
+        	<div id="invite-link-container" style="display: none">
+        		<label for="invite-link">초대 링크</label>
+        		<div class="flex">
+        			<input type="text" id="invite-link" readonly value="초대 링크 자동 생성..." />
+        			<button type="button" id="copy-link">📋</button>
+        		</div>
+        	</div>
+
+        	<button type="submit">회의 생성 +</button>
+    	</form>
+
+		<div id="link-join-section" style="margin-top: 3em;">
+			<h2>초대 링크로 참여</h2>
+			<label for="input-invite-link">초대 링크 입력</label>
+			<div class="flex">
+				<input
+				type="text"
+				id="input-invite-link"
+				placeholder="초대 링크를 입력하세요"
+				style="flex: 1; padding: 0.6em; border: 1px solid #ccc; border-radius: 6px;"
+				/>
+				<button type="button" id="go-to-invite-link" style="padding: 0.6em 1em; border-radius: 6px; background-color: #28a745; color: white; border: none;">
+				참여하기 →
+				</button>
+			</div>
+		</div>
+    </div>
+
+    <script src="./js/roommain.js"></script>
+  </body>
+</html>
