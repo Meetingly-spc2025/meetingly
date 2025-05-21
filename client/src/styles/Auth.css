@@ -5,6 +5,7 @@
   min-height: calc(100vh - 92px);
   background-color: #e0f0fc;
   padding: 40px 20px;
+  padding-top: var(--header-height);
 }
 
 .auth-card {
