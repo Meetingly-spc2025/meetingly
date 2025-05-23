@@ -2,6 +2,10 @@ from flask import Flask, request, jsonify
 from pydub import AudioSegment
 import os
 import filePipeline, recordPipeline
+from dotenv import load_dotenv  # ✅ 추가
+
+
+load_dotenv(dotenv_path="../.env")  # 또는 "server/.env"로 경로 조정
 
 
 app = Flask(__name__)
@@ -56,4 +60,6 @@ def process_file():
     return jsonify(result)
 
 if __name__ == "__main__":
-    app.run(port=4000, debug=True)
+    port = int(os.getenv("PYTHON_PORT"))
+    app.run(port=port, debug=True)
+

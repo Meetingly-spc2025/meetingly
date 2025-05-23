@@ -3,7 +3,6 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useLocation,
 } from "react-router-dom";
 import SidebarLayout from "./layouts/SidebarLayout";
 import Navbar from "./components/Navbar";
@@ -12,7 +11,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import MeetingList from "./pages/MeetingList";
 import TeamManagement from "./pages/TeamManagement";
-import StartMeeting from "./pages/StartMeeting";
+import CreateMeeting from "./pages/CreateMeeting";
 import MeetingDetail from "./pages/MeetingDetail";
 import MeetingRoom from "./pages/MeetingRoom";
 import MyPage from "./pages/MyPage";
@@ -51,7 +50,7 @@ function App() {
             path="/meeting/start"
             element={
               <SidebarLayout>
-                <StartMeeting />
+                <CreateMeeting />
               </SidebarLayout>
             }
           />
