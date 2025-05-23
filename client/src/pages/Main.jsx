@@ -52,7 +52,7 @@ const Main = () => {
       },
       {
         threshold: 0.2,
-      },
+      }
     );
 
     imgRefs.current.forEach((img) => {
@@ -77,9 +77,7 @@ const Main = () => {
           >
             <div className="main-section-inner intro-content">
               <h1 className="intro-title">Meetingly</h1>
-              <h3 className="intro-subtitle">
-                효율적인 회의를 위한 나만의 비서
-              </h3>
+              <h3 className="intro-subtitle">효율적인 회의를 위한 나만의 비서</h3>
               <p className="intro-content">
                 실시간 화상회의와 AI 기반 회의록 자동 생성/요약/태스크 관리
                 기능을 통합한 스마트 회의 도우미
@@ -108,7 +106,7 @@ const Main = () => {
               />
             </div>
           </section>
-        ),
+        )
       )}
     </div>
   );
