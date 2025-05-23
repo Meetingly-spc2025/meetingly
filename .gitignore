@@ -1,4 +1,6 @@
 .env
+jspm_packages/
+
 
 # Logs
 logs
