@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { NicknameForm, RoomForm, JoinByLink } from "./MeetingFormComponents";
+import { NicknameForm, RoomForm, JoinByLink } from "../components/Room/MeetingFormComponents";
 import "../styles/CreateMeeting.css";
 
 const CreateMeeting = () => {

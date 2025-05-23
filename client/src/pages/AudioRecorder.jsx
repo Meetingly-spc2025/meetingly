@@ -20,7 +20,7 @@ function AudioRecorder() {
 
       try {
         const res = await axios.post(
-          "http://localhost:4000/audio/upload/file",
+          "http://localhost:3000/audio/upload/file",
           formData,
           { headers: { "Content-Type": "multipart/form-data" } },
         );
