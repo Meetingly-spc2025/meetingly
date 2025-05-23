@@ -28,10 +28,6 @@ def process_file():
     except Exception as e:
         print("[오류] /process-file 처리 중 예외 발생:", str(e))
         return jsonify({"error": "서버 내부 오류", "details": str(e)}), 500
-    
-    
-    
-
 
 
 # 회의 녹음
