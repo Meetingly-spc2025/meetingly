@@ -1,0 +1,39 @@
+.calendarpage-container {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 30px;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", sans-serif;
+    text-align: center;
+  }
+  
+  .calendarpage-title {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .calendar-wrapper {
+    margin: 0 auto;
+  }
+  
+  .selected-date {
+    margin-top: 20px;
+    font-size: 1rem;
+    color: #444;
+  }
+  
+  .react-calendar {
+    border: none;
+    font-size: 1rem;
+  }
+  
+  .react-calendar__tile--active {
+    background-color: #cce4ff !important;
+    color: #003366 !important;
+    font-weight: bold;
+    border-radius: 8px;
+  }
+  
