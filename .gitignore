@@ -1,3 +1,5 @@
+.env
+
 # Logs
 logs
 *.log
@@ -23,3 +25,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 음성 파일
+tmp_audio/
+audio/
+uploads/
+
+# 컴파일된 파이썬 파일
+__pycache__/

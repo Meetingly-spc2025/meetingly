@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Auth.css";
+import axios from "axios"
 
 const Login = () => {
   const navigate = useNavigate();
@@ -35,6 +36,8 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("로그인 버튼 눌림"); // 이거 추가
+
     const newErrors = validate();
 
     if (Object.keys(newErrors).length > 0) {
@@ -43,9 +46,23 @@ const Login = () => {
     }
 
     try {
-      // 로그인 API 호출은 백엔드 연동 후 추가 예정
-      // 임시로 대시보드로 이동
+      // 서버에 로그인 요청
+      console.log("서버에 로그인 요청 보냄 (axios 시작)");
+        const response = await axios.post("/api/users/login",{
+        email: formData.email,
+        password: formData.password,
+      }); 
+
+      // JWT 토큰 응답
+      const token = response.data.token;
+      // const { token } = response.data;
+
+      // 액세스 토큰을 localStorage 에 저장
+      localStorage.setItem("token", token);
+
+      // 로그인 성공 후 대시보드 이동
       navigate("/dashboard");
+
     } catch (error) {
       console.error("로그인 오류:", error);
       setErrors({
@@ -61,6 +78,8 @@ const Login = () => {
         {errors.general && <div className="auth-error">{errors.general}</div>}
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">
+
+            {/* 이메일 html 시작 */}
             <label htmlFor="email">이메일</label>
             <input
               type="email"
@@ -75,7 +94,9 @@ const Login = () => {
               <div className="error-message">{errors.email}</div>
             )}
           </div>
+          {/* 이메일 html 끝 */}
 
+          {/* 비밀번호 html */}
           <div className="form-group">
             <label htmlFor="password">비밀번호</label>
             <input
@@ -91,6 +112,7 @@ const Login = () => {
               <div className="error-message">{errors.password}</div>
             )}
           </div>
+          {/* 비밀번호 html */}
 
           <button type="submit" className="auth-button">
             로그인
