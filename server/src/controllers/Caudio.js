@@ -9,7 +9,7 @@ exports.postUploadAudio = async (req, res) => {
   fs.renameSync(file.path, savePath);
 
   // AI 서버 호출
-  const aiRes = await axios.post("http://127.0.0.1:5000/process-file", {
+  const aiRes = await axios.post("http://127.0.0.1:4000/process-file", {
     filePath: savePath,
     headers: { "Content-Type": "application/json" },
   });
