@@ -9,7 +9,8 @@ import useWebRTC from "../components/Room/useWebRTC";
 import useSocket from "../components/Room/useSocket";
 import "../styles/MeetingRoom.css";
 
-const socket = io("http://localhost:5000", { autoConnect: false });
+const port = import.meta.env.VITE_SERVER_PORT;
+const socket = io(`http://localhost:${port}`, { autoConnect: false });
 const MAX_PARTICIPANTS = 4;
 
 const MeetingRoom = () => {

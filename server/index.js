@@ -9,15 +9,16 @@
 // });
 
 const dotenv = require("dotenv");
-dotenv.config();
+dotenv.config({ path: "../.env" });
 
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const http = require("http");
 
 // .env 적용된 상태에서 라우터 실행
 const userRouter = require("./src/routes/userRouter");
-
+const initSocket = require("./src/socket/socketServer");
 
 const app = express();
 // const PORT = process.env.PORT || 5000;
@@ -69,6 +70,11 @@ const db = require("./src/models/db_users"); // 네가 만든 db pool 불러오�
   }
 })();
 
-app.listen(3000, () => {
+// httpServer 생성 + socket 서버 초기화
+const httpServer = http.createServer(app);
+initSocket(httpServer);
+
+const PORT = process.env.SERVER_PORT;
+httpServer.listen(PORT, () => {
   console.log(`Server running on port 3000`);
 });
