@@ -11,7 +11,7 @@ export default function App() {
   const [summaryId, setSummaryId] = useState("summary-001");
 
   useEffect(() => {
-    fetch(`http://localhost:3001/tasks/${summaryId}`)
+    fetch(`http://localhost:3000/tasks/${summaryId}`)
       .then(res => res.json())
       .then(data => setTasks(data));
   }, [summaryId]);
@@ -23,7 +23,7 @@ export default function App() {
     );
     const moved = updated.find(t => t.task_id === draggableId);
     setTasks(updated);
-    fetch(`http://localhost:3001/tasks/${draggableId}`, {
+    fetch(`http://localhost:3000/tasks/${draggableId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(moved),
@@ -35,20 +35,20 @@ export default function App() {
   const handleEdit = (task) => setModal({ open: true, task });
 
   const handleDelete = async (id) => {
-    await fetch(`http://localhost:3001/tasks/${id}`, { method: "DELETE" });
+    await fetch(`http://localhost:3000/tasks/${id}`, { method: "DELETE" });
     setTasks(tasks.filter(t => t.task_id !== id));
   };
 
   const handleSave = async (task) => {
     if (task.task_id) {
-      await fetch(`http://localhost:3001/tasks/${task.task_id}`, {
+      await fetch(`http://localhost:3000/tasks/${task.task_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(task),
       });
       setTasks(tasks.map(t => (t.task_id === task.task_id ? task : t)));
     } else {
-      const res = await fetch("http://localhost:3001/tasks", {
+      const res = await fetch("http://localhost:3000/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...task, summary_id: summaryId }),
