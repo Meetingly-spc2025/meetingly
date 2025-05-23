@@ -17,6 +17,7 @@ import StartMeeting from "./pages/StartMeeting";
 import MeetingDetail from "./pages/MeetingDetail";
 import MyPage from "./pages/MyPage";
 import CalendarPage from "./pages/CalendarPage";
+import AudioRecorder from "./pages/AudioRecorder";
 import "./styles/AppLayout.css";
 
 const Layout = () => {
@@ -43,6 +44,7 @@ const Layout = () => {
             {/* 차후 여기에 각자 아이디 값 받아서 올 수 있게 해도 됨 */}
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/audio" element={<AudioRecorder />} />
           </Routes>
         </main>
       </div>

@@ -1,1 +1,0 @@
-function getApi(req, res) {}
