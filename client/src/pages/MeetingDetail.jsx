@@ -4,6 +4,7 @@ import AudioPlayer from "../components/Taskboard/AudioPlayer";
 import FileList from "../components/Taskboard/FileList";
 import DiscussionList from "../components/Taskboard/DiscusstionList";
 import AddSectionButton from "../components/Taskboard/AddSectionButton";
+import Kanban from "../components/Kanban/KanbanBoard";
 
 const MeetingDetail = () => {
   const [sections, setSections] = useState([
@@ -11,6 +12,7 @@ const MeetingDetail = () => {
     { type: "audio" },
     { type: "files" },
     { type: "discussion" },
+    { type: "kanban" },
   ]);
 
   const handleAddSection = () => {
@@ -32,6 +34,8 @@ const MeetingDetail = () => {
             return <AudioPlayer key="audio" />;
           case "files":
             return <FileList key="files" />;
+          case "kanban":
+            return <Kanban key="kanban" />;
 
           case "summary":
             return <SummaryBlock key={`summary-${index}`} />;
