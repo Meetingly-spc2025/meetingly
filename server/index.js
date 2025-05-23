@@ -1,12 +1,12 @@
-// 에러 체크용 2
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("🔥 비동기 에러 발생:", reason);
-});
+// // 에러 체크용 2
+// process.on("unhandledRejection", (reason, promise) => {
+//   console.error("🔥 비동기 에러 발생:", reason);
+// });
 
-// 에러 체크용
-process.on("uncaughtException", (err) => {
-  console.error("🔥 uncaughtException 발생:", err);
-});
+// // 에러 체크용
+// process.on("uncaughtException", (err) => {
+//   console.error("🔥 uncaughtException 발생:", err);
+// });
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -20,7 +20,7 @@ const userRouter = require("./src/routes/userRouter");
 
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+// const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 // 미들웨어
@@ -43,6 +43,9 @@ app.use("/api/users", userRouter);
   // console.error("userRouter 불러오기 실패:", err);
   // }
 
+
+const audioRouter = require("./src/routes/audioRouter");
+app.use("/audio", audioRouter);
 
 // 배포 모드
 if (process.env.NODE_ENV === "production") {
