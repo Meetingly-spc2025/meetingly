@@ -44,6 +44,17 @@ const MyPage = () => {
         </label>
 
         <label>
+          직급
+          <input
+            type="text"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            disabled
+          />
+        </label>
+
+        <label>
           비밀번호 변경
           <input
             type="password"

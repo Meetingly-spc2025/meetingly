@@ -1,83 +1,142 @@
-/* styles/Main.css */
-.main-scroll-container {
-  height: 100vh;
-  width: 100%;
-  scroll-snap-type: y mandatory;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-  box-sizing: border-box;
-  padding-top: var(--header-height);
-}
-
-.main-section {
-  height: 100vh;
-  width: 100%;
-  scroll-snap-align: start;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
-  padding: 0 2rem;
-}
-
-.main-section-inner {
-  text-align: center;
-  padding: 2rem;
-}
-
-img {
-  width: 30rem;
-  height: 6rem;
-}
-
-/* Intro 스타일 */
-.main-intro-section {
-  background-color: #ffffff;
-}
-
-.intro-content {
+/* 전체 wrapper */
+.meeting-page-wrapper {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  background-color: #e6f2fc;
+  box-sizing: border-box;
+  padding: 32px 80px;
+  padding-top: 60px;
+}
+
+/* 메인 콘텐츠 */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  background-color: transparent; /* 중복 제거 */
+}
+
+/* 헤더 */
+.main-header {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
-.intro-logo {
-  width: 100px;
-  height: auto;
-  margin-bottom: 1rem;
+.profile {
+  display: flex;
+  align-items: center;
 }
 
-.intro-title {
-  font-size: 3rem;
+.profile img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.greeting {
+  font-size: 18px;
+  color: #1e1e1e;
+}
+
+.greeting .highlight {
+  color: #f45858;
+}
+
+.email {
+  font-size: 12px;
+  color: gray;
+}
+
+/* 회의 목록 섹션 */
+.meeting-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.meeting-list h2 {
+  font-size: 24px;
   font-weight: 700;
-  color: #0f123f;
-  margin-bottom: 0.5rem;
+  color: #1e1e1e;
 }
 
-.intro-subtitle {
-  font-size: 1.25rem;
-  color: #3e46b4;
-  margin-bottom: 2rem;
+/* 탭 바 */
+.tab-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
-.intro-content {
-  font-size: 1rem;
-  color: #475569;
-  margin-bottom: 2rem;
+.tab-bar span {
+  font-weight: 500;
+  font-size: 15px;
+  color: #999;
+  cursor: pointer;
 }
 
-.intro-button {
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-  background-color: #0f123f;
+.tab-bar span.active {
+  color: #246bfd;
+}
+
+.tab-bar select {
+  margin-left: auto;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  background-color: white;
+}
+
+/* 카드 리스트 */
+.meeting-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.meeting-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* 버튼 */
+.view-button {
+  background-color: #0e0e44;
   color: white;
   border: none;
   border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
 }
 
-.intro-button:hover {
-  background-color: #ffa3a3;
+/* 페이지네이션 */
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pagination button {
+  border: none;
+  background: white;
+  color: #001a6d;
+  margin: 0 4px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background-color: #001a6d;
+  color: white;
 }

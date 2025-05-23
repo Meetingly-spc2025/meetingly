@@ -7,7 +7,6 @@ body {
   display: flex;
   height: 100vh;
   background-color: #e6f1fb;
-  padding-top: var(--header-height);
 }
 
 /* Sidebar */

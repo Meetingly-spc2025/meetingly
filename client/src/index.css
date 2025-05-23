@@ -6,9 +6,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
 
 /* Reset & Base Styles */
-:root {
-  --header-height: 90px;
-}
 
 html,
 body {

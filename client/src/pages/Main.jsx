@@ -1,8 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import "../styles/Main.css";
 import { useNavigate } from "react-router-dom";
-
-// 이미지 파일 import
 import webrtcImg from "../assets/webrtc.png";
 import meetingListImg from "../assets/meeting-list.png";
 import kanbanImg from "../assets/kanban-board.png";
@@ -39,10 +37,38 @@ const sections = [
 
 const Main = () => {
   const navigate = useNavigate();
+  const imgRefs = useRef([]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("animate-in");
+          } else {
+            entry.target.classList.remove("animate-in");
+          }
+        });
+      },
+      {
+        threshold: 0.2,
+      },
+    );
+
+    imgRefs.current.forEach((img) => {
+      if (img) observer.observe(img);
+    });
+
+    return () => {
+      imgRefs.current.forEach((img) => {
+        if (img) observer.unobserve(img);
+      });
+    };
+  }, []);
 
   return (
     <div className="main-scroll-container">
-      {sections.map((section) =>
+      {sections.map((section, index) =>
         section.isIntro ? (
           <section
             key={section.id}
@@ -75,10 +101,14 @@ const Main = () => {
             <div className="main-section-inner">
               <h1 className="intro-subtitle">{section.title}</h1>
               <p className="intro-content">{section.description}</p>
-              <img src={section.img} alt="서비스 설명 이미지" />
+              <img
+                src={section.img}
+                alt="서비스 설명 이미지"
+                ref={(el) => (imgRefs.current[index] = el)}
+              />
             </div>
           </section>
-        )
+        ),
       )}
     </div>
   );
