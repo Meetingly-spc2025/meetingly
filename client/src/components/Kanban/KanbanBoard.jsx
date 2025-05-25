@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import TaskColumn from "./TaskColumn";
 import TaskModal from "./TaskModal";
+import "../../styles/KanbanBoard.css";
 
 const STATUSES = ["todo", "doing", "done"];
 
@@ -61,8 +62,10 @@ export default function App() {
 
   return (
     <main style={{ padding: 20 }}>
-      <h1>🗂️ 칸반보드</h1>
-      <button onClick={handleAdd}>+ 할 일 추가</button>
+      <div className="kanban-header">
+        <h1>🗂️ 칸반보드</h1>
+        <button className="kanban-add-button" onClick={handleAdd}>+ 할 일 추가</button>
+      </div>
       <DragDropContext onDragEnd={handleDragEnd}>
         <div style={{ display: "flex", gap: 20 }}>
           {STATUSES.map(status => (
