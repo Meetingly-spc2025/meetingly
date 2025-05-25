@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import "../styles/Main.css";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 import webrtcImg from "../assets/webrtc.png";
 import meetingListImg from "../assets/meeting-list.png";
 import kanbanImg from "../assets/kanban-board.png";
@@ -105,9 +106,13 @@ const Main = () => {
                 ref={(el) => (imgRefs.current[index] = el)}
               />
             </div>
+            
           </section>
         )
       )}
+  <section className="footer-wrapper">
+    <Footer />
+  </section>
     </div>
   );
 };

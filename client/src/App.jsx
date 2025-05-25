@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import SidebarLayout from "./layouts/SidebarLayout";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import Main from "./pages/Main";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -15,7 +16,9 @@ import CreateMeeting from "./pages/CreateMeeting";
 import MeetingDetail from "./pages/MeetingDetail";
 import MeetingRoom from "./pages/MeetingRoom";
 import MyPage from "./pages/MyPage";
+import ResetPassword from "./pages/ResetPassword";
 import AudioRecorder from "./pages/AudioRecorder";
+import TeamEmpty from "./components/Team/TeamEmpty";
 import "./App.css";
 
 function App() {
@@ -27,6 +30,7 @@ function App() {
           <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/room/:roomName" element={<MeetingRoom />} />
 
           {/* 사이드 바 존재하는 페이지 */}
@@ -39,13 +43,17 @@ function App() {
             }
           />
           <Route
-            path="/team"
+            path="/team/:id"
             element={
               <SidebarLayout>
                 <TeamManagement />
               </SidebarLayout>
             }
           />
+          <Route path="/team" element={ 
+            <SidebarLayout>
+                <TeamEmpty />
+            </SidebarLayout>}/>
           <Route
             path="/meeting/start"
             element={
