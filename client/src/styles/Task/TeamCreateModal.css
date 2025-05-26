@@ -70,3 +70,23 @@
 .modal-create-btn:hover {
   background-color: #2563eb;
 }
+
+.invite-link-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.copy-button {
+  padding: 8px 12px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}

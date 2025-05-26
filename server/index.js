@@ -7,7 +7,6 @@
 // process.on("uncaughtException", (err) => {
 //   console.error("🔥 uncaughtException 발생:", err);
 // });
-
 const dotenv = require("dotenv");
 dotenv.config({ path: "../.env" });
 
@@ -15,12 +14,17 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const http = require("http");
+const db = require("./src/models/db_users"); // 네가 만든 db pool 불러오기
 
 // .env 적용된 상태에서 라우터 실행
-const userRouter = require("./src/routes/userRouter");
 const initSocket = require("./src/socket/socketServer");
+
+// Route
+const userRouter = require("./src/routes/userRouter");
 const meetingRouter = require("./src/routes/meetingRouter");
 const taskRoutes = require("./src/routes/tasksRouter");
+const audioRouter = require("./src/routes/audioRouter");
+const teamRouter = require("./src/routes/teamRouter")
 
 const app = express();
 // const PORT = process.env.PORT || 5000;
@@ -29,8 +33,7 @@ app.use(cors());
 // 미들웨어
 app.use(express.json());
 
-// tasks
-app.use("/tasks", taskRoutes);
+
 
 // 디버깅용 라우터
 app.use((req, res, next) => {
@@ -38,22 +41,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// // 로그인 및 jwt 검증 라우터
 app.use("/api/users", userRouter);
-
-  // try {
-  // userRouter = require("./src/routes/userRouter");
-  // console.log("userRouter 불러오기 성공");
-  
-  // }catch (err) {
-  // console.error("userRouter 불러오기 실패:", err);
-  // }
-
-
-const audioRouter = require("./src/routes/audioRouter");
 app.use("/audio", audioRouter);
-
 app.use("/api/meetings", meetingRouter);
+app.use("/tasks", taskRoutes);
+app.use("/api/teams", teamRouter)
 
 // 배포 모드
 if (process.env.NODE_ENV === "production") {
@@ -65,7 +57,6 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-const db = require("./src/models/db_users"); // 네가 만든 db pool 불러오기
 
 // DB 에러 체크용
 (async () => {
