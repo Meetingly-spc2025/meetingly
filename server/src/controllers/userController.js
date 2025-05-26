@@ -54,14 +54,14 @@ exports.getUserInfo = (req, res) => {
     console.log("터미널 디버깅 - req.user에 저장된 사용자 정보 응답, ", user);
 
     res.status(200).json({
-        message:"터미널 디버깅 - 프론트에서 헤더에서 꺼내 axios 시킨 토큰값은 우리 서버가 발급한게 맞음",
+        message:"터미널 디버깅 - 프론트에서 헤더에서 꺼내 axios 시킨 토큰값은 미팅리 서버가 발급한게 맞음",
         user : {
             id:user.id,
             email:user.email,
             name:user.name,
             role:user.role,
             // 닉네임은 추가 예정
-            // 기타 필요한 정보 파악 후 DB에 반영한 뒤 해당 코드에 추가 예정
+            // 기타 필요한 정보 파악 후 DB에 반영한 뒤 추가 예정
         },
     });
 };
