@@ -123,7 +123,7 @@ const Login = () => {
           <Link to="/register" className="auth-link">
             회원가입
           </Link>
-          <Link to="/forgot-password" className="auth-link">
+          <Link to="/reset-password" className="auth-link">
             비밀번호 찾기
           </Link>
         </div>
