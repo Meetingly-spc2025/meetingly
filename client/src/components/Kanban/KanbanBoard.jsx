@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import TaskColumn from "./TaskColumn";
 import TaskModal from "./TaskModal";
-import "../../styles/KanbanBoard.css";
+import "../../styles/Task/KanbanBoard.css";
 
 const STATUSES = ["todo", "doing", "done"];
 
 export default function App() {
   const [tasks, setTasks] = useState([]);
   const [modal, setModal] = useState({ open: false, task: null });
-  const [summaryId, setSummaryId] = useState("summary-001");
+  // const [summaryId, setSummaryId] = useState("summary-001");
+  const [summaryId] = useState("summary-001");
 
   useEffect(() => {
     fetch(`http://localhost:3000/tasks/${summaryId}`)

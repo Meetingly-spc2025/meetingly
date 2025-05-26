@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../../styles/TeamCreateModal.css";
+import "../../styles/Task/TeamCreateModal.css";
 
 const TeamCreateModal = ({ onClose, onCreate }) => {
   const [teamName, setTeamName] = useState("");
@@ -7,9 +7,9 @@ const TeamCreateModal = ({ onClose, onCreate }) => {
   const [teamLink, setTeamLink] = useState("")
 
   // 초대 코드
-  const generateInviteCode = () => {
-  return Math.random().toString(36).substring(2, 10); // 예: 'dk23kf9a'
-  };
+  // const generateInviteCode = () => {
+  // return Math.random().toString(36).substring(2, 10); // 예: 'dk23kf9a'
+  // };
 
   
 

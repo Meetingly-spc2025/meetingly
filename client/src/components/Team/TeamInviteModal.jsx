@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../../styles/TeamInviteModal.css";
+import "../../styles/Task/TeamInviteModal.css";
 
 const TeamInviteModal = ({ onClose, onSubmit }) => {
   const [inviteLink, setInviteLink] = useState("");

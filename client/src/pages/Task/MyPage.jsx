@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../styles/MyPage.css';
+import '../../styles/Task/MyPage.css';
 
 function MyPage() {
   const [isNicknameEditable, setIsNicknameEditable] = useState(false);

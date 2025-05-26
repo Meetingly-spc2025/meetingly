@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import TeamInviteModal from "./TeamInviteModal";
 import TeamCreateModal from "./TeamCreateModal";
-import "../../styles/TeamEmpty.css";
+import "../../styles/Task/TeamEmpty.css";
 
 const TeamEmpty = () => {
   // 초대 링크 참여

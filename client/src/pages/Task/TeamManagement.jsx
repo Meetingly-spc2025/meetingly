@@ -1,6 +1,6 @@
 // src/pages/TeamManagement.jsx
 import React from "react";
-import "../styles/TeamManagement.css";
+import "../../styles/Task/TeamManagement.css";
 
 const dummyMembers = [
   {

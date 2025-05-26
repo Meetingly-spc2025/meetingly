@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/MeetingList.css";
+import "../../styles/Task/MeetingList.css";
 import { useNavigate } from "react-router-dom";
 
 const meetings = [

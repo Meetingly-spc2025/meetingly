@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../styles/Auth.css";
+import "../../styles/Login/Auth.css";
 import axios from "axios"
 
 const Login = () => {
@@ -61,7 +61,7 @@ const Login = () => {
       localStorage.setItem("token", token);
 
       // 로그인 성공 후 대시보드 이동
-      navigate("/dashboard");
+      navigate("/meetings");
 
     } catch (error) {
       console.error("로그인 오류:", error);

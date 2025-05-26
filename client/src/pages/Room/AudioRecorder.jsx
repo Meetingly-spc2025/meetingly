@@ -1,14 +1,15 @@
-import React, { useState, useRef } from "react";
-import LoadingScreen from "../components/LoadingScreen";
+// import React, { useState, useRef } from "react";
+import React, { useState } from "react";
+import LoadingScreen from "../../components/LoadingScreen";
 import axios from "axios";
 
 function AudioRecorder() {
  const [loading, setLoading] = useState(false);
 
   const [audioFile, setAudioFile] = useState(null);
-  const [recording, setRecording] = useState(false);
-  const mediaRecorderRef = useRef(null);
-  const audioChunksRef = useRef([]);
+  // const [recording, setRecording] = useState(false);
+  // const mediaRecorderRef = useRef(null);
+  // const audioChunksRef = useRef([]);
 
   // 📁 파일 선택
   const handleFileChange = (e) => {
