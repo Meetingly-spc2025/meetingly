@@ -1,7 +1,10 @@
 import React, { useState, useRef } from "react";
+import LoadingScreen from "../components/LoadingScreen";
 import axios from "axios";
 
 function AudioRecorder() {
+ const [loading, setLoading] = useState(false);
+
   const [audioFile, setAudioFile] = useState(null);
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef(null);
@@ -19,6 +22,7 @@ function AudioRecorder() {
       formData.append("audio", audioFile);
 
       try {
+        setLoading(true);
         const res = await axios.post(
           "http://localhost:3000/audio/upload/file",
           formData,
@@ -29,7 +33,9 @@ function AudioRecorder() {
       } catch (err) {
         console.error(err);
         alert("업로드 실패: " + err.message);
-      }
+      } finally {
+      setLoading(false); // 요청 완료 시 로딩 종료
+    }
     }
   };
 
@@ -86,12 +92,13 @@ function AudioRecorder() {
   // };
 
   return (
-    <div>
+    <div style={{ position: "relative" }}>
       <h1>🎙 Whisper 테스트</h1>
-
       <h2>1️⃣ 녹음 업로드</h2>
       <input type="file" onChange={handleFileChange} />
       <button onClick={handleFileUpload}>업로드</button>
+
+       {loading && <LoadingScreen />}
 
       {/* <h2>2️⃣ 실시간 녹음</h2>
       {!recording ? (
@@ -99,6 +106,7 @@ function AudioRecorder() {
       ) : (
         <button onClick={stopRecording}>녹음 중지</button>
       )} */}
+    
     </div>
   );
 }

@@ -20,6 +20,7 @@ const http = require("http");
 const userRouter = require("./src/routes/userRouter");
 const initSocket = require("./src/socket/socketServer");
 const meetingRouter = require("./src/routes/meetingRouter");
+const taskRoutes = require("./src/routes/tasksRouter");
 
 const app = express();
 // const PORT = process.env.PORT || 5000;
@@ -27,6 +28,9 @@ const app = express();
 app.use(cors());
 // 미들웨어
 app.use(express.json());
+
+// tasks
+app.use("/tasks", taskRoutes);
 
 // 디버깅용 라우터
 app.use((req, res, next) => {
