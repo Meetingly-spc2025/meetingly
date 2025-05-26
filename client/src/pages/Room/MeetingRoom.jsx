@@ -2,16 +2,26 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 
-import VideoGrid from "../components/Room/VideoGrid";
-import Controls from "../components/Room/Controls";
-import ChatBox from "../components/Room/ChatBox";
-import useWebRTC from "../components/Room/useWebRTC";
-import useSocket from "../components/Room/useSocket";
-import "../styles/MeetingRoom.css";
+import VideoGrid from "../../components/Room/VideoGrid";
+import Controls from "../../components/Room/Controls";
+import ChatBox from "../../components/Room/ChatBox";
+import useWebRTC from "../../components/Room/useWebRTC";
+import useSocket from "../../components/Room/useSocket";
+import "../../styles/Room/MeetingRoom.css";
 
 const port = import.meta.env.VITE_SERVER_PORT;
 const socket = io(`http://localhost:${port}`, { autoConnect: false });
 const MAX_PARTICIPANTS = 4;
+
+async function registerParticipant(meeting_id, nickname) {
+  const res = await fetch("/api/meetings/participants", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_name: nickname, meeting_id }),
+  });
+  const data = await res.json();
+  return data.success;
+}
 
 const MeetingRoom = () => {
   const { roomName } = useParams();
@@ -29,6 +39,28 @@ const MeetingRoom = () => {
   const addMessage = useCallback((msg) => {
     setMessages((prev) => [...prev, msg]);
   }, []);
+
+  const [meetingId, setMeetingId] = useState(localStorage.getItem("meeting_id") || null);
+
+  useEffect(() => {
+    if (!meetingId && roomName) {
+      fetch(`/api/meetings/roomName/${roomName}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.meeting_id) {
+            localStorage.setItem("meeting_id", data.meeting_id);
+            setMeetingId(data.meeting_id);
+          } else {
+            alert("유효하지 않은 회의방입니다.");
+            navigate("/");
+          }
+        })
+        .catch(() => {
+          alert("회의방 정보를 가져올 수 없습니다.");
+          navigate("/");
+        });
+    }
+  }, [meetingId, roomName, navigate]);
 
   useEffect(() => {
     socket.connect();
@@ -82,16 +114,23 @@ const MeetingRoom = () => {
 
   useEffect(() => {
     const join = async () => {
-      if (socketConnected && nickname && roomName) {
+      if (socketConnected && nickname && roomName && meetingId) {
         await getMedia();
-        socket.emit("join_room", { roomName, nickname });
+        const success = await registerParticipant(meetingId, nickname);
+        if (!success) {
+          console.log("회의 참가 등록 실패");
+          navigate("/");
+          return;
+        }
+        socket.emit("join_room", { roomName, nickname, meeting_id: meetingId });
       }
     };
     join();
-  }, [socketConnected, nickname, roomName, getMedia]);
+  }, [socketConnected, nickname, roomName, getMedia, meetingId, navigate]);
 
   const handleLeaveRoom = () => {
     leaveRoom();
+    localStorage.removeItem("meeting_id");
     setTimeout(() => navigate("/"), 100);
   };
 
@@ -110,9 +149,7 @@ const MeetingRoom = () => {
   return (
     <div className="meeting-room">
       <div className="video-section">
-        <div className="video-grid">
-          <VideoGrid videoRefs={videoRefs} MAX_PARTICIPANTS={MAX_PARTICIPANTS} />
-        </div>
+        <VideoGrid videoRefs={videoRefs} MAX_PARTICIPANTS={MAX_PARTICIPANTS} />
         <div className="controls">
           <Controls
             muted={muted}
