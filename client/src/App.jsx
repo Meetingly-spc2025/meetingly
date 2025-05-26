@@ -17,6 +17,7 @@ import MeetingDetail from "./pages/MeetingDetail";
 import MeetingRoom from "./pages/MeetingRoom";
 import MyPage from "./pages/MyPage";
 import ResetPassword from "./pages/ResetPassword";
+import CalendarPage from "./pages/CalendarPage";
 import AudioRecorder from "./pages/AudioRecorder";
 import TeamEmpty from "./components/Team/TeamEmpty";
 import "./App.css";
@@ -76,6 +77,14 @@ function App() {
             element={
               <SidebarLayout>
                 <MyPage />
+              </SidebarLayout>
+            }
+          />
+          <Route
+            path="/calendarPage"
+            element={
+              <SidebarLayout>
+                <CalendarPage />
               </SidebarLayout>
             }
           />

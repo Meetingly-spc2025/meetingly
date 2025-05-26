@@ -5,46 +5,63 @@ import FileList from "../components/Taskboard/FileList";
 import DiscussionList from "../components/Taskboard/DiscusstionList";
 import AddSectionButton from "../components/Taskboard/AddSectionButton";
 import Kanban from "../components/Kanban/KanbanBoard";
+import "../styles/MeetingDetail.css";
 
 const MeetingDetail = () => {
   const [sections, setSections] = useState([
-    { type: "summary" },
-    { type: "audio" },
-    { type: "files" },
-    { type: "discussion" },
-    { type: "kanban" },
+    { type: "summary", collapsed: false },
+    { type: "audio", collapsed: false },
+    { type: "files", collapsed: false },
+    { type: "discussion", collapsed: false },
+    { type: "kanban", collapsed: false },
   ]);
 
   const handleAddSection = () => {
     setSections([
       ...sections,
-      { type: "summary" },
-      { type: "discussion" },
-      { type: "summary" },
+      { type: "summary", collapsed: false },
+      { type: "discussion", collapsed: false },
+      { type: "summary", collapsed: false },
     ]);
+  };
+
+  const toggleSection = (index) => {
+    setSections((prevSections) =>
+      prevSections.map((section, i) =>
+        i === index ? { ...section, collapsed: !section.collapsed } : section
+      )
+    );
   };
 
   return (
     <div className="meeting-detail-page">
       <h2>회의 기록 상세</h2>
 
-      {sections.map((section, index) => {
-        switch (section.type) {
-          case "audio":
-            return <AudioPlayer key="audio" />;
-          case "files":
-            return <FileList key="files" />;
-          case "kanban":
-            return <Kanban key="kanban" />;
+      {sections.map((section, index) => (
+        <div key={`${section.type}-${index}`} className="meeting-section-wrapper">
+          {/* 🔽 토글 버튼 */}
+          <div className="section-header">
+            <strong>{section.type.toUpperCase()}</strong>
+            <button
+              className="toggle-btn"
+              onClick={() => toggleSection(index)}
+            >
+              {section.collapsed ? "+" : "-"}
+            </button>
+          </div>
 
-          case "summary":
-            return <SummaryBlock key={`summary-${index}`} />;
-          case "discussion":
-            return <DiscussionList key={`discussion-${index}`} />;
-          default:
-            return null;
-        }
-      })}
+          {/* 🔽 섹션 내용 */}
+          {!section.collapsed && (
+            <>
+              {section.type === "audio" && <AudioPlayer />}
+              {section.type === "files" && <FileList />}
+              {section.type === "kanban" && <Kanban />}
+              {section.type === "summary" && <SummaryBlock />}
+              {section.type === "discussion" && <DiscussionList />}
+            </>
+          )}
+        </div>
+      ))}
 
       <AddSectionButton onClick={handleAddSection} />
     </div>

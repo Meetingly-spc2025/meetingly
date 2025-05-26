@@ -10,7 +10,7 @@ const FileList = () => {
   return (
     <div className="file-list">
       <h3>첨부 파일</h3>
-      <ul>
+      <ul style={{ listStyle: "disc inside", paddingLeft: 0, margin: 0 }}>
         {files.map((file, idx) => (
           <li key={idx}>
             <a href={file.url} target="_blank" rel="noopener noreferrer">
