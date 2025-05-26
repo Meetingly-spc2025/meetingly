@@ -19,6 +19,7 @@ const http = require("http");
 // .env 적용된 상태에서 라우터 실행
 const userRouter = require("./src/routes/userRouter");
 const initSocket = require("./src/socket/socketServer");
+const meetingRouter = require("./src/routes/meetingRouter");
 
 const app = express();
 // const PORT = process.env.PORT || 5000;
@@ -47,6 +48,8 @@ app.use("/api/users", userRouter);
 
 const audioRouter = require("./src/routes/audioRouter");
 app.use("/audio", audioRouter);
+
+app.use("/api/meetings", meetingRouter);
 
 // 배포 모드
 if (process.env.NODE_ENV === "production") {
