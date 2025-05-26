@@ -38,7 +38,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// // 로그인 라우터
+// // 로그인 및 jwt 검증 라우터
 app.use("/api/users", userRouter);
 
   // try {
