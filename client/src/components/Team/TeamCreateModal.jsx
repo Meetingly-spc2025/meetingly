@@ -3,6 +3,16 @@ import "../../styles/TeamCreateModal.css";
 
 const TeamCreateModal = ({ onClose, onCreate }) => {
   const [teamName, setTeamName] = useState("");
+  const [teamDescription, setTeamDescription] = useState("");
+  const [teamLink, setTeamLink] = useState("")
+
+  // 초대 코드
+  const generateInviteCode = () => {
+  return Math.random().toString(36).substring(2, 10); // 예: 'dk23kf9a'
+  };
+
+  
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,8 +37,30 @@ const TeamCreateModal = ({ onClose, onCreate }) => {
             className="modal-input"
             placeholder="팀 이름을 입력하세요"
           />
+
+          <label className="modal-label" htmlFor="teamName">팀 설명</label>
+          <input
+            id="teamDescription"
+            type="text"
+            value={teamDescription}
+            onChange={(e) => setTeamDescription(e.target.value)}
+            className="modal-input"
+            placeholder="팀 설명을 입력하세요"
+          />
+
+          <label className="modal-label" htmlFor="teamName">초대 링크</label>
+          <input
+            id="teamLink"
+            type="text"
+            value={teamLink}
+            onChange={(e) => setTeamLink(e.target.value)}
+            className="modal-input"
+            placeholder="초대 링크 자동 생성.."
+          />
+          
+          
           <button type="submit" className="modal-create-btn">
-            팀 만들기
+            팀 생성하기
           </button>
         </form>
       </div>
