@@ -1,4 +1,4 @@
-.task-card {
+.meetinglist-card {
   background-color: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
@@ -8,29 +8,29 @@
   transition: box-shadow 0.2s ease;
 }
 
-.task-card:hover {
+.meetinglist-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.task-content {
+.meetinglist-content {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.task-title {
+.meetinglist-title {
   font-size: 1.1rem;
   font-weight: 600;
   color: #111827;
 }
 
-.task-date,
-.task-participants {
+.meetinglist-date,
+.meetinglist-info {
   font-size: 0.95rem;
   color: #6b7280;
 }
 
-.task-detail-btn {
+.meetinglist-view-button {
   align-self: flex-start;
   margin-top: 10px;
   padding: 6px 12px;
@@ -42,6 +42,6 @@
   cursor: pointer;
 }
 
-.task-detail-btn:hover {
+.meetinglist-view-button:hover {
   background-color: #1d4ed8;
 }

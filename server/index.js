@@ -20,7 +20,8 @@ const http = require("http");
 const userRouter = require("./src/routes/userRouter");
 const initSocket = require("./src/socket/socketServer");
 const meetingRouter = require("./src/routes/meetingRouter");
-const taskRoutes = require("./src/routes/tasksRouter");
+const taskRouter = require("./src/routes/tasksRouter");
+const meetinglistsRouter = require("./src/routes/meetinglistsRouter");
 
 const app = express();
 // const PORT = process.env.PORT || 5000;
@@ -30,7 +31,10 @@ app.use(cors());
 app.use(express.json());
 
 // tasks
-app.use("/tasks", taskRoutes);
+app.use("/api/tasks", taskRouter);
+
+// meetings // 회의 목록 불러오기
+app.use("/api/meetinglists", meetinglistsRouter);
 
 // 디버깅용 라우터
 app.use((req, res, next) => {
