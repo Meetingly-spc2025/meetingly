@@ -13,4 +13,6 @@ const { getUserInfo } = require("../controllers/userController");
 router.post("/login", loginUser);
 router.get("/jwtauth", authenticate, getUserInfo);
 
+// 마이페이지 정보 수정
+
 module.exports = router;
