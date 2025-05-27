@@ -40,7 +40,18 @@ const ChatBox = ({
               </option>
             ))}
         </select>
-        <input id="chatMessage" type="text" placeholder="메시지 입력" />
+        <input
+          id="chatMessage"
+          type="text"
+          placeholder="메시지 입력"
+          style={{ resize: "none" }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+            }
+          }}
+        />
         <button onClick={sendMessage}>보내기</button>
       </div>
     </div>

@@ -8,9 +8,9 @@ export default function TaskColumn({ status, tasks, onEdit, onDelete }) {
         <div
           ref={provided.innerRef}
           {...provided.droppableProps}
-          style={{ width: 250, minHeight: 400, background: "#eee", padding: 10 }}
+          className="taskcolumn-container"
         >
-          <h3>{status.toUpperCase()}</h3>
+          <h3 className="taskcolumn-title">{status.toUpperCase()}</h3>
           {tasks.map((task, index) => (
             <TaskCard
               key={task.task_id}

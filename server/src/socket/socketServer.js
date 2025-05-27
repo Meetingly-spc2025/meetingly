@@ -1,4 +1,5 @@
 const { Server } = require("socket.io");
+const meetingModel = require("../models/meetingModel");
 
 const rooms = {};
 const nickInfo = {};
@@ -13,23 +14,26 @@ function initSocket(server) {
   });
 
   io.on("connection", (socket) => {
-    socket.on("join_room", ({ roomName, nickname }) => {
+    socket.on("join_room", async ({ roomName, nickname, meeting_id }) => {
       socket.join(roomName);
-
+      
       if (!rooms[roomName]) {
-        rooms[roomName] = [];
+        rooms[roomName] = {
+          users: [],
+          meeting_id,
+        };
         nickInfo[roomName] = {};
       }
 
-      if (rooms[roomName].length >= 4) {
+      if (rooms[roomName].users.length >= 4) {
         socket.emit("room_full");
         return;
       }
 
-      rooms[roomName].push(socket.id);
+      rooms[roomName].users.push(socket.id);
       nickInfo[roomName][socket.id] = nickname;
 
-      const userList = rooms[roomName]
+      const userList = rooms[roomName].users
         .filter(id => id !== socket.id)
         .map(id => ({ id, nickname: nickInfo[roomName][id] }));
 
@@ -77,24 +81,33 @@ function initSocket(server) {
       }
     });
 
-    socket.on("disconnecting", () => {
+    socket.on("disconnecting", async () => {
       const roomsJoined = [...socket.rooms].filter(r => r !== socket.id);
 
-      roomsJoined.forEach(roomName => {
-        if (!rooms[roomName]) return;
+      for (const roomName of roomsJoined) {
+        if (!rooms[roomName]) continue;
 
-        rooms[roomName] = rooms[roomName].filter(id => id !== socket.id);
+        rooms[roomName].users = rooms[roomName].users.filter(id => id !== socket.id);
         socket.to(roomName).emit("left_room", socket.id);
         io.to(roomName).emit("notice", `${nickInfo[roomName][socket.id]}님이 퇴장하셨습니다.`);
         delete nickInfo[roomName][socket.id];
 
-        if (rooms[roomName].length > 0) {
+        if (rooms[roomName].users.length > 0) {
           io.to(roomName).emit("updateNicks", nickInfo[roomName]);
         } else {
+          try {
+            const meeting_id = rooms[roomName].meeting_id;
+            if (meeting_id) {
+              await meetingModel.endMeeting(meeting_id, new Date());
+            }
+          } catch (err) {
+            console.error("회의 종료 시간 업데이트 실패:", err);
+          }
+
           delete rooms[roomName];
           delete nickInfo[roomName];
         }
-      });
+      }
     });
 
     socket.on("disconnect", () => {});

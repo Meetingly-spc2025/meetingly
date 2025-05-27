@@ -1,0 +1,77 @@
+.calendarpage-container {
+  max-width: 750px; /* ✅ 더 크게 */
+  margin: 60px auto;
+  padding: 40px;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", sans-serif;
+  text-align: center;
+}
+
+.calendarpage-title {
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.calendar-wrapper {
+  margin: 0 auto;
+}
+
+.selected-date {
+  margin-top: 25px;
+  font-size: 1.1rem;
+  color: #444;
+}
+
+/* 캘린더 전체 크기 & 글자 키우기 */
+.react-calendar {
+  width: 100% !important; /* ✅ 전체 너비 채움 */
+  max-width: 100%;
+  font-size: 1.2rem;
+  border: none;
+}
+
+/* 요일 헤더 */
+.react-calendar__month-view__weekdays {
+  display: grid !important; /* ✅ 요일도 균등 분포 */
+  grid-template-columns: repeat(7, 1fr) !important;
+  font-weight: bold;
+  color: #666;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+/* 날짜 칸을 그리드로 균등하게! */
+.react-calendar__month-view__days {
+  display: grid !important; /* ✅ 그리드로 정렬 */
+  grid-template-columns: repeat(7, 1fr) !important;
+  grid-gap: 5px;
+}
+
+/* 날짜 박스 크기 & 중앙 정렬 */
+.react-calendar__tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0 !important; /* ✅ 세로 높이 크게 */
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+
+.react-calendar__tile--active {
+  background-color: #cce4ff !important;
+  color: #003366 !important;
+  font-weight: bold;
+}
+
+.react-calendar__tile--now {
+  background: #f3f3f3;
+  font-weight: bold;
+  border: 1px solid #aaa;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #d00000;
+}

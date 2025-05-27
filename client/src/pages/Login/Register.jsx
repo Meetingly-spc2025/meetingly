@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../styles/Auth.css";
+import "../../styles/Login/Auth.css";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -12,6 +12,10 @@ const Register = () => {
   });
   const [errors, setErrors] = useState({});
   const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [nameFeedback, setNameFeedback] = useState("");
+
+  const emailRef = useRef(); // "참조 객체" 생성
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,6 +53,32 @@ const Register = () => {
 
     return newErrors;
   };
+
+  // 회원가입 시 유효성 검사 함수 목록
+  // 회원가입 시 이름 유효성 검사 (마우스)
+  const handleNameBlur = () => {
+    const name = formData.name;
+    
+    // 공백 있음
+    if(name.includes(" ") || name === "") {
+      setErrors((prev) => ({
+        ...prev,
+        name: "이름은 공백을 포함할 수 없습니다."
+      }));
+      setNameFeedback(""); // 환영 메세지 초기화 (중요)
+    } else {
+      setErrors((prev) => ({...prev, name:null}));
+      setNameFeedback(`${name}님 환영합니다.`);
+    }
+  }
+  // 회원가입 시 이름 유효성 검사 (엔터키)
+  const handleNameKeyUp = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleNameBlur();
+      emailRef.current.focus();
+    }
+  }
 
   const checkEmailDuplicate = async () => {
     if (!formData.email) {
@@ -101,9 +131,12 @@ const Register = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
+              onBlur={handleNameBlur}
+              onKeyUp={handleNameKeyUp}
               className={errors.name ? "input-error" : ""}
               placeholder="이름을 입력하세요"
             />
+            {!errors.name && nameFeedback && (<div className="welcome-message">{nameFeedback}</div>)}
             {errors.name && <div className="error-message">{errors.name}</div>}
           </div>
 

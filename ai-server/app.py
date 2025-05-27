@@ -60,6 +60,6 @@ def process_file():
     return jsonify(result)
 
 if __name__ == "__main__":
-    port = int(os.getenv("PYTHON_PORT"))
+    port = os.getenv("PYTHON_PORT")
     app.run(port=port, debug=True)
 

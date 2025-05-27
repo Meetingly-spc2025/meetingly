@@ -46,7 +46,7 @@ const Sidebar = () => {
               <span>프로필 수정</span>
             </Link>
 
-            <Link to="/calendar" className={isActive("/calendar")}>
+            <Link to="/calendarPage" className={isActive("/calendarPage")}>
               <FaCalendarAlt className="sidebar-icon" />
               <span>개인 캘린더</span>
             </Link>

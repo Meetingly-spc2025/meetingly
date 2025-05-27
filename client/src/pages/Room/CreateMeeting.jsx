@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { NicknameForm, RoomForm, JoinByLink } from "../components/Room/MeetingFormComponents";
-import "../styles/CreateMeeting.css";
+import { NicknameForm, RoomForm, JoinByLink } from "../../components/Room/MeetingFormComponents";
+// import "../styles/Room/CreateMeeting.css";
+import "../../styles/Room/CreateMeeting.css";
 
 const CreateMeeting = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const CreateMeeting = () => {
 
   const [showEnterRoomBtn, setShowEnterRoomBtn] = useState(false);
 
-  const handleRoomSubmit = (e) => {
+  const handleRoomSubmit = async (e) => {
     e.preventDefault();
     if (!roomTitle || !roomSubject || !roomDate) {
       alert("모든 정보를 입력해주세요.");
@@ -45,11 +46,37 @@ const CreateMeeting = () => {
     const link = `${window.location.origin}/room/${roomName}`;
 
     localStorage.setItem("nickname", nickname);
+
+    const title = roomName.substring(0, roomName.lastIndexOf("_"));
+
+    let meeting_id;
+    try {
+      const res = await fetch("/api/meetings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          room_fullname: roomName,
+          teamMember_id: nickname,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.meeting_id) {
+        meeting_id = data.meeting_id;
+      } else {
+        throw new Error(data.error || "회의 생성 실패");
+      }
+    } catch (err) {
+      console.log("회의방 생성 실패: " + err.message);
+      return;
+    }
   
     setInviteLink(link);
     setShowInviteLink(true);
     setCreatedRoomName(roomName);
     setShowEnterRoomBtn(true);
+
+    localStorage.setItem("meeting_id", meeting_id);
   };
 
   const handleEnterRoom = () => {
