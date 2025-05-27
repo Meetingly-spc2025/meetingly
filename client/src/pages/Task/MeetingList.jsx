@@ -1,104 +1,81 @@
-import React from "react";
-import "../../styles/Task/MeetingList.css";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const meetings = [
-  {
-    id: 1,
-    title: "회의 1",
-    members: "홍길동, 이순신, 강감찬",
-    host: "강감찬",
-    date: "2025. 05. 10",
-  },
-  {
-    id: 2,
-    title: "회의 2",
-    members: "홍길동, 이순신, 강감찬",
-    host: "강감찬",
-    date: "2025. 05. 10",
-  },
-  {
-    id: 3,
-    title: "회의 3",
-    members: "홍길동, 이순신, 강감찬",
-    host: "강감찬",
-    date: "2025. 05. 10",
-  },
-  {
-    id: 4,
-    title: "회의 4",
-    members: "홍길동, 이순신, 강감찬",
-    host: "강감찬",
-    date: "2025. 05. 10",
-  },
-  {
-    id: 5,
-    title: "회의 5",
-    members: "홍길동, 이순신, 강감찬",
-    host: "강감찬",
-    date: "2025. 05. 10",
-  },
-  {
-    id: 6,
-    title: "회의 6",
-    members: "홍길동, 이순신, 강감찬",
-    host: "강감찬",
-    date: "2025. 05. 10",
-  },
-];
+import "../../styles/Task/MeetingList.css";
+import MeetingCard from "../../components/Taskboard/MeetingCard";
 
 const MeetingList = () => {
+  const [meetings, setMeetings] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);  
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      try {
+        const res = await fetch(`http://localhost:3000/api/meetinglists?page=${page}`);
+        const data = await res.json();
+        
+        setMeetings(data.meetings);
+        setTotalPages(Math.ceil(data.totalDataCount / 6));
+      } catch (err) {
+        console.error("데이터 불러오기 오류:", err);
+      }
+    };
+
+    fetchMeetings();
+  }, [page]);
+
   return (
-    <div className="meeting-page-wrapper">
-      <div className="main-content">
-        <header className="main-header">
-          <div className="profile">
+    <div className="meetinglist-wrapper">
+      <div className="meetinglist-main-content">
+        <header className="meetinglist-header">
+          <div className="meetinglist-profile">
             <img src="/profile.png" alt="profile" />
             <div>
-              <div className="greeting">
+              <div className="meetinglist-greeting">
                 안녕하세요, <span className="highlight">홍길동</span> 님
               </div>
-              <div className="email">meetingly@gmail.com</div>
+              <div className="meetinglist-email">meetingly@gmail.com</div>
             </div>
           </div>
         </header>
 
-        <section className="meeting-list">
+        <section className="meetinglist-section">
           <h2>전체 회의 목록</h2>
-          <div className="tab-bar">
-            <span className="active">최근 참여한 회의</span>
-            <span>내가 주최한 회의</span>
-            <select>
-              <option>최신순</option>
-            </select>
-          </div>
-
-          <div className="meeting-cards">
+          <div className="meetinglist-cards">
             {meetings.map((meeting) => (
-              <div key={meeting.id} className="meeting-card">
-                <div className="meeting-title">{meeting.title}</div>
-                <div className="meeting-info">{meeting.members}</div>
-                <div className="meeting-host">{meeting.host}</div>
-                <div className="meeting-date">{meeting.date}</div>
-                <button
-                  className="view-button"
-                  onClick={() => navigate(`/meeting/${meeting.id}`)}
-                >
-                  자세히 보기
-                </button>
-              </div>
+              <MeetingCard
+                key={meeting.meeting_id}
+                meeting={meeting}
+                onClick={() => navigate(`/meeting/${meeting.meeting_id}`)}
+              />
             ))}
           </div>
 
-          <div className="pagination">
-            {[1, 2, 3, 4, 5].map((num) => (
-              <button key={num} className={num === 1 ? "active" : ""}>
+          <div className="meetinglist-pagination">
+            <span 
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))} 
+              className={page === 1 ? "disabled" : ""}
+            >
+              ‹
+            </span>
+            
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+              <button
+                key={num}
+                className={num === page ? "active" : ""}
+                onClick={() => setPage(num)}
+              >
                 {num}
               </button>
             ))}
-            <span>›</span>
+            
+            <span 
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))} 
+              className={page === totalPages ? "disabled" : ""}
+            >
+              ›
+            </span>
           </div>
         </section>
       </div>

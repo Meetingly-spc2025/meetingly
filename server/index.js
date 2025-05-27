@@ -22,7 +22,9 @@ const initSocket = require("./src/socket/socketServer");
 // Route
 const userRouter = require("./src/routes/userRouter");
 const meetingRouter = require("./src/routes/meetingRouter");
-const taskRoutes = require("./src/routes/tasksRouter");
+const taskRouter = require("./src/routes/tasksRouter");
+const meetinglistsRouter = require("./src/routes/meetinglistsRouter");
+const summaryRouter = require("./src/routes/summaryRouter");
 const audioRouter = require("./src/routes/audioRouter");
 const teamRouter = require("./src/routes/teamRouter");
 const mypageRouter = require("./src/routes/mypageRouter");
@@ -33,6 +35,15 @@ const app = express();
 app.use(cors());
 // 미들웨어
 app.use(express.json());
+
+// tasks
+app.use("/api/tasks", taskRouter);
+
+// meetings // 회의 목록 불러오기
+app.use("/api/meetinglists", meetinglistsRouter);
+
+// summaarys 
+app.use("/api/saveSummary", summaryRouter);
 
 // 디버깅용 라우터
 app.use((req, res, next) => {
