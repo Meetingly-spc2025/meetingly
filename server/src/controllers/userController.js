@@ -14,7 +14,6 @@ exports.loginUser = async (req, res) => {
       email,
     ]);
     console.log("DB 쿼리 결과: ", rows);
-    // 구조 분해 할당..? ㅎㅎ;
 
     const user = rows[0];
 
@@ -37,9 +36,6 @@ exports.loginUser = async (req, res) => {
         email: user.email,
         name: user.name,
         role: user.role,
-        // 닉네임 추가 필요
-        //  ---------------------
-        // 닉네임 추가 및 팀 아이디 추가
         nickname: user.nickname,
         teamId: user.team_id,
       },
@@ -68,10 +64,6 @@ exports.getUserInfo = (req, res) => {
       email: user.email,
       name: user.name,
       role: user.role,
-      // 닉네임은 추가 예정
-      // 기타 필요한 정보 파악 후 DB에 반영한 뒤 해당 코드에 추가 예정
-      //  ---------------------
-      // 닉네임 추가 및 팀 아이디 추가
       nickname: user.nickname,
       teamId: user.teamId,
     },

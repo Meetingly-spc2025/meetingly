@@ -137,3 +137,10 @@
 .duplicate-check-btn:hover {
   background-color: #646b72;
 }
+
+/* 회원가입 시, 이름 유효성 검증 CSS */
+.welcome-message {
+  font-size: 14px;
+  color: #10b981;
+  margin-top: 4px;
+}
