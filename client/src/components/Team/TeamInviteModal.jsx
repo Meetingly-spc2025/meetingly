@@ -3,17 +3,35 @@ import "../../styles/Task/TeamInviteModal.css";
 
 const TeamInviteModal = ({ onClose, onSubmit }) => {
   const [inviteLink, setInviteLink] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = () => {
-    if (inviteLink.trim()) {
-      onSubmit(inviteLink);
-      onClose();
+    if (!inviteLink.trim()) {
+      setError("초대 링크를 입력해주세요.");
+      return;
+    }
+
+    // 링크 유효성 검사는 선택 사항입니다
+    const isValid = /^http?:\/\/[\w.-]+\/invite\/[\w-]+$/.test(inviteLink);
+    if (!isValid) {
+      setError("올바른 초대 링크 형식이 아닙니다.");
+      return;
+    }
+
+    onSubmit(inviteLink);
+    setInviteLink("");
+    onClose();
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSubmit();
     }
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="invite-modal">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="invite-modal" onClick={(e) => e.stopPropagation()}>
         <h2 className="modal-title">초대 링크로 팀 참여</h2>
         <p className="modal-description">
           받은 초대 링크를 아래 입력창에 붙여넣고 참여해보세요.
@@ -22,9 +40,14 @@ const TeamInviteModal = ({ onClose, onSubmit }) => {
           type="text"
           placeholder="https://meetingly.team/invite/abcd1234"
           value={inviteLink}
-          onChange={(e) => setInviteLink(e.target.value)}
+          onChange={(e) => {
+            setInviteLink(e.target.value);
+            setError("");
+          }}
+          onKeyDown={handleKeyDown}
           className="invite-input"
         />
+        {error && <p className="error-message">{error}</p>}
         <div className="modal-buttons">
           <button className="submit-button" onClick={handleSubmit}>
             참여하기

@@ -1,25 +1,14 @@
-// components/Taskboard/TaskCard.jsx
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import "../../styles/TaskCard.css";
+import "../../styles/Task/MeetingList.css";
 
-const MeetingCard = ({ meeting }) => {
-  const navigate = useNavigate();
-
-  const handleDetailClick = () => {
-    navigate(`/meetings/${meeting.id}`);
-  };
-
+const MeetingCard = ({ meeting, onClick }) => {
   return (
-    <div className="task-card">
-      <div className="task-content">
-        <h3 className="task-title">{meeting.title}</h3>
-        <p className="task-date">📅 {meeting.date}</p>
-        <p className="task-participants">👥 {meeting.participants}명 참여</p>
-        <button className="task-detail-btn" onClick={handleDetailClick}>
-          자세히 보기
-        </button>
-      </div>
+    <div className="meetinglist-card" onClick={onClick}>
+      <div className="meetinglist-title">{meeting.title}</div>
+      <div className="meetinglist-info">{meeting.members}</div>
+      <div className="meetinglist-host">{meeting.host}</div>
+      <div className="meetinglist-date">{meeting.date}</div>
+      <button className="meetinglist-view-button">자세히 보기</button>
     </div>
   );
 };

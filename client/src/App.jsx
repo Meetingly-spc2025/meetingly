@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SidebarLayout from "./layouts/SidebarLayout";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -20,6 +16,7 @@ import ResetPassword from "./pages/Login/ResetPassword";
 import CalendarPage from "./pages/Task/CalendarPage";
 import AudioRecorder from "./pages/Room/AudioRecorder";
 import TeamEmpty from "./components/Team/TeamEmpty";
+import TeamRedirect from "./components/Team/TeamRedirect";
 import "./App.css";
 
 function App() {
@@ -44,6 +41,14 @@ function App() {
             }
           />
           <Route
+            path="/team"
+            element={
+              <SidebarLayout>
+                <TeamRedirect />
+              </SidebarLayout>
+            }
+          />
+          <Route
             path="/team/:id"
             element={
               <SidebarLayout>
@@ -51,10 +56,14 @@ function App() {
               </SidebarLayout>
             }
           />
-          <Route path="/team" element={ 
-            <SidebarLayout>
+          <Route
+            path="/team/join"
+            element={
+              <SidebarLayout>
                 <TeamEmpty />
-            </SidebarLayout>}/>
+              </SidebarLayout>
+            }
+          />
           <Route
             path="/meeting/start"
             element={

@@ -1,5 +1,5 @@
 /* 전체 wrapper */
-.meeting-page-wrapper {
+.meetinglist-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -12,79 +12,79 @@
 }
 
 /* 메인 콘텐츠 */
-.main-content {
+.meetinglist-main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 40px;
-  background-color: transparent; /* 중복 제거 */
+  background-color: transparent;
 }
 
 /* 헤더 */
-.main-header {
+.meetinglist-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.profile {
+.meetinglist-profile {
   display: flex;
   align-items: center;
 }
 
-.profile img {
+.meetinglist-profile img {
   width: 48px;
   height: 48px;
   border-radius: 50%;
   margin-right: 12px;
 }
 
-.greeting {
+.meetinglist-greeting {
   font-size: 18px;
   color: #1e1e1e;
 }
 
-.greeting .highlight {
+.meetinglist-greeting .highlight {
   color: #f45858;
 }
 
-.email {
+.meetinglist-email {
   font-size: 12px;
   color: gray;
 }
 
 /* 회의 목록 섹션 */
-.meeting-list {
+.meetinglist-section {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.meeting-list h2 {
+.meetinglist-section h2 {
   font-size: 24px;
   font-weight: 700;
   color: #1e1e1e;
 }
 
 /* 탭 바 */
-.tab-bar {
+.meetinglist-tab-bar {
   display: flex;
   align-items: center;
   gap: 20px;
 }
 
-.tab-bar span {
+.meetinglist-tab-bar span {
   font-weight: 500;
   font-size: 15px;
   color: #999;
   cursor: pointer;
 }
 
-.tab-bar span.active {
-  color: #246bfd;
+.meetinglist-tab-bar span.active {
+  color: #0F123F;
 }
 
-.tab-bar select {
+.meetinglist-tab-bar select {
   margin-left: auto;
   padding: 6px 10px;
   border-radius: 6px;
@@ -94,13 +94,13 @@
 }
 
 /* 카드 리스트 */
-.meeting-cards {
+.meetinglist-cards {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.meeting-card {
+.meetinglist-card {
   background-color: white;
   border-radius: 12px;
   padding: 20px;
@@ -112,8 +112,8 @@
 }
 
 /* 버튼 */
-.view-button {
-  background-color: #0e0e44;
+.meetinglist-view-button {
+  background-color: #0F123F;
   color: white;
   border: none;
   border-radius: 8px;
@@ -123,22 +123,22 @@
 }
 
 /* 페이지네이션 */
-.pagination {
+.meetinglist-pagination {
   margin-top: 20px;
   text-align: center;
 }
 
-.pagination button {
+.meetinglist-pagination button {
   border: none;
   background: white;
-  color: #001a6d;
+  color: #0F123F;
   margin: 0 4px;
   padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
 }
 
-.pagination button.active {
-  background-color: #001a6d;
+.meetinglist-pagination button.active {
+  background-color: #0F123F;
   color: white;
 }

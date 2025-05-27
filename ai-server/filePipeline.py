@@ -13,7 +13,6 @@ def convert_to_wav(input_path: str) -> str:
     
     print("[파일 파이프라인 시작]", input_path)
    
-
     tmp_dir = os.path.join("tmp_audio")
     os.makedirs(tmp_dir, exist_ok=True)
 
@@ -115,8 +114,6 @@ def extract_tasks(summary: str) -> str:
 
 # 🎯 파이프라인 실행 함수
 def run_pipeline(audio_path: str):
-    
-    
     full_text = ""
     
     transcript = transcribe_audio(audio_path)

@@ -3,7 +3,6 @@ import SummaryBlock from "../../components/Taskboard/SummaryBlock";
 import AudioPlayer from "../../components/Taskboard/AudioPlayer";
 import FileList from "../../components/Taskboard/FileList";
 import DiscussionList from "../../components/Taskboard/DiscusstionList";
-import AddSectionButton from "../../components/Taskboard/AddSectionButton";
 import Kanban from "../../components/Kanban/KanbanBoard";
 import "../../styles/Task/MeetingDetail.css";
 
@@ -39,7 +38,6 @@ const MeetingDetail = () => {
 
       {sections.map((section, index) => (
         <div key={`${section.type}-${index}`} className="meeting-section-wrapper">
-          {/* 🔽 토글 버튼 */}
           <div className="section-header">
             <strong>{section.type.toUpperCase()}</strong>
             <button
@@ -50,7 +48,6 @@ const MeetingDetail = () => {
             </button>
           </div>
 
-          {/* 🔽 섹션 내용 */}
           {!section.collapsed && (
             <>
               {section.type === "audio" && <AudioPlayer />}
@@ -63,7 +60,6 @@ const MeetingDetail = () => {
         </div>
       ))}
 
-      <AddSectionButton onClick={handleAddSection} />
     </div>
   );
 };

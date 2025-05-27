@@ -7,7 +7,6 @@
 // process.on("uncaughtException", (err) => {
 //   console.error("🔥 uncaughtException 발생:", err);
 // });
-
 const dotenv = require("dotenv");
 const express = require("express");
 const cors = require("cors");
@@ -17,10 +16,16 @@ const db = require("./src/models/db_users"); // 네가 만든 db pool 불러오�
 
 // .env 적용된 상태에서 라우터 실행
 const initSocket = require("./src/socket/socketServer");
+
+// Route
 const userRouter = require("./src/routes/userRouter");
 const meetingRouter = require("./src/routes/meetingRouter");
-const taskRoutes = require("./src/routes/tasksRouter");
+const taskRouter = require("./src/routes/tasksRouter");
+const meetinglistsRouter = require("./src/routes/meetinglistsRouter");
+const summaryRouter = require("./src/routes/summaryRouter");
 const audioRouter = require("./src/routes/audioRouter");
+const teamRouter = require("./src/routes/teamRouter");
+const mypageRouter = require("./src/routes/mypageRouter");
 
 dotenv.config({ path: "../.env" });
 const app = express();
@@ -30,25 +35,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/tasks", taskRoutes);
-app.use("/audio", audioRouter);
-app.use("/api/meetings", meetingRouter);
-app.use("/api/users", userRouter);
-
-// try {
-  // userRouter = require("./src/routes/userRouter");
-  // console.log("userRouter 불러오기 성공");
-  
-  // }catch (err) {
-    // console.error("userRouter 불러오기 실패:", err);
-    // }
-    
 // 디버깅용 라우터
 app.use((req, res, next) => {
   console.log("라우터 자체가 불리는지 테스트:", req.method, req.url);
   next();
 });
-    
+
+app.use("/api/users", userRouter);
+app.use("/audio", audioRouter);
+app.use("/api/meetings", meetingRouter);
+app.use("/tasks", taskRoutes);
+app.use("/api/teams", teamRouter);
+app.use("/api/mypage", mypageRouter);
+app.use("/api/tasks", taskRouter);
+app.use("/api/meetinglists", meetinglistsRouter);
+app.use("/api/saveSummary", summaryRouter);
 
 // 배포 모드
 if (process.env.NODE_ENV === "production") {
