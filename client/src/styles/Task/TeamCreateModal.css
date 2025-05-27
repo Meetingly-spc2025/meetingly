@@ -70,3 +70,60 @@
 .modal-create-btn:hover {
   background-color: #2563eb;
 }
+
+.invite-link-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.copy-button {
+  padding: 8px 12px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+.toast {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  animation: fadein 0.3s, fadeout 0.5s 1.5s;
+  z-index: 9999;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    bottom: 30px;
+  }
+  to {
+    opacity: 1;
+    bottom: 40px;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    opacity: 1;
+    bottom: 40px;
+  }
+  to {
+    opacity: 0;
+    bottom: 30px;
+  }
+}
