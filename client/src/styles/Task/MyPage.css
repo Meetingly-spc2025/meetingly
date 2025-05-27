@@ -5,7 +5,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
   padding: 40px 16px;
   box-sizing: border-box;
 }
@@ -166,14 +166,12 @@
 
 .save-button {
   background-color: #ff7373;
-   color: white;
+  color: white;
 }
 
 .save-button:hover {
   background-color: #ce6969;
 }
-
-
 
 /* 링크 */
 .link-group {
@@ -202,7 +200,6 @@
   color: #d62820;
   text-decoration: underline;
 }
-
 
 /* Modal */
 .modal-backdrop {
@@ -249,9 +246,6 @@
 }
 
 /* 중복확인 */
-.check-button {
-
-}
 
 .check-result {
   font-size: 0.9rem;

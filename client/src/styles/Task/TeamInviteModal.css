@@ -78,6 +78,12 @@
   background-color: #f9fafb;
 }
 
+.error-message {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
