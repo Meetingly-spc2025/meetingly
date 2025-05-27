@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 app.use("/api/users", userRouter);
 app.use("/audio", audioRouter);
 app.use("/api/meetings", meetingRouter);
-app.use("/tasks", taskRoutes);
+app.use("/tasks", taskRouter);
 app.use("/api/teams", teamRouter);
 app.use("/api/mypage", mypageRouter);
 app.use("/api/tasks", taskRouter);

@@ -25,19 +25,16 @@ function AudioRecorder() {
       try {
         setLoading(true);
         const res = await axios.post(
-          "http://localhost:3000/audio/upload/file",
+        // const res = await axios.post(
+          // "http://localhost:3000/audio/upload/file",
+          "http://localhost:3000/api/saveSummary/upload/audio",
+
           formData,
           { headers: { "Content-Type": "multipart/form-data" } },
         );
         // 이 부분을 수정해서 화면에 데이터 뿌리면 될 듯 싶습니다!
-        alert("파일 업로드 완료:\n" + JSON.stringify(res.data, null, 2));
+        alert("파일 업로드 완료:\n" + JSON.stringify(res.data.saveSummary, null, 2));
 
-        const saveSummary = {
-          transcript: res.data.transcript, // 예시 데이터
-          summary: res.data.summary,  // 예시 데이터
-          tasks: res.data.tasks,  // 예시 데이터
-          meeting_id: "회의 ID"
-        }
       } catch (err) {
         console.error(err);
         alert("업로드 실패: " + err.message);
