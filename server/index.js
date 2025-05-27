@@ -24,7 +24,8 @@ const userRouter = require("./src/routes/userRouter");
 const meetingRouter = require("./src/routes/meetingRouter");
 const taskRoutes = require("./src/routes/tasksRouter");
 const audioRouter = require("./src/routes/audioRouter");
-const teamRouter = require("./src/routes/teamRouter")
+const teamRouter = require("./src/routes/teamRouter");
+const mypageRouter = require("./src/routes/mypageRouter");
 
 const app = express();
 // const PORT = process.env.PORT || 5000;
@@ -32,8 +33,6 @@ const app = express();
 app.use(cors());
 // 미들웨어
 app.use(express.json());
-
-
 
 // 디버깅용 라우터
 app.use((req, res, next) => {
@@ -45,7 +44,8 @@ app.use("/api/users", userRouter);
 app.use("/audio", audioRouter);
 app.use("/api/meetings", meetingRouter);
 app.use("/tasks", taskRoutes);
-app.use("/api/teams", teamRouter)
+app.use("/api/teams", teamRouter);
+app.use("/api/mypage", mypageRouter);
 
 // 배포 모드
 if (process.env.NODE_ENV === "production") {
@@ -56,7 +56,6 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(rootPath, "index.html"));
   });
 }
-
 
 // DB 에러 체크용
 (async () => {

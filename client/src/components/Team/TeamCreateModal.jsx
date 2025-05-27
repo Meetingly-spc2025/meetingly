@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../styles/Task/TeamCreateModal.css";
 
 const TeamCreateModal = ({ onClose, onCreate, userId, userName }) => {
   const [teamName, setTeamName] = useState("");
   const [teamDescription, setTeamDescription] = useState("");
   const [inviteCode, setInviteCode] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   // 초대 코드
   const generateInviteCode = () => {
@@ -29,8 +30,8 @@ const TeamCreateModal = ({ onClose, onCreate, userId, userName }) => {
   const handleCopy = () => {
     const inviteLink = `${window.location.origin}/invite/${inviteCode}`;
     navigator.clipboard.writeText(inviteLink).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500); // 1.5초 후 복사 표시 제거
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
     });
   };
 
@@ -77,13 +78,17 @@ const TeamCreateModal = ({ onClose, onCreate, userId, userName }) => {
               readOnly
             />
             <button type="button" className="copy-button" onClick={handleCopy}>
-              {copied ? "복사됨!" : "복사"}
+              복사
             </button>
           </div>
 
           <button type="submit" className="modal-create-btn">
             팀 생성하기
           </button>
+
+          {showToast && (
+            <div className="toast">초대 링크가 복사되었습니다!</div>
+          )}
         </form>
       </div>
     </div>

@@ -4,18 +4,37 @@ const router = express.Router();
 const db = require("../models/db_users");
 
 router.post("/create", async (req, res) => {
-  const { name, description, userId, teamUrl } = req.body;
+  console.log("팀 생성 시작");
+  const { teamName, description, userId, teamUrl } = req.body;
   const teamId = uuidv4();
   const teamMemberId = uuidv4();
 
+  console.log("팀 아이디 :: ", teamId);
+
   try {
+    // 팀 코드 중복 확인
+    const [existing] = await db.query(
+      "SELECT team_id FROM teams WHERE team_url = ?",
+      [teamUrl],
+    );
+
+    if (existing.length > 0) {
+      return res.status(409).json({ message: "초대 코드 중복" });
+    }
+
     // 팀 생성
     await db.query(
       "INSERT INTO teams (team_id, name, description, team_url) VALUES (?, ?, ?, ?)",
-      [teamId, name, description, teamUrl],
+      [teamId, teamName, description, teamUrl],
     );
 
-    // 팀 생성자 등록
+    // 사용자에게 팀 할당
+    await db.query("UPDATE users SET team_id = ? WHERE user_id = ?", [
+      teamId,
+      userId,
+    ]);
+
+    // 팀 관리자 등록
     await db.query(
       `
       INSERT INTO teamMembers (teamMember_id, role, user_id, team_id, joined_at)
@@ -24,6 +43,7 @@ router.post("/create", async (req, res) => {
       [teamMemberId, userId, teamId],
     );
 
+    console.log("팀 생성 완료 보냄..~");
     res.status(201).json({ teamId, teamUrl });
   } catch (err) {
     console.error(err);

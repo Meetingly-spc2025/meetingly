@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import TeamInviteModal from "./TeamInviteModal";
 import TeamCreateModal from "./TeamCreateModal";
@@ -9,6 +10,7 @@ const TeamEmpty = () => {
   const [user, setUser] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false); // 초대 링크 참여
   const [showModal, setShowModal] = useState(false); // 팀 생성
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -57,7 +59,7 @@ const TeamEmpty = () => {
       const res = await axios.post(
         "/api/teams/create",
         {
-          name: teamName,
+          teamName: teamName,
           description: teamDescription,
           userId: user.id,
           teamUrl: inviteCode,
@@ -68,14 +70,22 @@ const TeamEmpty = () => {
           },
         },
       );
-      console.log("팀 초대코드 생성:: ", res.data.teamUrl);
-      // alert(
-      //   `팀 생성 성공! 팀 링크는 ${window.location.origin}/invite/${inviteCode}`,
-      // );
-      setShowModal(false);
+      const { teamId } = res.data;
+
+      console.log("생성된 팀 아이디:: ", teamId);
+
+      if (teamId) {
+        alert("팀 생성에 성공했습니다.");
+        navigate(`/team/${teamId}`);
+      } else {
+        throw new Error("teamId 없음");
+      }
     } catch (err) {
-      console.error(err);
-      alert("팀 생성 실패");
+      if (err.response?.status === 409) {
+        alert("이미 존재하는 초대 코드입니다. 다시 시도해주세요.");
+      } else {
+        alert("팀 생성에 실패했습니다.");
+      }
     }
   };
 
