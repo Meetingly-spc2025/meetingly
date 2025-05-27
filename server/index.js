@@ -22,6 +22,7 @@ const initSocket = require("./src/socket/socketServer");
 const meetingRouter = require("./src/routes/meetingRouter");
 const taskRouter = require("./src/routes/tasksRouter");
 const meetinglistsRouter = require("./src/routes/meetinglistsRouter");
+const summaryRouter = require("./src/routes/summaryRouter");
 
 const app = express();
 // const PORT = process.env.PORT || 5000;
@@ -35,6 +36,9 @@ app.use("/api/tasks", taskRouter);
 
 // meetings // 회의 목록 불러오기
 app.use("/api/meetinglists", meetinglistsRouter);
+
+// summaarys 
+app.use("/api/saveSummary", summaryRouter);
 
 // 디버깅용 라우터
 app.use((req, res, next) => {

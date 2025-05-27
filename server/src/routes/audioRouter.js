@@ -14,7 +14,7 @@ router.post("/upload/file", upload.single("audio"), controller.postUploadAudio);
 
 //   if (!roomId) return res.status(400).json({ error: "roomId는 필수입니다." });
 
-//   const roomDir = path.join(__dirname, "..", "uploads", roomId);
+//   const roomDir = path.join(__dirname, "../../", "uploads", roomId);
 //   if (!fs.existsSync(roomDir)) fs.mkdirSync(roomDir, { recursive: true });
 
 //   const savePath = path.join(roomDir, file.originalname);
