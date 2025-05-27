@@ -76,6 +76,7 @@ const MeetingRoom = () => {
   }, []);
 
   const {
+    myStreamRef,
     peerConnections,
     getMedia,
     createPeerConnection,
@@ -160,6 +161,8 @@ const MeetingRoom = () => {
             toggleCamera={toggleCamera}
             changeCamera={(e) => changeCamera(e.target.value)}
             handleLeaveRoom={handleLeaveRoom}
+            myStream={myStreamRef.current}
+            roomId={roomName}
           />
         </div>
       </div>

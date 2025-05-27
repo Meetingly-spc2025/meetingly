@@ -9,7 +9,7 @@ load_dotenv(dotenv_path="../.env")  # 또는 "server/.env"로 경로 조정
 
 
 app = Flask(__name__)
-UPLOAD_DIR = "../server/uploads"
+UPLOAD_DIR = "../server/src/uploads"
 MERGED_DIR = "./audio"
 
 # 일반 파일 업로드
@@ -35,8 +35,8 @@ def process_file():
 
 
 # 회의 녹음
-# @app.route("/process-room", methods=["POST"])
-# def process_audio():
+@app.route("/process-room", methods=["POST"])
+def process_audio():
     data = request.get_json()
     room_id = data["roomId"]
     room_upload_path = os.path.join(UPLOAD_DIR, room_id)

@@ -8,8 +8,6 @@
 //   console.error("🔥 uncaughtException 발생:", err);
 // });
 const dotenv = require("dotenv");
-dotenv.config({ path: "../.env" });
-
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -29,21 +27,13 @@ const audioRouter = require("./src/routes/audioRouter");
 const teamRouter = require("./src/routes/teamRouter");
 const mypageRouter = require("./src/routes/mypageRouter");
 
+dotenv.config({ path: "../.env" });
 const app = express();
 // const PORT = process.env.PORT || 5000;
 
-app.use(cors());
 // 미들웨어
+app.use(cors());
 app.use(express.json());
-
-// tasks
-app.use("/api/tasks", taskRouter);
-
-// meetings // 회의 목록 불러오기
-app.use("/api/meetinglists", meetinglistsRouter);
-
-// summaarys 
-app.use("/api/saveSummary", summaryRouter);
 
 // 디버깅용 라우터
 app.use((req, res, next) => {
@@ -57,6 +47,9 @@ app.use("/api/meetings", meetingRouter);
 app.use("/tasks", taskRoutes);
 app.use("/api/teams", teamRouter);
 app.use("/api/mypage", mypageRouter);
+app.use("/api/tasks", taskRouter);
+app.use("/api/meetinglists", meetinglistsRouter);
+app.use("/api/saveSummary", summaryRouter);
 
 // 배포 모드
 if (process.env.NODE_ENV === "production") {
@@ -83,6 +76,8 @@ const httpServer = http.createServer(app);
 initSocket(httpServer);
 
 const PORT = process.env.SERVER_PORT;
+console.log("process.env.SERVER_PORT:", process.env.SERVER_PORT);
+
 httpServer.listen(PORT, () => {
-  console.log(`Server running on port 3000`);
+  console.log(`Server running on port ${PORT}`);
 });

@@ -1,4 +1,5 @@
 import React from "react";
+import { BsCopy } from "react-icons/bs";
 
 export const NicknameForm = ({ nickname, setNickname, onSubmit }) => (
   <div id="nickname-section">
@@ -59,7 +60,7 @@ export const RoomForm = ({
         <label htmlFor="invite-link">초대 링크</label>
         <div className="flex">
           <input type="text" id="invite-link" readOnly value={inviteLink} />
-          <button type="button" onClick={onCopyLink}>복사</button>
+          <button type="button" onClick={onCopyLink}><BsCopy /></button>
         </div>
       </div>
     )}

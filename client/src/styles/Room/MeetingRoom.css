@@ -79,6 +79,8 @@
   color: white;
   font-size: 15px;
   transition: background-color 0.2s;
+  margin-left: 15px;
+  margin-right: 15px;
 }
 
 #controls button:hover {

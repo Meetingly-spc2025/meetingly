@@ -19,6 +19,9 @@ def convert_to_wav(input_path: str) -> str:
     unique_name = str(uuid.uuid4())[:8] + ".wav"
     output_path = os.path.join(tmp_dir, unique_name)
 
+    print("out:: ", output_path)
+    print("[convert_to_wav] input exists:", os.path.exists(input_path))
+
     try:
         (
             ffmpeg
@@ -27,6 +30,7 @@ def convert_to_wav(input_path: str) -> str:
             .overwrite_output()
             .run(quiet=True)
         )
+        print("ffmeg 실행 완료")
         return output_path
     except ffmpeg.Error as e:
         print("[FFmpeg 변환 오류]", e.stderr.decode())
