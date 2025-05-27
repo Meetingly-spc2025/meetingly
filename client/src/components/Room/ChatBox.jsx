@@ -1,4 +1,5 @@
 import React from "react";
+import { BsSend } from "react-icons/bs";
 
 const ChatBox = ({
   messages,
@@ -20,7 +21,7 @@ const ChatBox = ({
             </div>
           ) : (
             <div key={idx} className={msg.id === nickname ? "me" : "other"}>
-              {msg.isDm && <strong>[DM]</strong>} {msg.id}: {msg.message}
+              {msg.isDm && <strong>[귓속말]</strong>} {msg.id}: {msg.message}
             </div>
           )
         )}
@@ -52,7 +53,7 @@ const ChatBox = ({
             }
           }}
         />
-        <button onClick={sendMessage}>보내기</button>
+        <button onClick={sendMessage}><BsSend style={{ fontSize: "1rem" }} /></button>
       </div>
     </div>
   );

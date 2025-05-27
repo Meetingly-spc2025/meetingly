@@ -4,7 +4,7 @@ import LoadingScreen from "../../components/LoadingScreen";
 import axios from "axios";
 
 function AudioRecorder() {
- const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [audioFile, setAudioFile] = useState(null);
   // const [recording, setRecording] = useState(false);

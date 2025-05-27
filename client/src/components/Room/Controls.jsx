@@ -1,4 +1,7 @@
 import React from "react";
+import useMediaRecorder from "./MediaRecorder";
+import { BsFillMicFill, BsFillMicMuteFill, BsCameraVideoFill, BsCameraVideoOffFill, BsBoxArrowLeft } from "react-icons/bs";
+import { MdFiberManualRecord, MdStop } from "react-icons/md";
 
 const Controls = ({
   muted,
@@ -9,13 +12,23 @@ const Controls = ({
   toggleCamera,
   changeCamera,
   handleLeaveRoom,
+  myStream,
+  roomId,
 }) => {
+  
+  const { recording, startRecording, stopRecording } = useMediaRecorder({ myStream, roomId });
+
   return (
     <div id="controls">
-      <button onClick={toggleMute}>{muted ? "Unmute" : "Mute"}</button>
+      <button onClick={toggleMute}>{muted ? <BsFillMicMuteFill style={{ fontSize: "1.5rem" }} /> : <BsFillMicFill style={{ fontSize: "1.5rem" }} />}</button>
       <button onClick={toggleCamera}>
-        {cameraOff ? "카메라 켜기" : "카메라 끄기"}
+        {cameraOff ? <BsCameraVideoOffFill style={{ fontSize: "1.5rem" }} /> : <BsCameraVideoFill style={{ fontSize: "1.5rem" }} />}
       </button>
+      {!recording ? (
+        <button onClick={startRecording}><MdFiberManualRecord style={{ fontSize: "1.5rem", color: "red" }} /></button>
+      ) : (
+        <button onClick={stopRecording}><MdStop style={{ fontSize: "1.5rem", color: "black" }} /></button>
+      )}
       <select value={selectedDeviceId || ""} onChange={changeCamera}>
         {cameras.map((c) => (
           <option key={c.deviceId} value={c.deviceId}>
@@ -23,7 +36,7 @@ const Controls = ({
           </option>
         ))}
       </select>
-      <button onClick={handleLeaveRoom}>나가기</button>
+      <button onClick={handleLeaveRoom}><BsBoxArrowLeft style={{ fontSize: "1.5rem" }} /></button>
     </div>
   );
 };
