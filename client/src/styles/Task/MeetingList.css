@@ -81,7 +81,7 @@
 }
 
 .meetinglist-tab-bar span.active {
-  color: #246bfd;
+  color: #0F123F;
 }
 
 .meetinglist-tab-bar select {
@@ -113,7 +113,7 @@
 
 /* 버튼 */
 .meetinglist-view-button {
-  background-color: #0e0e44;
+  background-color: #0F123F;
   color: white;
   border: none;
   border-radius: 8px;
@@ -131,7 +131,7 @@
 .meetinglist-pagination button {
   border: none;
   background: white;
-  color: #001a6d;
+  color: #0F123F;
   margin: 0 4px;
   padding: 6px 10px;
   border-radius: 6px;
@@ -139,6 +139,6 @@
 }
 
 .meetinglist-pagination button.active {
-  background-color: #001a6d;
+  background-color: #0F123F;
   color: white;
 }

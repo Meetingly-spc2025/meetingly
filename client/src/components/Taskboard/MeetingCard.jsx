@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/Task/MeetingCard.css";
+import "../../styles/Task/MeetingList.css";
 
 const MeetingCard = ({ meeting, onClick }) => {
   return (

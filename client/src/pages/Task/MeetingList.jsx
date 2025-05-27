@@ -1,4 +1,3 @@
-// kanban/src/pages/MeetingList.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/Task/MeetingList.css";
@@ -7,7 +6,7 @@ import MeetingCard from "../../components/Taskboard/MeetingCard";
 const MeetingList = () => {
   const [meetings, setMeetings] = useState([]);
   const [page, setPage] = useState(1);
-  const totalPages = 5;
+  const [totalPages, setTotalPages] = useState(1);  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,7 +14,9 @@ const MeetingList = () => {
       try {
         const res = await fetch(`http://localhost:3000/api/meetinglists?page=${page}`);
         const data = await res.json();
-        setMeetings(data);
+        
+        setMeetings(data.meetings);
+        setTotalPages(Math.ceil(data.totalDataCount / 6));
       } catch (err) {
         console.error("데이터 불러오기 오류:", err);
       }
@@ -52,6 +53,13 @@ const MeetingList = () => {
           </div>
 
           <div className="meetinglist-pagination">
+            <span 
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))} 
+              className={page === 1 ? "disabled" : ""}
+            >
+              ‹
+            </span>
+            
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
               <button
                 key={num}
@@ -61,7 +69,13 @@ const MeetingList = () => {
                 {num}
               </button>
             ))}
-            <span onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}>›</span>
+            
+            <span 
+              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))} 
+              className={page === totalPages ? "disabled" : ""}
+            >
+              ›
+            </span>
           </div>
         </section>
       </div>

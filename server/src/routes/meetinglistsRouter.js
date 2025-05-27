@@ -3,16 +3,13 @@ const router = express.Router();
 const db = require("../models/db_users");
 const { v4: uuidv4 } = require("uuid");
 
-// 전체 회의 목록 (페이지네이션)
 router.get("/", async (req, res) => {
-    console.log(" /api/meetinglists 요청 들어옴!");
   const page = parseInt(req.query.page) || 1;
   const pageSize = 6;
   const offset = (page - 1) * pageSize;
 
   try {
-    const [rows] = await db.query(
-      `
+    const [meetings] = await db.query(`
       SELECT
         m.meeting_id,
         m.title,
@@ -27,14 +24,24 @@ router.get("/", async (req, res) => {
       JOIN users u2 ON tm_participant.user_id = u2.user_id
       GROUP BY m.meeting_id
       ORDER BY m.start_time DESC
-      LIMIT ${pageSize} OFFSET ${offset}
-      `
-    );
-    res.json(rows);
+      LIMIT ? OFFSET ?
+    `, [pageSize, offset]);
+
+    const [totalCountResult] = await db.query(`
+      SELECT COUNT(*) AS totalCount
+      FROM meetings m
+      JOIN participants p ON m.meeting_id = p.meeting_id
+    `);
+
+    res.json({
+      meetings: meetings,
+      totalDataCount: totalCountResult[0].totalCount,  // 전체 회의 수
+    });
   } catch (error) {
     console.error("GET /api/meetinglists 에러:", error);
     res.status(500).json({ error: "조회 실패" });
   }
 });
+
 
 module.exports = router;
