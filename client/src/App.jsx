@@ -17,6 +17,7 @@ import CalendarPage from "./pages/Task/CalendarPage";
 import AudioRecorder from "./pages/Room/AudioRecorder";
 import TeamEmpty from "./components/Team/TeamEmpty";
 import TeamRedirect from "./components/Team/TeamRedirect";
+import MeetingListRedirect from "./pages/Task/MeetingListRedirect";
 import "./App.css";
 
 function App() {
@@ -34,6 +35,14 @@ function App() {
           {/* 사이드 바 존재하는 페이지 */}
           <Route
             path="/meetings"
+            element={
+              <SidebarLayout>
+                <MeetingListRedirect />
+              </SidebarLayout>
+            }
+          />
+          <Route
+            path="/meetinglists/task/:id"
             element={
               <SidebarLayout>
                 <MeetingList />
