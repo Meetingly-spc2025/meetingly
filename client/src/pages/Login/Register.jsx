@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/Login/Auth.css";
+import axios from "axios"
 
 const Register = () => {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ const Register = () => {
     password: "",
     nickname: "",
   });
+  
   const [errors, setErrors] = useState({});
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [nameFeedback, setNameFeedback] = useState("");
@@ -87,14 +89,22 @@ const Register = () => {
     }
 
     try {
-      // 이메일 중복 확인 API 호출은 백엔드 연동 후 추가 예정
-      // 임시로 중복이 없다고 가정
-      setIsEmailVerified(true);
-      setErrors({ ...errors, email: null });
-      alert("사용 가능한 이메일입니다.");
+      const response = await axios.post("/api/users/check-email", {
+                email: formData.email
+      });
+
+      if(response.data.exists) {
+        // 이메일 True
+        setErrors({...errors, email:"이미 사용중인 이메일입니다."});
+      } else {
+        // 이메일 False
+        setErrors({...errors, email:null});
+        setIsEmailVerified(true);
+        alert("사응 가능한 이메일입니다.")
+      }
     } catch (error) {
-      console.error("이메일 중복 확인 오류:", error);
-      setErrors({ ...errors, email: "이미 사용 중인 이메일입니다." });
+      console.error("이메일 중복 확인 기능 자체가 안됨:", error);
+      setErrors({ ...errors, email: "이메일 중복 확인 기능 자체가 안됨:" });
     }
   };
 
@@ -151,13 +161,14 @@ const Register = () => {
                 onChange={handleChange}
                 className={errors.email ? "input-error" : ""}
                 placeholder="이메일 주소를 입력하세요"
+                ref={emailRef}
               />
               <button
                 type="button"
                 className="duplicate-check-btn"
                 onClick={checkEmailDuplicate}
               >
-                중복확인
+                {isEmailVerified ? "이메일 인증" : "중복 확인"}
               </button>
             </div>
             {errors.email && (

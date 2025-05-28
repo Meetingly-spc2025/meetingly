@@ -1,12 +1,3 @@
-// // 에러 체크용 2
-// process.on("unhandledRejection", (reason, promise) => {
-//   console.error("🔥 비동기 에러 발생:", reason);
-// });
-
-// // 에러 체크용
-// process.on("uncaughtException", (err) => {
-//   console.error("🔥 uncaughtException 발생:", err);
-// });
 const dotenv = require("dotenv");
 const express = require("express");
 const cors = require("cors");
@@ -44,7 +35,7 @@ app.use((req, res, next) => {
 app.use("/api/users", userRouter);
 app.use("/audio", audioRouter);
 app.use("/api/meetings", meetingRouter);
-app.use("/tasks", taskRoutes);
+app.use("/tasks", taskRouter);
 app.use("/api/teams", teamRouter);
 app.use("/api/mypage", mypageRouter);
 app.use("/api/tasks", taskRouter);
