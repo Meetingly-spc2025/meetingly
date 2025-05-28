@@ -16,12 +16,12 @@ const useSocket = ({
   setSocketConnected,
 }) => {
   useEffect(() => {
-    if (!nickname || !roomName) {
-      alert("닉네임 또는 방 정보가 없습니다.");
+    if (!roomName) {
+      alert("방 정보가 없습니다.");
       return navigate("/");
     }
 
-    socket.connect();
+    if (!nickname || !socketId) return;
 
     socket.on("connect", () => {
       console.log("[socket connected] id:", socket.id);
@@ -42,6 +42,20 @@ const useSocket = ({
       socket.emit("offer", offer, id, socketId);
     });
 
+    async function flushIceQueue(userId) {
+      const pc = peerConnections.current[userId];
+      if (pc && pc.iceQueue) {
+        for (const ice of pc.iceQueue) {
+          try {
+            await pc.addIceCandidate(ice);
+          } catch (err) {
+            console.error("addIceCandidate(flush) error:", err);
+          }
+        }
+        pc.iceQueue = [];
+      }
+    }
+
     socket.on("offer", async (offer, callerId, callerNick) => {
       let pc = peerConnections.current[callerId];
       if (!pc) {
@@ -53,15 +67,28 @@ const useSocket = ({
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
         socket.emit("answer", answer, callerId);
+        await flushIceQueue(callerId);
       }
     });
 
     socket.on("answer", async (answer, userId) => {
       await peerConnections.current[userId]?.setRemoteDescription(answer);
+      await flushIceQueue(userId);
     });
 
     socket.on("ice", async (ice, userId) => {
-      await peerConnections.current[userId]?.addIceCandidate(ice);
+      const pc = peerConnections.current[userId];
+      if (!pc) return;
+      if (pc.remoteDescription && pc.remoteDescription.type) {
+        try {
+          await pc.addIceCandidate(ice);
+        } catch (err) {
+          console.error("addIceCandidate error:", err);
+        }
+      } else {
+        if (!pc.iceQueue) pc.iceQueue = [];
+        pc.iceQueue.push(ice);
+      }
     });
 
     socket.on("left_room", (userId) => {
@@ -83,7 +110,9 @@ const useSocket = ({
     });
 
     socket.on("updateNicks", (nickInfo) => {
-      const targets = Object.entries(nickInfo).map(([id, name]) => ({ id, name }));
+      const targets = Object.entries(nickInfo)
+        .map(([id, name]) => ({ id, name }))
+        .filter(({ id }) => String(id) !== String(socketId));
       setDmTargets(targets);
     });
 

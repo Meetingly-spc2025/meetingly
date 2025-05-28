@@ -1,9 +1,9 @@
 const db = require("./db_users");
 
-exports.createMeeting = async ({ title, room_fullname, start_time, teamMember_id }) => {
+exports.createMeeting = async ({ title, room_fullname, start_time, creator_id, teamId }) => {
   const [result] = await db.query(
-    "INSERT INTO meetings (title, room_fullname, start_time, teamMember_id) VALUES (?, ?, ?, ?)",
-    [title, room_fullname, start_time, teamMember_id]
+    "INSERT INTO meetings (title, room_fullname, start_time, creator_id, team_id) VALUES (?, ?, ?, ?, ?)",
+    [title, room_fullname, start_time, creator_id, teamId]
   );
   return result.insertId;
 };
@@ -23,10 +23,10 @@ exports.getMeeting = async (meeting_id) => {
   return rows[0];
 };
 
-exports.addParticipant = async ({ user_name, teamMember_id, meeting_id }) => {
+exports.addParticipant = async ({ meeting_id, id }) => {
   await db.query(
-    "INSERT INTO participants (user_name, teamMember_id, meeting_id) VALUES (?, ?, ?)",
-    [user_name, teamMember_id, meeting_id]
+    "INSERT INTO participants (meeting_id, user_id) VALUES (?, ?)",
+    [meeting_id, id]
   );
 };
 
@@ -36,4 +36,12 @@ exports.getMeetingByRoomName = async (roomName) => {
     [roomName]
   );
   return rows[0];
+};
+
+exports.findMeetingById = async (meetingId) => {
+  const [rows] = await db.query(
+    "SELECT * FROM meetings WHERE meeting_id = ? LIMIT 1",
+    [meetingId]
+  );
+  return rows.length > 0 ? rows[0] : null;
 };

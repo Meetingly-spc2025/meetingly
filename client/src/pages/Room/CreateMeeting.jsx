@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { NicknameForm, RoomForm, JoinByLink } from "../../components/Room/MeetingFormComponents";
-// import "../styles/Room/CreateMeeting.css";
+import { RoomForm, JoinByLink } from "../../components/Room/MeetingFormComponents";
+import axios from "axios";
 import "../../styles/Room/CreateMeeting.css";
 
 const CreateMeeting = () => {
   const navigate = useNavigate();
 
-  const [nickname, setNickname] = useState("");
+  const [user, setUser] = useState(null);
   const [roomTitle, setRoomTitle] = useState("");
   const [roomSubject, setRoomSubject] = useState("");
   const [roomDate, setRoomDate] = useState("");
@@ -15,24 +15,40 @@ const CreateMeeting = () => {
   const [showRoomForm, setShowRoomForm] = useState(false);
   const [showInviteLink, setShowInviteLink] = useState(false);
   const [createdRoomName, setCreatedRoomName] = useState("");
+  const [showEnterRoomBtn, setShowEnterRoomBtn] = useState(false);
 
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
+    (async () => {
+      try {
+        const response = await axios.get("/api/users/jwtauth", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.data || !response.data.user) {
+          alert("로그인이 필요합니다.");
+          navigate("/login");
+          return;
+        }
+        setUser(response.data.user);
+        setShowRoomForm(true);
+      } catch (err) {
+        alert("로그인이 필요합니다.", err);
+        navigate("/login");
+      }
+    })();
+
     const today = new Date();
     const formatted = today.toISOString().split("T")[0];
     setRoomDate(formatted);
-  }, []);
+  }, [navigate]);
 
   const joinLinkRef = useRef();
-
-  const handleNicknameSubmit = (e) => {
-    e.preventDefault();
-    if (!nickname.trim()) return;
-    localStorage.setItem("nickname", nickname);
-    setShowRoomForm(true);
-  };
-
-  const [showEnterRoomBtn, setShowEnterRoomBtn] = useState(false);
 
   const handleRoomSubmit = async (e) => {
     e.preventDefault();
@@ -42,12 +58,9 @@ const CreateMeeting = () => {
     }
   
     const uuid = crypto.randomUUID();
-    const roomName = `${roomTitle}_${uuid}`;
+    const roomName = `${roomTitle}__${uuid}`;
     const link = `${window.location.origin}/room/${roomName}`;
-
-    localStorage.setItem("nickname", nickname);
-
-    const title = roomName.substring(0, roomName.lastIndexOf("_"));
+    const title = roomName.substring(0, roomName.lastIndexOf("__"));
 
     let meeting_id;
     try {
@@ -57,7 +70,8 @@ const CreateMeeting = () => {
         body: JSON.stringify({
           title,
           room_fullname: roomName,
-          teamMember_id: nickname,
+          creator_id: user.id,
+          teamId: user.teamId,
         }),
       });
       const data = await res.json();
@@ -97,40 +111,57 @@ const CreateMeeting = () => {
       });
   };
 
-  const joinByLink = () => {
+  const joinByLink = async () => {
     const input = joinLinkRef.current.value.trim();
-    if (input && input.startsWith("http")) {
-      const relativePath = input.replace(window.location.origin, "");
-      navigate(relativePath);
-    } else {
+    if (!input || !input.startsWith("http")) {
       alert("유효한 초대 링크를 입력하세요.");
+      return;
+    } 
+    const relativePath = input.replace(window.location.origin, "");
+    const match = relativePath.match(/\/room\/(.+)$/);
+    if (!match) {
+      alert("유효한 초대 링크를 입력하세요.");
+      return;
+    }
+    const roomName = match[1];
+
+    try {
+      const res1 = await fetch(`/api/meetings/roomName/${roomName}`);
+      if (!res1.ok) throw new Error("방 정보를 불러올 수 없습니다.");
+      const data1 = await res1.json();
+      const meetingId = data1.meeting_id;
+      if (!meetingId) {
+        alert("회의방 정보를 찾을 수 없습니다.");
+        return;
+      }
+
+      const res2 = await fetch(`/api/meetings/${meetingId}`);
+      if (!res2.ok) throw new Error("방 정보를 불러올 수 없습니다.");
+      const data2 = await res2.json();
+      const meetingTeamId = data2.team_id || data2.teamId;
+      
+      if (!meetingTeamId) {
+        alert("회의방 team_id를 찾을 수 없습니다.");
+        return;
+      }
+      if (!user || !user.teamId) {
+        alert("로그인 정보를 확인할 수 없습니다.");
+        return;
+      }
+      if (user.teamId !== meetingTeamId) {
+        alert("팀이 달라서 해당 방에 입장할 수 없습니다.");
+        return;
+      }
+      navigate(relativePath);
+    } catch (err) {
+      alert(err.message || "방 입장에 실패했습니다.");
     }
   };
-
-  useEffect(() => {
-    const savedNickname = localStorage.getItem("nickname");
-    if (savedNickname) {
-      setNickname(savedNickname);
-      setShowRoomForm(true);
-    }
-
-    const today = new Date();
-    const formatted = today.toISOString().split("T")[0];
-    setRoomDate(formatted);
-  }, []);
 
   return (
     <div className="create-room">
       <div className="create-room-box">
         <h1>화상 회의 생성</h1>
-
-        {!showRoomForm && (
-          <NicknameForm
-            nickname={nickname}
-            setNickname={setNickname}
-            onSubmit={handleNicknameSubmit}
-          />
-        )}
 
         {showRoomForm && (
           <>

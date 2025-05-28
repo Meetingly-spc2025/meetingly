@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
+import axios from "axios";
 
 import VideoGrid from "../../components/Room/VideoGrid";
 import Controls from "../../components/Room/Controls";
@@ -13,11 +14,11 @@ const port = import.meta.env.VITE_SERVER_PORT;
 const socket = io(`http://localhost:${port}`, { autoConnect: false });
 const MAX_PARTICIPANTS = 4;
 
-async function registerParticipant(meeting_id, nickname) {
+async function registerParticipant(meeting_id, user) {
   const res = await fetch("/api/meetings/participants", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_name: nickname, meeting_id }),
+    body: JSON.stringify({ id: user.id, meeting_id }),
   });
   const data = await res.json();
   return data.success;
@@ -26,8 +27,8 @@ async function registerParticipant(meeting_id, nickname) {
 const MeetingRoom = () => {
   const { roomName } = useParams();
   const navigate = useNavigate();
-  const nickname = localStorage.getItem("nickname");
 
+  const [user, setUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [dmTargets, setDmTargets] = useState([]);
   const [dmTargetId, setDmTargetId] = useState("all");
@@ -41,6 +42,31 @@ const MeetingRoom = () => {
   }, []);
 
   const [meetingId, setMeetingId] = useState(localStorage.getItem("meeting_id") || null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
+    (async () => {
+      try {
+        const response = await axios.get("/api/users/jwtauth", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.data || !response.data.user) {
+          alert("로그인이 필요합니다.");
+          navigate("/login");
+          return;
+        }
+        setUser(response.data.user);
+      } catch (err) {
+        alert("로그인이 필요합니다.", err);
+        navigate("/login");
+      }
+    })();
+  }, [navigate]);
 
   useEffect(() => {
     if (!meetingId && roomName) {
@@ -93,7 +119,7 @@ const MeetingRoom = () => {
   } = useWebRTC({
     socket,
     socketId,
-    nickname,
+    nickname: user?.nickname,
     videoRefs,
   });
 
@@ -101,7 +127,7 @@ const MeetingRoom = () => {
     socket,
     socketId,
     roomName,
-    nickname,
+    nickname: user?.nickname,
     navigate,
     createPeerConnection,
     peerConnections,
@@ -115,19 +141,19 @@ const MeetingRoom = () => {
 
   useEffect(() => {
     const join = async () => {
-      if (socketConnected && nickname && roomName && meetingId) {
+      if (socketConnected && user?.nickname && roomName && meetingId && user?.teamId) {
         await getMedia();
-        const success = await registerParticipant(meetingId, nickname);
+        const success = await registerParticipant(meetingId, user);
         if (!success) {
           console.log("회의 참가 등록 실패");
           navigate("/");
           return;
         }
-        socket.emit("join_room", { roomName, nickname, meeting_id: meetingId });
+        socket.emit("join_room", { roomName, nickname: user?.nickname, meeting_id: meetingId });
       }
     };
     join();
-  }, [socketConnected, nickname, roomName, getMedia, meetingId, navigate]);
+  }, [socketConnected, user, roomName, getMedia, meetingId, navigate]);
 
   const handleLeaveRoom = () => {
     leaveRoom();
@@ -140,12 +166,14 @@ const MeetingRoom = () => {
     const text = input.value.trim();
     if (!text) return;
     socket.emit("send", {
-      myNick: nickname,
+      myNick: user?.nickname,
       dm: dmTargetId,
       msg: text,
     });
     input.value = "";
   };
+
+  if (!user) return null;
 
   return (
     <div className="meeting-room">
@@ -174,7 +202,7 @@ const MeetingRoom = () => {
           dmTargets={dmTargets}
           dmTargetId={dmTargetId}
           setDmTargetId={setDmTargetId}
-          nickname={nickname}
+          nickname={user.nickname}
           sendMessage={sendMessage}
           socketId={socketId}
         />

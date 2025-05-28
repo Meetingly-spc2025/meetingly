@@ -43,14 +43,14 @@ app.use("/api/meetinglists", meetinglistsRouter);
 app.use("/api/saveSummary", summaryRouter);
 
 // 배포 모드
-if (process.env.NODE_ENV === "production") {
-  const rootPath = path.resolve(__dirname, "../../client");
-  app.use(express.static(rootPath));
+// if (process.env.NODE_ENV === "production") {
+//   const rootPath = path.resolve(__dirname, "../../client");
+//   app.use(express.static(rootPath));
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(rootPath, "index.html"));
-  });
-}
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.join(rootPath, "index.html"));
+//   });
+// }
 
 // DB 에러 체크용
 (async () => {
