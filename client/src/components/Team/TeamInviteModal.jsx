@@ -11,13 +11,6 @@ const TeamInviteModal = ({ onClose, onSubmit }) => {
       return;
     }
 
-    // 링크 유효성 검사는 선택 사항입니다
-    const isValid = /^http?:\/\/[\w.-]+\/invite\/[\w-]+$/.test(inviteLink);
-    if (!isValid) {
-      setError("올바른 초대 링크 형식이 아닙니다.");
-      return;
-    }
-
     onSubmit(inviteLink);
     setInviteLink("");
     onClose();

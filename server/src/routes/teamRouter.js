@@ -7,43 +7,41 @@ router.post("/create", async (req, res) => {
   console.log("팀 생성 시작");
   const { teamName, description, userId, teamUrl } = req.body;
   const teamId = uuidv4();
-  const teamMemberId = uuidv4();
 
   console.log("팀 아이디 :: ", teamId);
 
   try {
-    // 팀 코드 중복 확인
+    // 1. 팀 URL 중복 체크
     const [existing] = await db.query(
       "SELECT team_id FROM teams WHERE team_url = ?",
-      [teamUrl],
+      [teamUrl]
     );
 
     if (existing.length > 0) {
       return res.status(409).json({ message: "초대 코드 중복" });
     }
 
-    // 팀 생성
+    // 2. 팀 생성
     await db.query(
-      "INSERT INTO teams (team_id, name, description, team_url) VALUES (?, ?, ?, ?)",
-      [teamId, teamName, description, teamUrl],
+      `INSERT INTO teams (team_id, team_name, description, team_url, user_id)
+       VALUES (?, ?, ?, ?, ?)`,
+      [teamId, teamName, description, teamUrl, userId]
     );
 
-    // 사용자에게 팀 할당
-    await db.query("UPDATE users SET team_id = ? WHERE user_id = ?", [
-      teamId,
-      userId,
-    ]);
-
-    // 팀 관리자 등록
+    // 3. 사용자(users)에 팀 ID 지정
     await db.query(
-      `
-      INSERT INTO teamMembers (teamMember_id, role, user_id, team_id, joined_at)
-      VALUES (?, 'admin', ?, ?, NOW())
-    `,
-      [teamMemberId, userId, teamId],
+      "UPDATE users SET team_id = ? WHERE user_id = ?",
+      [teamId, userId]
     );
 
-    console.log("팀 생성 완료 보냄..~");
+    // 4. team_members 테이블에 관리자 등록
+    await db.query(
+      `INSERT INTO team_members (team_id, user_id, role)
+       VALUES (?, ?, 'admin')`,
+      [teamId, userId]
+    );
+
+    console.log("팀 생성 완료");
     res.status(201).json({ teamId, teamUrl });
   } catch (err) {
     console.error(err);
@@ -53,12 +51,14 @@ router.post("/create", async (req, res) => {
 
 router.post("/join", async (req, res) => {
   const { teamUrl, userId } = req.body;
-  const teamMemberId = uuidv4();
 
   try {
+    console.log("팀 참여 시작");
+
+    // 1. 초대 코드(teamUrl)로 팀 조회
     const [rows] = await db.query(
       "SELECT team_id FROM teams WHERE team_url = ?",
-      [teamUrl],
+      [teamUrl]
     );
 
     if (rows.length === 0) {
@@ -67,19 +67,17 @@ router.post("/join", async (req, res) => {
 
     const teamId = rows[0].team_id;
 
-    // 이미 가입된 경우 체크 (옵션)
-    const [exists] = await db.query(
-      "SELECT * FROM teamMembers WHERE team_id = ? AND user_id = ?",
-      [teamId, userId],
-    );
-    if (exists.length > 0) {
-      return res.status(409).send("이미 가입된 팀입니다");
-    }
-
-    // 팀에 멤버로 추가
+    // 2. users 테이블에서 사용자 team_id 설정
     await db.query(
-      "INSERT INTO teamMembers (teamMember_id, role, joined_at, user_id, team_id) VALUES (?, ?, NOW(), ?, ?)",
-      [teamMemberId, "member", userId, teamId],
+      "UPDATE users SET team_id = ? WHERE user_id = ?",
+      [teamId, userId]
+    );
+
+    // 3. team_members 테이블에 멤버 등록
+    await db.query(
+      `INSERT INTO team_members (team_id, user_id, role)
+       VALUES (?, ?, 'member')`,
+      [teamId, userId]
     );
 
     res.status(200).send("팀 가입 완료");

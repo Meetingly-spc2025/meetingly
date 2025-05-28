@@ -20,7 +20,6 @@ const TeamCreateModal = ({ onClose, onCreate, userId, userName }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (teamName.trim()) {
-      const inviteLink = `${window.location.origin}/invite/${inviteCode}`;
       onCreate(teamName, teamDescription, inviteCode);
       setTeamName("");
       setTeamDescription("");
@@ -28,7 +27,7 @@ const TeamCreateModal = ({ onClose, onCreate, userId, userName }) => {
   };
 
   const handleCopy = () => {
-    const inviteLink = `${window.location.origin}/invite/${inviteCode}`;
+    const inviteLink = `${window.location.origin}/team/${inviteCode}`;
     navigator.clipboard.writeText(inviteLink).then(() => {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 2000);
@@ -74,7 +73,7 @@ const TeamCreateModal = ({ onClose, onCreate, userId, userName }) => {
             <input
               type="text"
               className="modal-input"
-              value={`${window.location.origin}/invite/${inviteCode}`}
+              value={`${window.location.origin}/team/${inviteCode}`}
               readOnly
             />
             <button type="button" className="copy-button" onClick={handleCopy}>
