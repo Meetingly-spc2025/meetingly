@@ -63,3 +63,17 @@ exports.getMeetingIdByRoomName = async (req, res) => {
     res.status(500).json({ error: "DB 조회 실패", details: err.message });
   }
 };
+
+exports.getMeetingById = async (req, res) => {
+  const { meeting_id } = req.params;
+  try {
+    const meeting = await meetingModel.findMeetingById(meeting_id);
+    if (meeting) {
+      res.json(meeting);
+    } else {
+      res.status(404).json({ error: "회의방을 찾을 수 없습니다." });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "서버 오류", details: err.message });
+  }
+};

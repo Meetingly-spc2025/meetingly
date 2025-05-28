@@ -111,13 +111,50 @@ const CreateMeeting = () => {
       });
   };
 
-  const joinByLink = () => {
+  const joinByLink = async () => {
     const input = joinLinkRef.current.value.trim();
-    if (input && input.startsWith("http")) {
-      const relativePath = input.replace(window.location.origin, "");
-      navigate(relativePath);
-    } else {
+    if (!input || !input.startsWith("http")) {
       alert("유효한 초대 링크를 입력하세요.");
+      return;
+    } 
+    const relativePath = input.replace(window.location.origin, "");
+    const match = relativePath.match(/\/room\/(.+)$/);
+    if (!match) {
+      alert("유효한 초대 링크를 입력하세요.");
+      return;
+    }
+    const roomName = match[1];
+
+    try {
+      const res1 = await fetch(`/api/meetings/roomName/${roomName}`);
+      if (!res1.ok) throw new Error("방 정보를 불러올 수 없습니다.");
+      const data1 = await res1.json();
+      const meetingId = data1.meeting_id;
+      if (!meetingId) {
+        alert("회의방 정보를 찾을 수 없습니다.");
+        return;
+      }
+
+      const res2 = await fetch(`/api/meetings/${meetingId}`);
+      if (!res2.ok) throw new Error("방 정보를 불러올 수 없습니다.");
+      const data2 = await res2.json();
+      const meetingTeamId = data2.team_id || data2.teamId;
+      
+      if (!meetingTeamId) {
+        alert("회의방 team_id를 찾을 수 없습니다.");
+        return;
+      }
+      if (!user || !user.teamId) {
+        alert("로그인 정보를 확인할 수 없습니다.");
+        return;
+      }
+      if (user.teamId !== meetingTeamId) {
+        alert("팀이 달라서 해당 방에 입장할 수 없습니다.");
+        return;
+      }
+      navigate(relativePath);
+    } catch (err) {
+      alert(err.message || "방 입장에 실패했습니다.");
     }
   };
 

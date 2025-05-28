@@ -37,3 +37,11 @@ exports.getMeetingByRoomName = async (roomName) => {
   );
   return rows[0];
 };
+
+exports.findMeetingById = async (meetingId) => {
+  const [rows] = await db.query(
+    "SELECT * FROM meetings WHERE meeting_id = ? LIMIT 1",
+    [meetingId]
+  );
+  return rows.length > 0 ? rows[0] : null;
+};
