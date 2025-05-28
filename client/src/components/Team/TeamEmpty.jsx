@@ -33,8 +33,8 @@ const TeamEmpty = () => {
   }, []);
 
   const handleInviteSubmit = async (link) => {
-    console.log("초대 링크 제출됨:", link);
     const teamUrl = link.split("/").pop();
+    console.log("초대 링크 제출됨:", teamUrl);
 
     try {
       await axios.post(
@@ -48,6 +48,7 @@ const TeamEmpty = () => {
       );
       alert("팀 참여 성공!");
       setModalOpen(false);
+      navigate("/team");
     } catch (err) {
       console.error(err);
       alert("팀 참여 실패");

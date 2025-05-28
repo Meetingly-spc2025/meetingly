@@ -14,23 +14,23 @@ const sections = [
   },
   {
     id: 2,
-    title: "실시간 회의 녹취",
-    description: "화상회의와 동시에 AI가 내용을 기록해요.",
+    title: "화상회의 & 팀 관리",
+    description: "1:1 및 소규모 다자간 WebRTC 화상회의와 실시간 음성 녹음, 팀 생성/초대, 멤버 관리까지 한번에 지원",
     img: webrtcImg,
     backgroundColor: "#E0F0FC",
   },
   {
     id: 3,
-    title: "요약과 태스크 자동화",
+    title: "AI 회의록 자동화",
     description:
-      "회의에 참석하지 않았어도 걱정하지 마세요.\n문단별 요약을 통해 회의에 참석하지 않았더라도 빠르게 회의의 핵심 내용을 파악할 수 있습니다.\n회의가 길었더라도 걱정하지 마세요.\n회의 내용이 누락되지 않게끔, 자동으로 문단 수를 조절해 회의 내용을 요약합니다.",
+      "WhisperSTT로 음성 자동 텍스트 변환, GPT 기반 요약/키포인트/할 일 추출 등의 다양한 회의록 기능 제공",
     img: meetingListImg,
     backgroundColor: "#E0F0FC",
   },
   {
     id: 4,
-    title: "회의 히스토리 관리",
-    description: `회의가 끝난 후, 누가 뭘 하기로 했는지 헷갈리셨나요?\nAI가 자동으로 추출한 액션 아이템을 통해, 회의가 끝난 후 실행해야 할 액션 아이템을 정확히 확인하고 실행할 수 있습니다.`,
+    title: "AI 태스크 보드 & 대시보드",
+    description: `액션 아이템 자동 추출, 칸반보드 시각화 및 담당자 지정, 회의 이력 저장까지 완변 지원`,
     img: kanbanImg,
     backgroundColor: "#E0F0FC",
   },
@@ -56,60 +56,76 @@ const Main = () => {
       }
     );
 
-    imgRefs.current.forEach((img) => {
-      if (img) observer.observe(img);
-    });
+    // imgRefs.current.forEach((img) => {
+    //   if (img) observer.observe(img);
+    // });
 
-    return () => {
-      imgRefs.current.forEach((img) => {
-        if (img) observer.unobserve(img);
-      });
-    };
+    // return () => {
+    //   imgRefs.current.forEach((img) => {
+    //     if (img) observer.unobserve(img);
+    //   });
+    // };
+
+        imgRefs.current.forEach((img) => img && observer.observe(img));
+    return () => imgRefs.current.forEach((img) => img && observer.unobserve(img));
   }, []);
 
   return (
     <div className="main-scroll-container">
-      {sections.map((section, index) =>
-        section.isIntro ? (
+        {sections.map((section, index) => {
+        if (section.isIntro) {
+          return (
+            <section
+              key={section.id}
+              className="main-section main-intro-section"
+              style={{ backgroundColor: section.backgroundColor }}
+            >
+              <div className="main-section-inner intro-content">
+                <h1 className="intro-title">Meetingly</h1>
+                <h3 className="intro-subtitle">효율적인 회의를 위한 나만의 비서</h3>
+                <p className="intro-content">
+                  실시간 화상회의와 AI 기반 회의록 자동 생성/요약/태스크 관리 기능을 통합한 스마트 회의 도우미
+                </p>
+                <button className="intro-button" onClick={() => navigate("/login")}>
+                  시작하기
+                </button>
+              </div>
+            </section>
+          );
+        }
+
+        const isReversed = index % 2 === 0;
+
+        return (
           <section
             key={section.id}
-            className="main-section main-intro-section"
+            className="main-section content-section"
             style={{ backgroundColor: section.backgroundColor }}
           >
-            <div className="main-section-inner intro-content">
-              <h1 className="intro-title">Meetingly</h1>
-              <h3 className="intro-subtitle">효율적인 회의를 위한 나만의 비서</h3>
-              <p className="intro-content">
-                실시간 화상회의와 AI 기반 회의록 자동 생성/요약/태스크 관리
-                기능을 통합한 스마트 회의 도우미
-              </p>
-              <button
-                className="intro-button"
-                onClick={() => navigate("/login")}
-              >
-                시작하기
-              </button>
+            <div className={`main-section-inner content-row ${isReversed ? "reverse" : ""}`}>
+              <div className="text-content">
+                <h2 className="section-title">{section.title}</h2>
+                <p className="section-description">
+                  {section.description.split("\n").map((line, i) => (
+                    <span key={i}>
+                      {line}
+                      <br />
+                    </span>
+                  ))}
+                </p>
+              </div>
+              <div className="image-content">
+                <img
+                  src={section.img}
+                  alt={section.title}
+                  ref={(el) => (imgRefs.current[index] = el)}
+                  className="section-image"
+                />
+              </div>
             </div>
           </section>
-        ) : (
-          <section
-            key={section.id}
-            className="main-section"
-            style={{ backgroundColor: section.backgroundColor }}
-          >
-            <div className="main-section-inner">
-              <h1 className="intro-subtitle">{section.title}</h1>
-              <p className="intro-content">{section.description}</p>
-              <img
-                src={section.img}
-                alt="서비스 설명 이미지"
-                ref={(el) => (imgRefs.current[index] = el)}
-              />
-            </div>
-            
-          </section>
-        )
-      )}
+        );
+      })}
   <section className="footer-wrapper">
     <Footer />
   </section>
