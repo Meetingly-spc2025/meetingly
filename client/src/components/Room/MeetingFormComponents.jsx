@@ -1,23 +1,6 @@
 import React from "react";
 import { BsCopy } from "react-icons/bs";
 
-export const NicknameForm = ({ nickname, setNickname, onSubmit }) => (
-  <div id="nickname-section">
-    <label htmlFor="nickname">닉네임</label>
-    <form onSubmit={onSubmit}>
-      <input
-        type="text"
-        id="nickname"
-        placeholder="닉네임을 입력하세요."
-        required
-        value={nickname}
-        onChange={(e) => setNickname(e.target.value)}
-      />
-      <button type="submit">다음</button>
-    </form>
-  </div>
-);
-
 export const RoomForm = ({
   roomTitle,
   setRoomTitle,

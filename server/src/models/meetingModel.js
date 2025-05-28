@@ -1,9 +1,9 @@
 const db = require("./db_users");
 
-exports.createMeeting = async ({ title, room_fullname, start_time, teamMember_id }) => {
+exports.createMeeting = async ({ title, room_fullname, start_time, creator_name, teamId }) => {
   const [result] = await db.query(
-    "INSERT INTO meetings (title, room_fullname, start_time, teamMember_id) VALUES (?, ?, ?, ?)",
-    [title, room_fullname, start_time, teamMember_id]
+    "INSERT INTO meetings (title, room_fullname, start_time, creator_name, team_id) VALUES (?, ?, ?, ?, ?)",
+    [title, room_fullname, start_time, creator_name, teamId]
   );
   return result.insertId;
 };
@@ -23,10 +23,10 @@ exports.getMeeting = async (meeting_id) => {
   return rows[0];
 };
 
-exports.addParticipant = async ({ user_name, teamMember_id, meeting_id }) => {
+exports.addParticipant = async ({ user_name, teamId, meeting_id }) => {
   await db.query(
-    "INSERT INTO participants (user_name, teamMember_id, meeting_id) VALUES (?, ?, ?)",
-    [user_name, teamMember_id, meeting_id]
+    "INSERT INTO participants (user_name, team_id, meeting_id) VALUES (?, ?, ?)",
+    [user_name, teamId, meeting_id]
   );
 };
 

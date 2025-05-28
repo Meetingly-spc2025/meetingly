@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 app.use("/api/users", userRouter);
 app.use("/audio", audioRouter);
 app.use("/api/meetings", meetingRouter);
-app.use("/tasks", taskRoutes);
+app.use("/tasks", taskRouter);
 app.use("/api/teams", teamRouter);
 app.use("/api/mypage", mypageRouter);
 app.use("/api/tasks", taskRouter);
@@ -52,14 +52,14 @@ app.use("/api/meetinglists", meetinglistsRouter);
 app.use("/api/saveSummary", summaryRouter);
 
 // 배포 모드
-if (process.env.NODE_ENV === "production") {
-  const rootPath = path.resolve(__dirname, "../../client");
-  app.use(express.static(rootPath));
+// if (process.env.NODE_ENV === "production") {
+//   const rootPath = path.resolve(__dirname, "../../client");
+//   app.use(express.static(rootPath));
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(rootPath, "index.html"));
-  });
-}
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.join(rootPath, "index.html"));
+//   });
+// }
 
 // DB 에러 체크용
 (async () => {

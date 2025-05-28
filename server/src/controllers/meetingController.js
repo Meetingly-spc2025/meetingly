@@ -1,11 +1,11 @@
 const meetingModel = require("../models/meetingModel");
 
 exports.createMeeting = async (req, res) => {
-  const { title, teamMember_id, room_fullname } = req.body;
+  const { title, creator_name, room_fullname, teamId } = req.body;
   const start_time = new Date();
 
   try {
-    const meeting_id = await meetingModel.createMeeting({ title, room_fullname, start_time, teamMember_id });
+    const meeting_id = await meetingModel.createMeeting({ title, room_fullname, start_time, creator_name, teamId });
     res.json({ meeting_id });
   } catch (err) {
     res.status(500).json({ error: "회의 생성 실패", details: err.message });
@@ -36,12 +36,12 @@ exports.getMeeting = async (req, res) => {
 };
 
 exports.addParticipant = async (req, res) => {
-  const { user_name, meeting_id } = req.body;
+  const { user_name, meeting_id, teamId } = req.body;
   try {
-    console.log("참가자 등록 요청:", { user_name, meeting_id });
+    console.log("참가자 등록 요청:", { user_name, meeting_id, teamId });
     await meetingModel.addParticipant({
       user_name,
-      teamMember_id: "tm1",
+      teamId,
       meeting_id,
     });
     res.json({ success: true });
