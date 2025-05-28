@@ -1,3 +1,4 @@
+const { encodingExists } = require("iconv-lite");
 const db = require("../models/db_users");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "default-secret";
@@ -69,3 +70,16 @@ exports.getUserInfo = (req, res) => {
     },
   });
 };
+
+// 이메일 중복 체크
+exports.checkEmailDuplicate = async (req, res) => {
+  const { email } = req.body;
+  console.log("클라이언트가 보낸 이메일은: ", email)
+
+  try {
+    const [rows] = await db.query("SELECT email FROM users WHERE email = ?", [email]);
+    res.json( { exists: rows.length > 0 } );
+  }catch (error) {
+    res.status(500).json( { error })
+  }
+}

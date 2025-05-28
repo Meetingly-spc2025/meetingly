@@ -18,5 +18,7 @@ const pool = mysql.createPool({
   waitForConnections: true,
 });
 
+console.log("연결된 풀 객체 상태입니다",pool)
+
 module.exports = pool;
 // DB

@@ -57,7 +57,7 @@ router.delete("/:task_id", async (req, res) => {
     await db.query("DELETE FROM tasks WHERE task_id = ?", [task_id]);
     res.sendStatus(200);
   } catch (err) {
-    console.error("DELETE /tasks/:task_id 에러:", err);
+    console.error("DELETE /tasker/:task_id 에러:", err);
     res.status(500).json({ error: "삭제 실패" });
   }
 });
