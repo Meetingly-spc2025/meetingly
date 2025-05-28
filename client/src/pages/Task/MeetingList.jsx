@@ -36,7 +36,7 @@ const MeetingList = () => {
     const fetchMeetings = async () => {
       try {
         console.log("팀 ID:", user.teamId); // user.teamId 확인!
-        const res = await axios.get(`/api/meetinglists/${user.teamId}?page=${page}`);
+        const res = await axios.get(`/api/meetinglists/task/${user.teamId}?page=${page}`);
         const data = res.data;
         setMeetings(data.meetings);
         setTotalPages(Math.ceil(data.totalDataCount / 6));
