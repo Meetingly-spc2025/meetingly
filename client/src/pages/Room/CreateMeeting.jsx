@@ -70,7 +70,7 @@ const CreateMeeting = () => {
         body: JSON.stringify({
           title,
           room_fullname: roomName,
-          creator_name: user.nickname,
+          creator_id: user.id,
           teamId: user.teamId,
         }),
       });

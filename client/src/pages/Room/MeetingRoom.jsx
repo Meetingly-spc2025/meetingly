@@ -18,7 +18,7 @@ async function registerParticipant(meeting_id, user) {
   const res = await fetch("/api/meetings/participants", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_name: user.nickname, teamId: user.teamId, meeting_id }),
+    body: JSON.stringify({ id: user.id, meeting_id }),
   });
   const data = await res.json();
   return data.success;

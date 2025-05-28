@@ -22,7 +22,6 @@ const useSocket = ({
     }
 
     if (!nickname || !socketId) return;
-    // socket.connect();
 
     socket.on("connect", () => {
       console.log("[socket connected] id:", socket.id);
