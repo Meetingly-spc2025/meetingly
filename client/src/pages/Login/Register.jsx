@@ -4,6 +4,12 @@ import "../../styles/Login/Auth.css";
 import axios from "axios"
 
 const Register = () => {
+
+  const [isEmailAuthSent, setIsEmailAuthSent] = useState(false); // 인증번호 전송 여부
+  const [authCode, setAuthCode] = useState(""); // 사용자가 입력한 인증번호
+  const [serverAuthCode, setServerAuthCode] = useState(""); // 서버로부터 받은 인증번호
+  const [isEmailVerifiedFinal, setIsEmailVerifiedFinal] = useState(false); // 최종 인증 완료 여부
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -108,6 +114,30 @@ const Register = () => {
     }
   };
 
+  const requestEmailVerification = async () => {
+  try {
+    const response = await axios.post("/api/users/send-verification-code", {
+      email: formData.email,
+    });
+
+    alert("인증번호가 이메일로 전송되었습니다.");
+    setIsEmailAuthSent(true);
+    setServerAuthCode(response.data.code); // 실무에선 서버에 저장하거나 세션 사용
+  } catch (error) {
+    alert("인증번호 전송 실패");
+    console.error("이메일 인증번호 전송 에러:", error);
+    }
+  };
+
+  const handleVerifyAuthCode = () => {
+  if (authCode === serverAuthCode) {
+    alert("이메일 인증이 완료되었습니다.");
+    setIsEmailVerifiedFinal(true);
+  } else {
+    alert("인증번호가 일치하지 않습니다.");
+  }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validate();
@@ -166,10 +196,32 @@ const Register = () => {
               <button
                 type="button"
                 className="duplicate-check-btn"
-                onClick={checkEmailDuplicate}
+                onClick={isEmailVerified ? requestEmailVerification : checkEmailDuplicate}
+
               >
-                {isEmailVerified ? "이메일 인증" : "중복 확인"}
+                {isEmailVerified ? "이메일 인증" : "중복확인"}
               </button>
+              {/* 이메일 인증번호 입력 */}
+              {isEmailVerified && !isEmailVerifiedFinal && (
+              <div className="form-group">
+                <label htmlFor="authCode">인증번호</label>
+                <div className="input-with-button">
+                  <input
+                    type="text"
+                    id="authCode"
+                    name="authCode"
+                    value={authCode}
+                    onChange={(e) => setAuthCode(e.target.value)}
+                    placeholder="인증번호를 입력하세요"
+                    disabled={isEmailVerifiedFinal}
+
+                  />
+                  <button type="button" onClick={handleVerifyAuthCode}>
+                    인증 확인
+                  </button>
+                </div>
+              </div>
+              )}
             </div>
             {errors.email && (
               <div className="error-message">{errors.email}</div>

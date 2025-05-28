@@ -2,6 +2,8 @@ const { encodingExists } = require("iconv-lite");
 const db = require("../models/db_users");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "default-secret";
+const nodemailer = require("nodemailer");
+const { from } = require("form-data");
 
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -83,3 +85,47 @@ exports.checkEmailDuplicate = async (req, res) => {
     res.status(500).json( { error })
   }
 }
+
+// node mailer 라이브러리 인증번호
+exports.sendedEmailVerificationCode = async (req,res) => {
+  const { email } = req.body;
+}
+
+// 인증번호 생성
+const sendedEmailVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+// 이메일 전송 세팅
+exports.sendEmailVerificationCode = async (req, res) => {
+  const { email } = req.body;
+
+  // 인증번호 생성
+  const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // 이메일 전송 세팅
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,   // Gmail 주소
+      pass: process.env.EMAIL_PASS,   // 앱 비밀번호
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "회원가입 인증번호",
+    text: `인증번호는 ${verificationCode} 입니다.`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("인증번호 전송 완료:", verificationCode);
+
+    // 클라이언트로 전송
+    res.status(200).json({ message: "인증번호 전송 성공", code: verificationCode });
+  } catch (err) {
+    console.error("이메일 전송 실패:", err);
+    res.status(500).json({ message: "이메일 전송 실패" });
+  }
+};
+
