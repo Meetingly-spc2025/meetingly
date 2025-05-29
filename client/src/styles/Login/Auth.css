@@ -185,3 +185,11 @@
 .verification-button:hover {
   background-color: #0056b3;
 }
+
+
+/* 닉네임 중복 확인 관련 CSS */
+.success-message {
+  color: green;
+  margin-top: 5px;
+  font-size: 0.9rem;
+}

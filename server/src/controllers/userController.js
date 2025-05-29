@@ -118,13 +118,26 @@ exports.sendVerificationCode = async (req,res) => {
       으며 그것은 매우 소중하다고 합니다. 어쨌든 인증번호는 [${code}] 입니다.`
     };
     console.log("이메일 옵션 설정 디버깅", mailOptions)
-    // 여기서 다시 막힘
     await transporter.sendMail(mailOptions);
-    // 프론트 응답
     res.status(200).json({ message: "이메일 전송 완료", code });
     console.log("이메일 전송, 서버 응답 성공: ", code);
   } catch(error) {
     console.log("이메일 전송 실패: ", error);
     res.status(500).json({ message: "이메일 전송 실패" });
+  }
+};
+
+// 닉네임 체크 함수
+exports.checkNicknameDuplicate = async (req, res) => {
+  try {
+    const { nickname } = req.body;
+    const [rows] = await db.query(
+      "SELECT * FROM users WHERE nickname =?",
+      [nickname]);
+    res.json({exists: rows.length>0});
+    console.log("닉네임 중복 여부 서버에서 체크 성공 후 응답")
+  } catch(error) {
+    console.error("닉네임 확인 오류: ", error)
+    res.status(500).json({error:"닉네임 확인 실패"})
   }
 };

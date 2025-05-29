@@ -26,7 +26,7 @@ const Register = () => {
   const [isVerificationLoading, setIsVerificationLoading] = useState(false); // 로딩 중 여부
 
   // 닉네임 중복 확인 변수 설정
-  const [nicknameFeedback, setNicknameFeedback] = useState("");
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -167,6 +167,31 @@ const Register = () => {
     }
   };
 
+  // 닉네임 유효성 검사 함수
+  const checkNicknameDuplicate = async () => {
+    const nickname = formData.nickname;
+    
+    if(!nickname) {
+      setErrors(prev => ({ ...prev, nickname:"닉네임을 입력해주세요"}));
+      return;
+    }
+    try {
+    const response = await axios.post("/api/users/check-nickname", { nickname });
+    if (response.data.exists) {
+      setErrors(prev => ({ ...prev, nickname: "이미 사용중인 닉네임입니다." }));
+      setIsNicknameChecked(false);
+    } else {
+      setErrors(prev => ({ ...prev, nickname: null }));
+      setIsNicknameChecked(true);
+    }
+  } catch (err) {
+    setErrors(prev => ({ ...prev, nickname: "닉네임 확인 중 오류가 발생했습니다." }));
+  }
+  };
+
+
+
+
   return (
     <div className="auth-container">
       <div className="auth-card">
@@ -272,9 +297,21 @@ const Register = () => {
               name="nickname"
               value={formData.nickname}
               onChange={handleChange}
+              onBlur={checkNicknameDuplicate}
+              onKeyDown={(e)=> {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  checkNicknameDuplicate();
+                }
+              }}
               className={errors.nickname ? "input-error" : ""}
               placeholder="닉네임을 입력하세요"
             />
+
+            {isNicknameChecked && !errors.nickname && (
+            <div className="success-message">사용 가능한 닉네임입니다.</div>
+            )}
+
             {errors.nickname && (
               <div className="error-message">{errors.nickname}</div>
             )}

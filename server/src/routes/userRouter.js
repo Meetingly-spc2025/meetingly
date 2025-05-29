@@ -11,6 +11,8 @@ const { getUserInfo } = require("../controllers/userController");
 const { checkEmailDuplicate } = require("../controllers/userController")
 // 이메일 인증
 const { sendVerificationCode } = require("../controllers/userController")
+// 닉네임 중복 체크
+const { checkNicknameDuplicate } = require("../controllers/userController")
 
 // 실제 라우터 등록 - 로그인
 router.post("/login", loginUser);
@@ -20,6 +22,8 @@ router.get("/jwtauth", authenticate, getUserInfo);
 router.post("/check-email", checkEmailDuplicate);
 // 실제 라우터 등록 - 이메일 인증
 router.post("/verify-email", sendVerificationCode)
+// 실제 라우터 등록 - 닉네임 중복 체크
+router.post("/check-nickname", checkNicknameDuplicate)
 
 // 마이페이지 정보 수정
 
