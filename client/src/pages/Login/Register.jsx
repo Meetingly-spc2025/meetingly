@@ -158,8 +158,8 @@ const Register = () => {
     }
 
     try {
-      // 회원가입 API 호출은 백엔드 연동 후 추가 예정
-      // 임시로 로그인 페이지로 이동
+      await axios.post("/api/users/register", formData);
+      alert("회원가입 성공! 로그인 창으로 이동합니다.")
       navigate("/login");
     } catch (error) {
       console.error("회원가입 오류:", error);

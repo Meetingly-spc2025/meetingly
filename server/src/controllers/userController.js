@@ -4,6 +4,10 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "default-secret";
 const nodemailer = require("nodemailer");
 const { from } = require("form-data");
+const { message } = require("statuses");
+
+// 비크립트 임포츠 추가. 로그인할때 평문 비밀번호와 해시된 비밀번호 검증하는 코드 추가필요
+const bcrypt = require("bcrypt");
 
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -17,7 +21,6 @@ exports.loginUser = async (req, res) => {
       email,
     ]);
     console.log("DB 쿼리 결과: ", rows);
-
     const user = rows[0];
 
     if (!user) {
@@ -28,9 +31,17 @@ exports.loginUser = async (req, res) => {
     console.log("DB 상 비밀번호: ", user.password);
     console.log("입력된 비밀번호: ", password);
 
-    if (user.password.trim() !== password.trim()) {
+    // 기존 평문 비밀번호 비교 사용 X
+    // if (user.password.trim() !== password.trim()) {
+    //   console.log("비밀번호 불일치");
+    //   return res.status(401).json({ message: "비밀번호가 올바르지 않습니다." });
+    // }
+
+    // 해시된 비밀번호와 비교
+    const isMatch = await bcrypt.compare(password, user.password);
+    if(isMatch) {
       console.log("비밀번호 불일치");
-      return res.status(401).json({ message: "비밀번호가 올바르지 않습니다." });
+      return res.status(401).json({message:"비밀번호가 올바르지 않습니다."});
     }
 
     const token = jwt.sign(
@@ -139,5 +150,26 @@ exports.checkNicknameDuplicate = async (req, res) => {
   } catch(error) {
     console.error("닉네임 확인 오류: ", error)
     res.status(500).json({error:"닉네임 확인 실패"})
+  }
+};
+
+// 드디어 회원가입 API 만들기
+exports.registerUser = async (req, res) => {
+  const { name, email, password, nickname } = req.body;
+
+  try {
+    // 비밀번호 해시
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 사용자 정보를 DB 저장
+    await db.query(
+      "INSERT INTO users (name, email, password, nickname) VALUES (?,?,?,?)",
+      [name, email, hashedPassword, nickname]
+    );
+    res.status(201).json({message:"회원가입 성공"})
+    console.log("회원가입 성공")
+  } catch(error) {
+    console.error("회원가입 에러: ", error);
+    res.status(500).json({message:"회원가입중 서버 에러 발생"})
   }
 };
