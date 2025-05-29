@@ -15,12 +15,8 @@ const socket = io(`http://localhost:${port}`, { autoConnect: false });
 const MAX_PARTICIPANTS = 4;
 
 async function registerParticipant(meeting_id, user) {
-  const res = await fetch("/api/meetings/participants", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: user.id, meeting_id }),
-  });
-  const data = await res.json();
+  const res = await axios.post("/api/meetings/participants", { id: user.id, meeting_id });
+  const data = res.data;
   return data.success;
 }
 
@@ -70,9 +66,10 @@ const MeetingRoom = () => {
 
   useEffect(() => {
     if (!meetingId && roomName) {
-      fetch(`/api/meetings/roomName/${roomName}`)
-        .then(res => res.json())
-        .then(data => {
+      axios
+        .get(`/api/meetings/roomName/${roomName}`)
+        .then((res) => {
+          const data = res.data;
           if (data.meeting_id) {
             localStorage.setItem("meeting_id", data.meeting_id);
             setMeetingId(data.meeting_id);
@@ -146,13 +143,13 @@ const MeetingRoom = () => {
 
     const fetchAndCheckTeam = async () => {
       try {
-        const res1 = await fetch(`/api/meetings/roomName/${roomName}`);
-        const data1 = await res1.json();
+        const res1 = await axios.get(`/api/meetings/roomName/${roomName}`);
+        const data1 = res1.data;
         if (!data1.meeting_id) throw new Error("유효하지 않은 회의방입니다.");
         const id = data1.meeting_id;
 
-        const res2 = await fetch(`/api/meetings/${id}`);
-        const data2 = await res2.json();
+        const res2 = await axios.get(`/api/meetings/${id}`);
+        const data2 = res2.data;
         const meetingTeamId = data2.team_id || data2.teamId;
         if (!meetingTeamId) throw new Error("회의방 팀 정보가 없습니다.");
 

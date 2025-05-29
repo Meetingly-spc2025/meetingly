@@ -40,11 +40,6 @@ const useMediaRecorder = ({ myStream, roomId }) => {
     setRecording(true);
   };
 
-  // const stopRecording = () => {
-  //   mediaRecorderRef.current?.stop();
-  //   setRecording(false);
-  // };
-
   const stopRecording = () => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       mediaRecorderRef.current.stop();
