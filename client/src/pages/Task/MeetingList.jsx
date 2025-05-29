@@ -1,52 +1,31 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import "../../styles/Task/MeetingList.css";
 import MeetingCard from "../../components/Taskboard/MeetingCard";
 
 const MeetingList = () => {
+  const { id: teamId } = useParams();
   const [meetings, setMeetings] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
 
-  // ✅ 1) 유저 정보 가져오기
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("/api/users/jwtauth", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(res.data.user);
-        console.log("user :: ", res.data.user);
-      } catch (err) {
-        console.error("유저 정보 불러오기 실패:", err);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  // ✅ 2) 유저 정보(user) & 페이지(page)가 바뀔 때 미팅 가져오기
-  useEffect(() => {
-    if (!user) return; // user가 없으면 fetchMeetings 실행하지 않음!
-
     const fetchMeetings = async () => {
       try {
-        console.log("팀 ID:", user.teamId); // user.teamId 확인!
-        const res = await axios.get(`/api/meetinglists/task/${user.teamId}?page=${page}`);
+        console.log("팀 ID (from URL):", teamId);
+        const res = await axios.get(`/api/meetinglists/task/${teamId}?page=${page}`);
         const data = res.data;
         setMeetings(data.meetings);
         setTotalPages(Math.ceil(data.totalDataCount / 6));
       } catch (err) {
-        console.error("데이터 불러오기 오류:", err);
+        console.error("회의 목록 데이터 불러오기 오류:", err);
       }
     };
 
-    fetchMeetings();
-  }, [page, user]);
+    if (teamId) fetchMeetings();
+  }, [page, teamId]);
 
   return (
     <div className="meetinglist-wrapper">
@@ -70,7 +49,9 @@ const MeetingList = () => {
               <MeetingCard
                 key={meeting.meeting_id}
                 meeting={meeting}
-                onClick={() => navigate(`/meeting/${meeting.meeting_id}`)}
+                onClick={() =>
+                  navigate(`/meeting/${meeting.meeting_id}?teamId=${teamId}`)
+                }
               />
             ))}
           </div>

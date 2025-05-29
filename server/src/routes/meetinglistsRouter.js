@@ -13,30 +13,28 @@ router.get("/task/:teamId", async (req, res) => {
 
   try {
     const [meetings] = await db.query(`
-      SELECT
-        m.meeting_id,
-        m.title,
-        DATE_FORMAT(m.start_time, '%Y. %m. %d') AS date,
-        u.name AS host,
-        GROUP_CONCAT(DISTINCT u2.name ORDER BY u2.name SEPARATOR ', ') AS members
-      FROM meetings m
-      -- 호스트: creator_id를 users에서 가져옴
-      JOIN users u ON m.creator_id = u.user_id
-      -- 참가자 목록
-      JOIN participants p ON m.meeting_id = p.meeting_id
-      JOIN users u2 ON p.user_id = u2.user_id
-      -- ✅ 팀 ID로 필터링!
-      WHERE m.team_id = ?
-      GROUP BY m.meeting_id
-      ORDER BY m.start_time DESC
-      LIMIT ? OFFSET ?
+    SELECT
+    m.meeting_id,
+    m.title,
+    DATE_FORMAT(m.start_time, '%Y. %m. %d') AS date,
+    TIME_FORMAT(TIMEDIFF(m.end_time, m.start_time), '%H:%i:%s') AS totalDuration, -- ✅ 총 회의시간
+    u.name AS host,
+    GROUP_CONCAT(DISTINCT u2.name ORDER BY u2.name SEPARATOR ', ') AS members
+    FROM meetings m
+    JOIN users u ON m.creator_id = u.user_id
+    JOIN participants p ON m.meeting_id = p.meeting_id
+    JOIN users u2 ON p.user_id = u2.user_id
+    WHERE m.team_id = ?
+    GROUP BY m.meeting_id
+    ORDER BY m.start_time DESC
+    LIMIT ? OFFSET ?
     `, [teamId, pageSize, offset]);
-  
+
     const [totalCountResult] = await db.query(`
-      SELECT COUNT(*) AS totalCount
-      FROM meetings m
-      JOIN participants p ON m.meeting_id = p.meeting_id
-      WHERE m.team_id = ?
+    SELECT COUNT(*) AS totalCount
+    FROM meetings m
+    JOIN participants p ON m.meeting_id = p.meeting_id
+    WHERE m.team_id = ?
     `, [teamId]);
 
     res.json({
