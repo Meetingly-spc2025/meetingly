@@ -4,19 +4,16 @@ import SummaryBlock from "../../components/Taskboard/SummaryBlock";
 import AudioPlayer from "../../components/Taskboard/AudioPlayer";
 import FileList from "../../components/Taskboard/FileList";
 import DiscussionList from "../../components/Taskboard/DiscusstionList";
-import Kanban from "../../components/Kanban/KanbanBoard";
+import KanbanBoard from "../../components/Kanban/KanbanBoard";
 import MeetingInfo from "../../components/Taskboard/MeetingInfo";
 import "../../styles/Task/MeetingDetail.css";
 
-import { useLocation, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
 const MeetingDetail = () => {
   const { id: meetingId } = useParams();
   const [searchParams] = useSearchParams();
   const teamId = searchParams.get("teamId");
-
-  console.log("상세 페이지 - teamId:", teamId);
-  console.log("상세 페이지 - meetingId:", meetingId);
 
   const [sections, setSections] = useState([
     { type: "info", collapsed: false },
@@ -28,20 +25,36 @@ const MeetingDetail = () => {
   ]);
 
   const [meetingInfo, setMeetingInfo] = useState(null);
+  const [summaries, setSummaries] = useState([]);
+  const [kanbanTasks, setKanbanTasks] = useState([]);
 
   useEffect(() => {
-    const fetchMeetingInfo = async () => {
+    const fetchMeetingDetail = async () => {
       try {
-        const res = await axios.get(`/api/meetinglists/task/${teamId}?page=1`);
-        const firstMeeting = res.data.meetings[0];
-        setMeetingInfo(firstMeeting);
+        const res = await axios.get(`/api/meeting/${meetingId}?teamId=${teamId}`);
+        setMeetingInfo(res.data.meeting);
+        setSummaries(res.data.summaries);
       } catch (err) {
-        console.error("회의 데이터 조회 오류:", err);
+        console.error("회의 상세 데이터 조회 오류:", err);
       }
     };
 
-    if (teamId) fetchMeetingInfo();
-  }, [teamId]);
+    if (meetingId && teamId) fetchMeetingDetail();
+  }, [meetingId, teamId]);
+
+  useEffect(() => {
+    const fetchKanbanTasks = async () => {
+      try {
+        const res = await axios.get(`/api/tasks/meeting/${meetingId}`);
+        console.log("tasks fetched:", res.data);
+        setKanbanTasks(res.data);
+      } catch (err) {
+        console.error("Kanban tasks 데이터 조회 오류:", err);
+      }
+    };
+
+    if (meetingId) fetchKanbanTasks();
+  }, [meetingId]);
 
   const toggleSection = (index) => {
     setSections((prev) =>
@@ -80,8 +93,15 @@ const MeetingDetail = () => {
               )}
               {section.type === "audio" && <AudioPlayer />}
               {section.type === "files" && <FileList />}
-              {section.type === "kanban" && <Kanban />}
-              {section.type === "summary" && <SummaryBlock />}
+              {section.type === "kanban" && <KanbanBoard tasks={kanbanTasks} />}
+              {section.type === "summary" && (
+                <SummaryBlock
+                  content={
+                    summaries.find((s) => s.status === "keypoint")?.content ||
+                    "요약 데이터가 없습니다."
+                  }
+                />
+              )}
               {section.type === "discussion" && <DiscussionList />}
             </>
           )}

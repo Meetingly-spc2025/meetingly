@@ -17,6 +17,7 @@ const summaryRouter = require("./src/routes/summaryRouter");
 const audioRouter = require("./src/routes/audioRouter");
 const teamRouter = require("./src/routes/teamRouter");
 const mypageRouter = require("./src/routes/mypageRouter");
+const meetingDetailRouter = require("./src/routes/meetingDetailRouter");
 
 dotenv.config({ path: "../.env" });
 const app = express();
@@ -41,6 +42,7 @@ app.use("/api/mypage", mypageRouter);
 app.use("/api/tasks", taskRouter);
 app.use("/api/meetinglists", meetinglistsRouter);
 app.use("/api/saveSummary", summaryRouter);
+app.use("/api/meeting", meetingDetailRouter);
 
 // 배포 모드
 // if (process.env.NODE_ENV === "production") {

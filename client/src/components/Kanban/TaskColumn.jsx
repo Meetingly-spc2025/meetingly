@@ -2,6 +2,7 @@ import { Droppable } from "react-beautiful-dnd";
 import TaskCard from "./TaskCard";
 
 export default function TaskColumn({ status, tasks, onEdit, onDelete }) {
+  console.log("TaskColumn tasks:", tasks);
   return (
     <Droppable droppableId={status}>
       {(provided) => (
@@ -16,8 +17,8 @@ export default function TaskColumn({ status, tasks, onEdit, onDelete }) {
               key={task.task_id}
               task={task}
               index={index}
-              onEdit={() => onEdit(task)}
-              onDelete={() => onDelete(task.task_id)}
+              onEdit={onEdit}
+              onDelete={onDelete}
             />
           ))}
           {provided.placeholder}

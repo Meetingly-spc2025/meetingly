@@ -6,17 +6,13 @@ import "../../styles/Task/KanbanBoard.css";
 
 const STATUSES = ["todo", "doing", "done"];
 
-export default function App() {
-  const [tasks, setTasks] = useState([]);
+export default function KanbanBoard({ tasks: initialTasks }) {
+  const [tasks, setTasks] = useState(initialTasks || []);
   const [modal, setModal] = useState({ open: false, task: null });
-  // const [summaryId, setSummaryId] = useState("summary-001");
-  const [summaryId] = useState("summary-001");
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/tasks/${summaryId}`)
-      .then(res => res.json())
-      .then(data => setTasks(data));
-  }, [summaryId]);
+    setTasks(initialTasks);
+  }, [initialTasks]);
 
   const handleDragEnd = ({ source, destination, draggableId }) => {
     if (!destination || source.droppableId === destination.droppableId) return;
@@ -25,7 +21,7 @@ export default function App() {
     );
     const moved = updated.find(t => t.task_id === draggableId);
     setTasks(updated);
-    fetch(`http://localhost:3000/api/tasks/${draggableId}`, {
+    fetch(`/api/tasks/${draggableId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(moved),
@@ -37,26 +33,26 @@ export default function App() {
   const handleEdit = (task) => setModal({ open: true, task });
 
   const handleDelete = async (id) => {
-    await fetch(`http://localhost:3000/api/tasks/${id}`, { method: "DELETE" });
+    await fetch(`/api/tasks/${id}`, { method: "DELETE" });
     setTasks(tasks.filter(t => t.task_id !== id));
   };
 
   const handleSave = async (task) => {
     if (task.task_id) {
-      await fetch(`http://localhost:3000/api/tasks/${task.task_id}`, {
+      await fetch(`/api/tasks/${task.task_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(task),
       });
       setTasks(tasks.map(t => (t.task_id === task.task_id ? task : t)));
     } else {
-      const res = await fetch("http://localhost:3000/api/tasks", {
+      const res = await fetch("/api/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...task, summary_id: summaryId }),
+        body: JSON.stringify(task),
       });
       const { task_id } = await res.json();
-      setTasks([...tasks, { ...task, task_id, summary_id: summaryId }]);
+      setTasks([...tasks, { ...task, task_id }]);
     }
     setModal({ open: false, task: null });
   };
