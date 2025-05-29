@@ -6,8 +6,12 @@ const nodemailer = require("nodemailer");
 const { from } = require("form-data");
 const { message } = require("statuses");
 
-// 비크립트 임포츠 추가. 로그인할때 평문 비밀번호와 해시된 비밀번호 검증하는 코드 추가필요
+// 비크립트 임포트 추가. 로그인할때 평문 비밀번호와 해시된 비밀번호 검증하는 코드 추가필요
 const bcrypt = require("bcrypt");
+
+// 혜인님 uuid 추가
+const { v4: uuidv4 } = require('uuid');
+const userId = uuidv4();
 
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -153,18 +157,19 @@ exports.checkNicknameDuplicate = async (req, res) => {
   }
 };
 
-// 드디어 회원가입 API 만들기
+// 회원가입 API 만들기
 exports.registerUser = async (req, res) => {
   const { name, email, password, nickname } = req.body;
 
   try {
     // 비밀번호 해시
     const hashedPassword = await bcrypt.hash(password, 10);
+    const user_id = uuidv4();
 
     // 사용자 정보를 DB 저장
     await db.query(
-      "INSERT INTO users (name, email, password, nickname) VALUES (?,?,?,?)",
-      [name, email, hashedPassword, nickname]
+      "INSERT INTO users (user_id, name, email, password, nickname) VALUES (?,?,?,?,?)",
+      [user_id, name, email, hashedPassword, nickname]
     );
     res.status(201).json({message:"회원가입 성공"})
     console.log("회원가입 성공")
