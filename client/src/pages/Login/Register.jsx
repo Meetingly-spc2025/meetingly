@@ -13,11 +13,20 @@ const Register = () => {
   });
   
   const [errors, setErrors] = useState({});
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [nameFeedback, setNameFeedback] = useState("");
 
   const emailRef = useRef(); // "참조 객체" 생성
 
+  // 이메일 인증 관련 상태 변수 설정
+  const [isEmailVerified, setIsEmailVerified] = useState(false); // 중복 체크 통과 여부
+  const [isVerificationSent, setIsVerificationSent] = useState(false); // 인증번호 전송 여부
+  const [verificationCode, setVerificationCode] = useState(""); // 사용자가 입력한 코드
+  const [serverCode, setServerCode] = useState(""); // 서버에서 받은 코드
+  const [isEmailConfirmed, setIsEmailConfirmed] = useState(false); // 인증번호 일치 여부
+  const [isVerificationLoading, setIsVerificationLoading] = useState(false); // 로딩 중 여부
+
+  // 닉네임 중복 확인 변수 설정
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -56,6 +65,36 @@ const Register = () => {
     return newErrors;
   };
 
+  // 이메일 인증번호 전송 함수
+  const sendEmailVerification = async () => {
+    setIsVerificationLoading(true);
+    try{
+      const response = await axios.post("/api/users/verify-email", {
+        email: formData.email,
+      })
+
+      setIsVerificationSent(true);
+      setServerCode(response.data.code);
+      alert("인증번호가 이메일로 전송되었습니다.")
+      
+    }catch(error) {
+      console.log("이메일 인증 전송 실패: ", error)
+      alert("이메일 인증 실패")
+    }finally {setIsVerificationLoading(false);
+
+    }
+  }
+
+  // 이메일 인증번호 확인 함수
+  const verifyCode =() => {
+    if (verificationCode === serverCode) {
+      setIsEmailConfirmed(true);
+      alert("이메일 인증이 완료")
+    } else {
+      alert("이메일 인증 불가")
+    }
+  }
+
   // 회원가입 시 유효성 검사 함수 목록
   // 회원가입 시 이름 유효성 검사 (마우스)
   const handleNameBlur = () => {
@@ -82,6 +121,7 @@ const Register = () => {
     }
   }
 
+  // 이메일 중복 검사 함수
   const checkEmailDuplicate = async () => {
     if (!formData.email) {
       setErrors({ ...errors, email: "이메일은 공백일 수 없습니다." });
@@ -118,14 +158,39 @@ const Register = () => {
     }
 
     try {
-      // 회원가입 API 호출은 백엔드 연동 후 추가 예정
-      // 임시로 로그인 페이지로 이동
+      await axios.post("/api/users/register", formData);
+      alert("회원가입 성공! 로그인 창으로 이동합니다.")
       navigate("/login");
     } catch (error) {
       console.error("회원가입 오류:", error);
       setErrors({ general: "회원가입에 실패했습니다. 다시 시도해주세요." });
     }
   };
+
+  // 닉네임 유효성 검사 함수
+  const checkNicknameDuplicate = async () => {
+    const nickname = formData.nickname;
+    
+    if(!nickname) {
+      setErrors(prev => ({ ...prev, nickname:"닉네임을 입력해주세요"}));
+      return;
+    }
+    try {
+    const response = await axios.post("/api/users/check-nickname", { nickname });
+    if (response.data.exists) {
+      setErrors(prev => ({ ...prev, nickname: "이미 사용중인 닉네임입니다." }));
+      setIsNicknameChecked(false);
+    } else {
+      setErrors(prev => ({ ...prev, nickname: null }));
+      setIsNicknameChecked(true);
+    }
+  } catch (err) {
+    setErrors(prev => ({ ...prev, nickname: "닉네임 확인 중 오류가 발생했습니다." }));
+  }
+  };
+
+
+
 
   return (
     <div className="auth-container">
@@ -150,31 +215,63 @@ const Register = () => {
             {errors.name && <div className="error-message">{errors.name}</div>}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="email">이메일</label>
-            <div className="input-with-button">
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={errors.email ? "input-error" : ""}
-                placeholder="이메일 주소를 입력하세요"
-                ref={emailRef}
-              />
-              <button
-                type="button"
-                className="duplicate-check-btn"
-                onClick={checkEmailDuplicate}
-              >
-                {isEmailVerified ? "이메일 인증" : "중복 확인"}
-              </button>
-            </div>
-            {errors.email && (
-              <div className="error-message">{errors.email}</div>
-            )}
-          </div>
+<div className="form-group">
+  <label htmlFor="email">이메일</label>
+  <div className="input-with-button">
+    <input
+      type="email"
+      id="email"
+      name="email"
+      value={formData.email}
+      onChange={handleChange}
+      placeholder="이메일 주소를 입력하세요"
+      disabled={isEmailConfirmed}
+      className={`email-input ${isEmailConfirmed ? "email-confirmed" : ""}`}
+    />
+
+    <button
+      type="button"
+      onClick={
+        isEmailVerified
+          ? sendEmailVerification   
+          : checkEmailDuplicate    
+      }
+      disabled={isVerificationSent || isEmailConfirmed}
+      className={`email-button ${isEmailConfirmed ? "email-confirmed" : ""}`}
+
+    >
+      {isEmailConfirmed
+        ? "인증 완료"                        
+        : isVerificationSent
+        ? "이메일 인증중..."                
+        : isEmailVerified
+        ? "이메일 인증"                   
+        : "중복확인"}                
+    </button>
+  </div>
+
+  {errors.email && <div className="error-message">{errors.email}</div>}
+
+  {isVerificationSent && !isEmailConfirmed && (
+    <div className="form-group" style={{ marginTop: "10px" }}>
+      <label htmlFor="verificationCode">인증번호</label>
+      <div className="input-with-button">
+        <input
+          type="text"
+          id="verificationCode"
+          value={verificationCode}
+          onChange={(e) => setVerificationCode(e.target.value)}
+          placeholder="인증번호 입력"
+          className="verification-input"
+        />
+        <button type="button" onClick={verifyCode}>
+          인증 확인
+        </button>
+      </div>
+    </div>
+  )}
+</div>
+
 
           <div className="form-group">
             <label htmlFor="password">비밀번호</label>
@@ -200,9 +297,21 @@ const Register = () => {
               name="nickname"
               value={formData.nickname}
               onChange={handleChange}
+              onBlur={checkNicknameDuplicate}
+              onKeyDown={(e)=> {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  checkNicknameDuplicate();
+                }
+              }}
               className={errors.nickname ? "input-error" : ""}
               placeholder="닉네임을 입력하세요"
             />
+
+            {isNicknameChecked && !errors.nickname && (
+            <div className="success-message">사용 가능한 닉네임입니다.</div>
+            )}
+
             {errors.nickname && (
               <div className="error-message">{errors.nickname}</div>
             )}
