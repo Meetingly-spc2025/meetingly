@@ -45,3 +45,27 @@ exports.findMeetingById = async (meetingId) => {
   );
   return rows.length > 0 ? rows[0] : null;
 };
+
+exports.getTeamIdByMeetingId = async (meeting_id) => {
+  const [rows] = await db.query(
+    "SELECT team_id FROM meetings WHERE meeting_id = ?",
+    [meeting_id]
+  );
+  return rows.length > 0 ? rows[0].team_id : null;
+};
+
+exports.getTeamIdByUserId = async (user_id) => {
+  const [rows] = await db.query(
+    "SELECT team_id FROM users WHERE user_id = ?",
+    [user_id]
+  );
+  return rows.length > 0 ? rows[0].team_id : null;
+};
+
+exports.isAlreadyParticipant = async (meeting_id, user_id) => {
+  const [rows] = await db.query(
+    "SELECT 1 FROM participants WHERE meeting_id = ? AND user_id = ?",
+    [meeting_id, user_id]
+  );
+  return rows.length > 0;
+};

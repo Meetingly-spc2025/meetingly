@@ -3,9 +3,9 @@ import { BsSend } from "react-icons/bs";
 
 const ChatBox = ({
   messages,
-  dmTargets,
-  dmTargetId,
-  setDmTargetId,
+  recipientList,
+  recipientId,
+  setRecipientId,
   nickname,
   sendMessage,
   socketId,
@@ -29,15 +29,15 @@ const ChatBox = ({
 
       <div id="chat-input">
         <select
-          value={dmTargetId}
-          onChange={(e) => setDmTargetId(e.target.value)}
+          value={recipientId}
+          onChange={(event) => setRecipientId(event.target.value)}
         >
           <option value="all">전체</option>
-          {dmTargets
-            .filter((u) => u.id !== socketId)
-            .map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.name}
+          {recipientList
+            .filter((user) => user.id !== socketId)
+            .map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name}
               </option>
             ))}
         </select>
@@ -46,9 +46,9 @@ const ChatBox = ({
           type="text"
           placeholder="메시지 입력"
           style={{ resize: "none" }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+              event.preventDefault();
               sendMessage();
             }
           }}

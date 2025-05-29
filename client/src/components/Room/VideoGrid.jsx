@@ -3,13 +3,13 @@ import React from "react";
 const VideoGrid = ({ videoRefs, MAX_PARTICIPANTS = 4 }) => {
   return (
     <div className="video-grid">
-      {[...Array(MAX_PARTICIPANTS)].map((_, i) => (
-        <div className="participant" key={i}>
+      {[...Array(MAX_PARTICIPANTS)].map((_, idx) => (
+        <div className="participant" key={idx}>
           <video
             autoPlay
             playsInline
-            muted={i === 0}
-            ref={(el) => (videoRefs.current[i] = el)}
+            muted={idx === 0}
+            ref={(videoEl) => (videoRefs.current[idx] = videoEl)}
             className="video-tile"
             data-userid=""
           />

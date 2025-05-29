@@ -12,7 +12,7 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
 
   const assignStreamToSlot = useCallback(
     (userId, stream, name) => {
-      let index = videoRefs.current.findIndex((v) => v?.dataset?.userid === userId);
+      let index = videoRefs.current.findIndex((videoEl) => videoEl?.dataset?.userid === userId);
       if (index !== -1) {
         const video = videoRefs.current[index];
         if (video.srcObject !== stream) {
@@ -21,7 +21,7 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
         return;
       }
 
-      index = videoRefs.current.findIndex((v) => !v?.dataset?.userid);
+      index = videoRefs.current.findIndex((videoEl) => !videoEl?.dataset?.userid);
       if (index === -1) return;
 
       const video = videoRefs.current[index];
@@ -46,10 +46,10 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
 
         if (!deviceId) {
           const devices = await navigator.mediaDevices.enumerateDevices();
-          const videoInputs = devices.filter((d) => d.kind === "videoinput");
+          const videoInputs = devices.filter((device) => device.kind === "videoinput");
           setCameras(videoInputs);
           const currentTrack = stream.getVideoTracks()[0];
-          const currentDevice = videoInputs.find((d) => d.label === currentTrack.label);
+          const currentDevice = videoInputs.find((device) => device.label === currentTrack.label);
           if (currentDevice) setSelectedDeviceId(currentDevice.deviceId);
         } else {
           setSelectedDeviceId(deviceId);
@@ -63,10 +63,10 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
 
   const clearSlot = useCallback(
     (userId) => {
-      const index = videoRefs.current.findIndex((v) => v?.dataset?.userid === userId);
+      const index = videoRefs.current.findIndex((videoEl) => videoEl?.dataset?.userid === userId);
       if (index !== -1) {
         const video = videoRefs.current[index];
-        video.srcObject?.getTracks().forEach((t) => t.stop());
+        video.srcObject?.getTracks().forEach((track) => track.stop());
         video.srcObject = null;
         video.removeAttribute("data-userid");
         video.nextSibling.textContent = "";
@@ -105,12 +105,12 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
   );
 
   const toggleMute = () => {
-    myStreamRef.current?.getAudioTracks().forEach((t) => (t.enabled = muted));
+    myStreamRef.current?.getAudioTracks().forEach((track) => (track.enabled = muted));
     setMuted((prev) => !prev);
   };
 
   const toggleCamera = () => {
-    myStreamRef.current?.getVideoTracks().forEach((t) => (t.enabled = cameraOff));
+    myStreamRef.current?.getVideoTracks().forEach((track) => (track.enabled = cameraOff));
     setCameraOff((prev) => !prev);
   };
 
@@ -119,14 +119,14 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
     await getMedia(deviceId);
     const videoTrack = myStreamRef.current?.getVideoTracks()[0];
     Object.values(peerConnections.current).forEach((pc) => {
-      const sender = pc.getSenders().find((s) => s.track.kind === "video");
+      const sender = pc.getSenders().find((sender) => sender.track.kind === "video");
       if (sender && videoTrack) sender.replaceTrack(videoTrack);
     });
   };
 
   const leaveRoom = useCallback(() => {
     Object.values(peerConnections.current).forEach((pc) => pc.close());
-    myStreamRef.current?.getTracks().forEach((t) => t.stop());
+    myStreamRef.current?.getTracks().forEach((track) => track.stop());
     socket.disconnect();
     socket.close();
   }, [socket]);

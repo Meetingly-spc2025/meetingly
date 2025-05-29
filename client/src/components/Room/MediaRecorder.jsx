@@ -23,8 +23,8 @@ const useMediaRecorder = ({ myStream, roomId }) => {
     mediaRecorderRef.current = mediaRecorder;
     audioChunksRef.current = [];
 
-    mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) audioChunksRef.current.push(e.data);
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) audioChunksRef.current.push(event.data);
     };
 
     mediaRecorder.onstop = async () => {
@@ -41,9 +41,13 @@ const useMediaRecorder = ({ myStream, roomId }) => {
   };
 
   const stopRecording = () => {
-    mediaRecorderRef.current?.stop();
-    setRecording(false);
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+      setRecording(false);
+    }
   };
+
+  const port = import.meta.env.VITE_SERVER_PORT;
 
   const uploadAudio = async (file, roomId) => {
     const formData = new FormData();
@@ -52,7 +56,7 @@ const useMediaRecorder = ({ myStream, roomId }) => {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/audio/upload/record",
+        `http://localhost:${port}/audio/upload/record`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

@@ -15,12 +15,8 @@ const socket = io(`http://localhost:${port}`, { autoConnect: false });
 const MAX_PARTICIPANTS = 4;
 
 async function registerParticipant(meeting_id, user) {
-  const res = await fetch("/api/meetings/participants", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: user.id, meeting_id }),
-  });
-  const data = await res.json();
+  const res = await axios.post("/api/meetings/participants", { id: user.id, meeting_id });
+  const data = res.data;
   return data.success;
 }
 
@@ -30,8 +26,8 @@ const MeetingRoom = () => {
 
   const [user, setUser] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [dmTargets, setDmTargets] = useState([]);
-  const [dmTargetId, setDmTargetId] = useState("all");
+  const [recipientList, setRecipientList] = useState([]);
+  const [recipientId, setRecipientId] = useState("all");
   const [socketConnected, setSocketConnected] = useState(false);
   const [socketId, setSocketId] = useState(null);
 
@@ -70,9 +66,10 @@ const MeetingRoom = () => {
 
   useEffect(() => {
     if (!meetingId && roomName) {
-      fetch(`/api/meetings/roomName/${roomName}`)
-        .then(res => res.json())
-        .then(data => {
+      axios
+        .get(`/api/meetings/roomName/${roomName}`)
+        .then((res) => {
+          const data = res.data;
           if (data.meeting_id) {
             localStorage.setItem("meeting_id", data.meeting_id);
             setMeetingId(data.meeting_id);
@@ -135,13 +132,46 @@ const MeetingRoom = () => {
     addMessage,
     assignStreamToSlot,
     getMedia,
-    setDmTargets,
+    setRecipientList,
     setSocketConnected,
   });
 
+  const [teamVerified, setTeamVerified] = useState(false);
+
+  useEffect(() => {
+    if (!user || !roomName) return;
+
+    const fetchAndCheckTeam = async () => {
+      try {
+        const res1 = await axios.get(`/api/meetings/roomName/${roomName}`);
+        const data1 = res1.data;
+        if (!data1.meeting_id) throw new Error("유효하지 않은 회의방입니다.");
+        const id = data1.meeting_id;
+
+        const res2 = await axios.get(`/api/meetings/${id}`);
+        const data2 = res2.data;
+        const meetingTeamId = data2.team_id || data2.teamId;
+        if (!meetingTeamId) throw new Error("회의방 팀 정보가 없습니다.");
+
+        if (user.teamId !== meetingTeamId) {
+          alert("팀이 달라서 해당 방에 입장할 수 없습니다.");
+          navigate("/");
+          return;
+        }
+        setMeetingId(id);
+        setTeamVerified(true);
+      } catch (err) {
+        alert(err.message || "방 입장에 실패했습니다.");
+        navigate("/");
+      }
+    };
+
+    fetchAndCheckTeam();
+  }, [user, roomName, navigate]);
+
   useEffect(() => {
     const join = async () => {
-      if (socketConnected && user?.nickname && roomName && meetingId && user?.teamId) {
+      if (socketConnected && user?.nickname && roomName && meetingId && user?.teamId && teamVerified) {
         await getMedia();
         const success = await registerParticipant(meetingId, user);
         if (!success) {
@@ -153,7 +183,7 @@ const MeetingRoom = () => {
       }
     };
     join();
-  }, [socketConnected, user, roomName, getMedia, meetingId, navigate]);
+  }, [socketConnected, user, roomName, getMedia, meetingId, navigate, teamVerified]);
 
   const handleLeaveRoom = () => {
     leaveRoom();
@@ -167,7 +197,7 @@ const MeetingRoom = () => {
     if (!text) return;
     socket.emit("send", {
       myNick: user?.nickname,
-      dm: dmTargetId,
+      dm: recipientId,
       msg: text,
     });
     input.value = "";
@@ -199,9 +229,9 @@ const MeetingRoom = () => {
         <div className="chat-header">Chat</div>
         <ChatBox
           messages={messages}
-          dmTargets={dmTargets}
-          dmTargetId={dmTargetId}
-          setDmTargetId={setDmTargetId}
+          recipientList={recipientList}
+          recipientId={recipientId}
+          setRecipientId={setRecipientId}
           nickname={user.nickname}
           sendMessage={sendMessage}
           socketId={socketId}

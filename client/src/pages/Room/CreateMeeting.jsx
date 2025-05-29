@@ -64,18 +64,14 @@ const CreateMeeting = () => {
 
     let meeting_id;
     try {
-      const res = await fetch("/api/meetings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          room_fullname: roomName,
-          creator_id: user.id,
-          teamId: user.teamId,
-        }),
+      const res = await axios.post("/api/meetings", {
+        title,
+        room_fullname: roomName,
+        creator_id: user.id,
+        teamId: user.teamId,
       });
-      const data = await res.json();
-      if (res.ok && data.meeting_id) {
+      const data = res.data;
+      if (res.status === 200 && data.meeting_id) {
         meeting_id = data.meeting_id;
       } else {
         throw new Error(data.error || "회의 생성 실패");
@@ -126,20 +122,20 @@ const CreateMeeting = () => {
     const roomName = match[1];
 
     try {
-      const res1 = await fetch(`/api/meetings/roomName/${roomName}`);
-      if (!res1.ok) throw new Error("방 정보를 불러올 수 없습니다.");
-      const data1 = await res1.json();
+      const res1 = await axios.get(`/api/meetings/roomName/${roomName}`);
+      if (res1.status !== 200) throw new Error("방 정보를 불러올 수 없습니다.");
+      const data1 = res1.data;
       const meetingId = data1.meeting_id;
       if (!meetingId) {
         alert("회의방 정보를 찾을 수 없습니다.");
         return;
       }
 
-      const res2 = await fetch(`/api/meetings/${meetingId}`);
-      if (!res2.ok) throw new Error("방 정보를 불러올 수 없습니다.");
-      const data2 = await res2.json();
+      const res2 = await axios.get(`/api/meetings/${meetingId}`);
+      if (res2.status !== 200) throw new Error("방 정보를 불러올 수 없습니다.");
+      const data2 = res2.data;
       const meetingTeamId = data2.team_id || data2.teamId;
-      
+        
       if (!meetingTeamId) {
         alert("회의방 team_id를 찾을 수 없습니다.");
         return;
