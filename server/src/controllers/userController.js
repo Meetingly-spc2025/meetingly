@@ -86,46 +86,45 @@ exports.checkEmailDuplicate = async (req, res) => {
   }
 }
 
-// node mailer 라이브러리 인증번호
-exports.sendedEmailVerificationCode = async (req,res) => {
-  const { email } = req.body;
-}
+// 인증번호 이메일 전송
+exports.sendVerificationCode = async (req,res) => {
 
-// 인증번호 생성
-const sendedEmailVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-// 이메일 전송 세팅
-exports.sendEmailVerificationCode = async (req, res) => {
+  console.log("구글 메일 env 설정 맞는지: EMAIL_USER: ",process.env.EMAIL_USER)
+  console.log("구글 메일 env 설정 맞는지: EMAIL_PASS: ",process.env.EMAIL_PASS)
   const { email } = req.body;
 
-  // 인증번호 생성
-  const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+  // 6자리 인증번호.. GPT
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-  // 이메일 전송 세팅
+  // 메일 전송 세팅
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    service:"gmail",
     auth: {
-      user: process.env.EMAIL_USER,   // Gmail 주소
-      pass: process.env.EMAIL_PASS,   // 앱 비밀번호
+      user:process.env.EMAIL_USER,
+      pass:process.env.EMAIL_PASS
     },
   });
+  console.log("메일 전송 세팅값 디버깅: ", transporter)
 
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: "회원가입 인증번호",
-    text: `인증번호는 ${verificationCode} 입니다.`,
-  };
-
+  // 실제 메일 전송 시 이메일 옵션 설정
   try {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject:"회원가입 인증번호",
+      text: `돈도 소중하고 일도 소중하지만, 
+      진심으로 별을 바라보거나 
+      기타 소리에 미친 듯이 끌려들거나 하는 시기란 인생에서 극히 잠깐밖에 없
+      으며 그것은 매우 소중하다고 합니다. 어쨌든 인증번호는 [${code}] 입니다.`
+    };
+    console.log("이메일 옵션 설정 디버깅", mailOptions)
+    // 여기서 다시 막힘
     await transporter.sendMail(mailOptions);
-    console.log("인증번호 전송 완료:", verificationCode);
-
-    // 클라이언트로 전송
-    res.status(200).json({ message: "인증번호 전송 성공", code: verificationCode });
-  } catch (err) {
-    console.error("이메일 전송 실패:", err);
+    // 프론트 응답
+    res.status(200).json({ message: "이메일 전송 완료", code });
+    console.log("이메일 전송, 서버 응답 성공: ", code);
+  } catch(error) {
+    console.log("이메일 전송 실패: ", error);
     res.status(500).json({ message: "이메일 전송 실패" });
   }
 };
-

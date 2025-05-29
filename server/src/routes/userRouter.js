@@ -9,8 +9,8 @@ const { authenticate } = require("../middlewares/authJwtMiddleware");
 const { getUserInfo } = require("../controllers/userController");
 // 이메일 중복 확인 로직
 const { checkEmailDuplicate } = require("../controllers/userController")
-// 이메일 인증 전송
-const { sendEmailVerificationCode } = require("../controllers/userController")
+// 이메일 인증
+const { sendVerificationCode } = require("../controllers/userController")
 
 // 실제 라우터 등록 - 로그인
 router.post("/login", loginUser);
@@ -18,9 +18,8 @@ router.post("/login", loginUser);
 router.get("/jwtauth", authenticate, getUserInfo);
 // 실제 라우터 등록 - 이메일 중복 확인
 router.post("/check-email", checkEmailDuplicate);
-// 실제 라우토 등록 - 이메일 인증
-router.post("/send-verification-code", sendEmailVerificationCode);
-
+// 실제 라우터 등록 - 이메일 인증
+router.post("/verify-email", sendVerificationCode)
 
 // 마이페이지 정보 수정
 

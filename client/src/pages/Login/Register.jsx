@@ -4,12 +4,6 @@ import "../../styles/Login/Auth.css";
 import axios from "axios"
 
 const Register = () => {
-
-  const [isEmailAuthSent, setIsEmailAuthSent] = useState(false); // 인증번호 전송 여부
-  const [authCode, setAuthCode] = useState(""); // 사용자가 입력한 인증번호
-  const [serverAuthCode, setServerAuthCode] = useState(""); // 서버로부터 받은 인증번호
-  const [isEmailVerifiedFinal, setIsEmailVerifiedFinal] = useState(false); // 최종 인증 완료 여부
-
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -19,11 +13,20 @@ const Register = () => {
   });
   
   const [errors, setErrors] = useState({});
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [nameFeedback, setNameFeedback] = useState("");
 
   const emailRef = useRef(); // "참조 객체" 생성
 
+  // 이메일 인증 관련 상태 변수 설정
+  const [isEmailVerified, setIsEmailVerified] = useState(false); // 중복 체크 통과 여부
+  const [isVerificationSent, setIsVerificationSent] = useState(false); // 인증번호 전송 여부
+  const [verificationCode, setVerificationCode] = useState(""); // 사용자가 입력한 코드
+  const [serverCode, setServerCode] = useState(""); // 서버에서 받은 코드
+  const [isEmailConfirmed, setIsEmailConfirmed] = useState(false); // 인증번호 일치 여부
+  const [isVerificationLoading, setIsVerificationLoading] = useState(false); // 로딩 중 여부
+
+  // 닉네임 중복 확인 변수 설정
+  const [nicknameFeedback, setNicknameFeedback] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,6 +65,36 @@ const Register = () => {
     return newErrors;
   };
 
+  // 이메일 인증번호 전송 함수
+  const sendEmailVerification = async () => {
+    setIsVerificationLoading(true);
+    try{
+      const response = await axios.post("/api/users/verify-email", {
+        email: formData.email,
+      })
+
+      setIsVerificationSent(true);
+      setServerCode(response.data.code);
+      alert("인증번호가 이메일로 전송되었습니다.")
+      
+    }catch(error) {
+      console.log("이메일 인증 전송 실패: ", error)
+      alert("이메일 인증 실패")
+    }finally {setIsVerificationLoading(false);
+
+    }
+  }
+
+  // 이메일 인증번호 확인 함수
+  const verifyCode =() => {
+    if (verificationCode === serverCode) {
+      setIsEmailConfirmed(true);
+      alert("이메일 인증이 완료")
+    } else {
+      alert("이메일 인증 불가")
+    }
+  }
+
   // 회원가입 시 유효성 검사 함수 목록
   // 회원가입 시 이름 유효성 검사 (마우스)
   const handleNameBlur = () => {
@@ -88,6 +121,7 @@ const Register = () => {
     }
   }
 
+  // 이메일 중복 검사 함수
   const checkEmailDuplicate = async () => {
     if (!formData.email) {
       setErrors({ ...errors, email: "이메일은 공백일 수 없습니다." });
@@ -112,30 +146,6 @@ const Register = () => {
       console.error("이메일 중복 확인 기능 자체가 안됨:", error);
       setErrors({ ...errors, email: "이메일 중복 확인 기능 자체가 안됨:" });
     }
-  };
-
-  const requestEmailVerification = async () => {
-  try {
-    const response = await axios.post("/api/users/send-verification-code", {
-      email: formData.email,
-    });
-
-    alert("인증번호가 이메일로 전송되었습니다.");
-    setIsEmailAuthSent(true);
-    setServerAuthCode(response.data.code); // 실무에선 서버에 저장하거나 세션 사용
-  } catch (error) {
-    alert("인증번호 전송 실패");
-    console.error("이메일 인증번호 전송 에러:", error);
-    }
-  };
-
-  const handleVerifyAuthCode = () => {
-  if (authCode === serverAuthCode) {
-    alert("이메일 인증이 완료되었습니다.");
-    setIsEmailVerifiedFinal(true);
-  } else {
-    alert("인증번호가 일치하지 않습니다.");
-  }
   };
 
   const handleSubmit = async (e) => {
@@ -180,53 +190,63 @@ const Register = () => {
             {errors.name && <div className="error-message">{errors.name}</div>}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="email">이메일</label>
-            <div className="input-with-button">
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={errors.email ? "input-error" : ""}
-                placeholder="이메일 주소를 입력하세요"
-                ref={emailRef}
-              />
-              <button
-                type="button"
-                className="duplicate-check-btn"
-                onClick={isEmailVerified ? requestEmailVerification : checkEmailDuplicate}
+<div className="form-group">
+  <label htmlFor="email">이메일</label>
+  <div className="input-with-button">
+    <input
+      type="email"
+      id="email"
+      name="email"
+      value={formData.email}
+      onChange={handleChange}
+      placeholder="이메일 주소를 입력하세요"
+      disabled={isEmailConfirmed}
+      className={`email-input ${isEmailConfirmed ? "email-confirmed" : ""}`}
+    />
 
-              >
-                {isEmailVerified ? "이메일 인증" : "중복확인"}
-              </button>
-              {/* 이메일 인증번호 입력 */}
-              {isEmailVerified && !isEmailVerifiedFinal && (
-              <div className="form-group">
-                <label htmlFor="authCode">인증번호</label>
-                <div className="input-with-button">
-                  <input
-                    type="text"
-                    id="authCode"
-                    name="authCode"
-                    value={authCode}
-                    onChange={(e) => setAuthCode(e.target.value)}
-                    placeholder="인증번호를 입력하세요"
-                    disabled={isEmailVerifiedFinal}
+    <button
+      type="button"
+      onClick={
+        isEmailVerified
+          ? sendEmailVerification   
+          : checkEmailDuplicate    
+      }
+      disabled={isVerificationSent || isEmailConfirmed}
+      className={`email-button ${isEmailConfirmed ? "email-confirmed" : ""}`}
 
-                  />
-                  <button type="button" onClick={handleVerifyAuthCode}>
-                    인증 확인
-                  </button>
-                </div>
-              </div>
-              )}
-            </div>
-            {errors.email && (
-              <div className="error-message">{errors.email}</div>
-            )}
-          </div>
+    >
+      {isEmailConfirmed
+        ? "인증 완료"                        
+        : isVerificationSent
+        ? "이메일 인증중..."                
+        : isEmailVerified
+        ? "이메일 인증"                   
+        : "중복확인"}                
+    </button>
+  </div>
+
+  {errors.email && <div className="error-message">{errors.email}</div>}
+
+  {isVerificationSent && !isEmailConfirmed && (
+    <div className="form-group" style={{ marginTop: "10px" }}>
+      <label htmlFor="verificationCode">인증번호</label>
+      <div className="input-with-button">
+        <input
+          type="text"
+          id="verificationCode"
+          value={verificationCode}
+          onChange={(e) => setVerificationCode(e.target.value)}
+          placeholder="인증번호 입력"
+          className="verification-input"
+        />
+        <button type="button" onClick={verifyCode}>
+          인증 확인
+        </button>
+      </div>
+    </div>
+  )}
+</div>
+
 
           <div className="form-group">
             <label htmlFor="password">비밀번호</label>
