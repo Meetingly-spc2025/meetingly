@@ -40,6 +40,11 @@ const Sidebar = () => {
               <span>회의 시작</span>
             </Link>
           </div>
+        </nav>
+        <div className="sidebar-header">
+          <h2>My Page</h2>
+        </div>
+        <nav className="sidebar-menu">
           <div className="menu-section">
             <Link to="/mypage" className={isActive("/profile")}>
               <FaUser className="sidebar-icon" />

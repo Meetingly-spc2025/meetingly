@@ -126,5 +126,6 @@ def run_pipeline(audio_path: str, room_id: str):
     return {
         "transcript": full_text,
         "summary": summary,
-        "tasks": tasks
+        "tasks": tasks,
+        "roodId": room_id
     }
