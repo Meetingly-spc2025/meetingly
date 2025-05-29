@@ -8,7 +8,11 @@ function MyPage() {
   const [isAvailable, setIsAvailable] = useState(null);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [teamName, setTeamName] = useState("개발팀");
-  const [userInfo, setUserInfo] = useState({ name: "", email: "" });
+  const [userInfo, setUserInfo] = useState({
+    name: "",
+    email: "",
+    teamName: "",
+  });
 
   const token = localStorage.getItem("token");
 
@@ -20,9 +24,12 @@ function MyPage() {
         });
 
         const user = res.data.user;
-        setUserInfo({ name: user.name, email: user.email });
+        setUserInfo({
+          name: user.name,
+          email: user.email,
+        });
         setNickname(user.nickname || "");
-        // setTeamName(user.team?.name || ""); // 소속 팀
+        setTeamName(user.teamId || "");
       } catch (err) {
         console.error("유저 정보 조회 실패:", err);
       }

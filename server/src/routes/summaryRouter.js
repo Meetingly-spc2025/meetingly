@@ -24,7 +24,7 @@ router.post('/upload/audio', upload.single("audio"), async (req, res) => {
   });
 
   
-  const { transcript, summary, tasks } = aiRes.data;
+  const { transcript, summary, tasks, roomId } = aiRes.data;
   
   const currentTimestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
   
@@ -40,7 +40,7 @@ router.post('/upload/audio', upload.single("audio"), async (req, res) => {
   
   try {
     const query = `
-    INSERT INTO summarys (summary_id, status, content, created_at, meeting_id)
+    INSERT INTO summaries (summary_id, status, content, created_at, meeting_id)
     VALUES (?, ?, ?, ?, 1)
     `;
     
