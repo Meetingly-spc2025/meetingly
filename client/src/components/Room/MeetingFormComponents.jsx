@@ -22,7 +22,7 @@ export const RoomForm = ({
       placeholder="회의 제목을 입력하세요."
       required
       value={roomTitle}
-      onChange={(e) => setRoomTitle(e.target.value)}
+      onChange={(event) => setRoomTitle(event.target.value)}
     />
 
     <label htmlFor="roomSubject">회의 주제</label>
@@ -32,7 +32,7 @@ export const RoomForm = ({
       placeholder="회의 주제를 입력하세요."
       required
       value={roomSubject}
-      onChange={(e) => setRoomSubject(e.target.value)}
+      onChange={(event) => setRoomSubject(event.target.value)}
     />
 
     <label htmlFor="roomDate">회의 날짜</label>

@@ -30,9 +30,9 @@ const Controls = ({
         <button onClick={stopRecording}><MdStop style={{ fontSize: "1.5rem", color: "black" }} /></button>
       )}
       <select value={selectedDeviceId || ""} onChange={changeCamera}>
-        {cameras.map((c) => (
-          <option key={c.deviceId} value={c.deviceId}>
-            {c.label}
+        {cameras.map((camera) => (
+          <option key={camera.deviceId} value={camera.deviceId}>
+            {camera.label}
           </option>
         ))}
       </select>

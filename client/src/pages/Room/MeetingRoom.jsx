@@ -26,8 +26,8 @@ const MeetingRoom = () => {
 
   const [user, setUser] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [dmTargets, setDmTargets] = useState([]);
-  const [dmTargetId, setDmTargetId] = useState("all");
+  const [recipientList, setRecipientList] = useState([]);
+  const [recipientId, setRecipientId] = useState("all");
   const [socketConnected, setSocketConnected] = useState(false);
   const [socketId, setSocketId] = useState(null);
 
@@ -132,7 +132,7 @@ const MeetingRoom = () => {
     addMessage,
     assignStreamToSlot,
     getMedia,
-    setDmTargets,
+    setRecipientList,
     setSocketConnected,
   });
 
@@ -197,7 +197,7 @@ const MeetingRoom = () => {
     if (!text) return;
     socket.emit("send", {
       myNick: user?.nickname,
-      dm: dmTargetId,
+      dm: recipientId,
       msg: text,
     });
     input.value = "";
@@ -229,9 +229,9 @@ const MeetingRoom = () => {
         <div className="chat-header">Chat</div>
         <ChatBox
           messages={messages}
-          dmTargets={dmTargets}
-          dmTargetId={dmTargetId}
-          setDmTargetId={setDmTargetId}
+          recipientList={recipientList}
+          recipientId={recipientId}
+          setRecipientId={setRecipientId}
           nickname={user.nickname}
           sendMessage={sendMessage}
           socketId={socketId}

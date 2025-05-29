@@ -12,7 +12,7 @@ const useSocket = ({
   addMessage,
   assignStreamToSlot,
   getMedia,
-  setDmTargets,
+  setRecipientList,
   setSocketConnected,
 }) => {
   useEffect(() => {
@@ -110,10 +110,10 @@ const useSocket = ({
     });
 
     socket.on("updateNicks", (nickInfo) => {
-      const targets = Object.entries(nickInfo)
+      const recipients = Object.entries(nickInfo)
         .map(([id, name]) => ({ id, name }))
         .filter(({ id }) => String(id) !== String(socketId));
-      setDmTargets(targets);
+      setRecipientList(recipients);
     });
 
     socket.on("message", (msg) => {
@@ -145,7 +145,7 @@ const useSocket = ({
     addMessage,
     assignStreamToSlot,
     getMedia,
-    setDmTargets,
+    setRecipientList,
     setSocketConnected,
   ]);
 };
