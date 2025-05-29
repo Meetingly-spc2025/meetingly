@@ -19,11 +19,11 @@ const MeetingListRedirect = () => {
         const user = res.data.user;
 
         if (user.teamId) {
-          // ✅ 팀이 존재하는 경우 → 해당 팀 회의목록 페이지로 이동
+          // 팀이 존재하는 경우 → 해당 팀 회의목록 페이지로 이동
           console.log(user.teamId);
           navigate(`/meetinglists/task/${user.teamId}`);
         } else {
-          // ✅ 팀이 없는 경우 → 팀 생성/가입 페이지로 이동
+          // 팀이 없는 경우 → 팀 생성/가입 페이지로 이동
           navigate("/team/join");
         }
       } catch (err) {
