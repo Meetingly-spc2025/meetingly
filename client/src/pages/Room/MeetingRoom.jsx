@@ -139,9 +139,42 @@ const MeetingRoom = () => {
     setSocketConnected,
   });
 
+  const [teamVerified, setTeamVerified] = useState(false);
+
+  useEffect(() => {
+    if (!user || !roomName) return;
+
+    const fetchAndCheckTeam = async () => {
+      try {
+        const res1 = await fetch(`/api/meetings/roomName/${roomName}`);
+        const data1 = await res1.json();
+        if (!data1.meeting_id) throw new Error("유효하지 않은 회의방입니다.");
+        const id = data1.meeting_id;
+
+        const res2 = await fetch(`/api/meetings/${id}`);
+        const data2 = await res2.json();
+        const meetingTeamId = data2.team_id || data2.teamId;
+        if (!meetingTeamId) throw new Error("회의방 팀 정보가 없습니다.");
+
+        if (user.teamId !== meetingTeamId) {
+          alert("팀이 달라서 해당 방에 입장할 수 없습니다.");
+          navigate("/");
+          return;
+        }
+        setMeetingId(id);
+        setTeamVerified(true);
+      } catch (err) {
+        alert(err.message || "방 입장에 실패했습니다.");
+        navigate("/");
+      }
+    };
+
+    fetchAndCheckTeam();
+  }, [user, roomName, navigate]);
+
   useEffect(() => {
     const join = async () => {
-      if (socketConnected && user?.nickname && roomName && meetingId && user?.teamId) {
+      if (socketConnected && user?.nickname && roomName && meetingId && user?.teamId && teamVerified) {
         await getMedia();
         const success = await registerParticipant(meetingId, user);
         if (!success) {
@@ -153,7 +186,7 @@ const MeetingRoom = () => {
       }
     };
     join();
-  }, [socketConnected, user, roomName, getMedia, meetingId, navigate]);
+  }, [socketConnected, user, roomName, getMedia, meetingId, navigate, teamVerified]);
 
   const handleLeaveRoom = () => {
     leaveRoom();

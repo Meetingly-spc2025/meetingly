@@ -40,9 +40,16 @@ const useMediaRecorder = ({ myStream, roomId }) => {
     setRecording(true);
   };
 
+  // const stopRecording = () => {
+  //   mediaRecorderRef.current?.stop();
+  //   setRecording(false);
+  // };
+
   const stopRecording = () => {
-    mediaRecorderRef.current?.stop();
-    setRecording(false);
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+      setRecording(false);
+    }
   };
 
   const uploadAudio = async (file, roomId) => {

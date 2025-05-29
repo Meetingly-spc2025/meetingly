@@ -38,11 +38,25 @@ exports.getMeeting = async (req, res) => {
 exports.addParticipant = async (req, res) => {
   const { meeting_id, id } = req.body;
   try {
+    const meetingTeamId = await meetingModel.getTeamIdByMeetingId(meeting_id);
+    if (!meetingTeamId) {
+      return res.status(404).json({ error: "해당 미팅이 존재하지 않습니다." });
+    }
+    const userTeamId = await meetingModel.getTeamIdByUserId(id);
+    if (!userTeamId) {
+      return res.status(404).json({ error: "유저를 찾을 수 없습니다." });
+    }
+    if (meetingTeamId !== userTeamId) {
+      return res.status(403).json({ error: "팀이 달라서 참여할 수 없습니다." });
+    }
+
+    const already = await meetingModel.isAlreadyParticipant(meeting_id, id);
+    if (already) {
+      return res.json({ success: true, message: "이미 참가중인 유저입니다." });
+    }
+
     console.log("참가자 등록 요청:", { meeting_id, id });
-    await meetingModel.addParticipant({
-      meeting_id,
-      id,
-    });
+    await meetingModel.addParticipant({ meeting_id, id });
     res.json({ success: true });
   } catch (err) {
     console.error("참가자 등록 에러:", err);
