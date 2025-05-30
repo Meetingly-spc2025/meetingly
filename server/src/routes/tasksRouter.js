@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require("../models/db_users");
 const { v4: uuidv4 } = require("uuid");
 
-// ✅ 특정 summary의 tasks 조회
+// 특정 summary의 tasks 조회
 router.get("/summary/:summary_id", async (req, res) => {
   const { summary_id } = req.params;
   try {
@@ -18,7 +18,7 @@ router.get("/summary/:summary_id", async (req, res) => {
   }
 });
 
-// ✅ 특정 meeting의 tasks 조회 (action summary_id만 연결)
+// 특정 meeting의 tasks 조회 (action summary_id만 연결)
 router.get("/meeting/:meeting_id", async (req, res) => {
   const { meeting_id } = req.params;
   try {
@@ -54,23 +54,15 @@ router.get("/meeting/:meeting_id", async (req, res) => {
   }
 });
 
-// ✅ 새로운 task 추가 (담당자 닉네임 → user_id로 변환 후 삽입)
+// 새로운 task 추가 (assignee_id 직접 받음)
 router.post("/", async (req, res) => {
-  const { content, assignee_nickname, status, summary_id, team_id } = req.body;
+  const { content, assignee_id, status, summary_id } = req.body;
   const task_id = uuidv4();
-
-  if (assignee_nickname) {
-    const [userResult] = await db.query(
-      "SELECT user_id FROM users WHERE nickname = ? AND team_id = ?",
-      [assignee_nickname, team_id]
-    );
-    assignee_id = userResult[0]?.user_id || null;
-  }
 
   try {
     await db.query(
       "INSERT INTO tasks (task_id, content, assignee_id, status, summary_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
-      [task_id, content, assignee_id, status, summary_id]
+      [task_id, content, assignee_id || null, status, summary_id]
     );
     res.status(201).json({ task_id });
   } catch (err) {
@@ -79,7 +71,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ✅ task 수정
+// task 수정
 router.put("/:task_id", async (req, res) => {
   const { task_id } = req.params;
   const { content, assignee_id, status } = req.body;
@@ -97,7 +89,7 @@ router.put("/:task_id", async (req, res) => {
   }
 });
 
-// ✅ task 삭제
+// task 삭제
 router.delete("/:task_id", async (req, res) => {
   const { task_id } = req.params;
   try {
@@ -126,8 +118,5 @@ router.get("/team/:team_id/members", async (req, res) => {
     res.status(500).json({ error: "팀 멤버 조회 실패" });
   }
 });
-
-
-
 
 module.exports = router;

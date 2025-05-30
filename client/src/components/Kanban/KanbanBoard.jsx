@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import TaskColumn from "./TaskColumn";
 import TaskModal from "./TaskModal";
+import axios from "axios";
 import "../../styles/Task/KanbanBoard.css";
 
 const STATUSES = ["todo", "doing", "done"];
@@ -14,25 +15,30 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
     setTasks(initialTasks);
   }, [initialTasks]);
 
-  const handleDragEnd = ({ source, destination, draggableId }) => {
+  const handleDragEnd = async ({ source, destination, draggableId }) => {
     if (!destination || source.droppableId === destination.droppableId) return;
     const updated = tasks.map((task) =>
       task.task_id === draggableId ? { ...task, status: destination.droppableId } : task
     );
     const moved = updated.find((t) => t.task_id === draggableId);
     setTasks(updated);
-    fetch(`/api/tasks/${draggableId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(moved),
-    });
+
+    try {
+      await axios.put(`/api/tasks/${draggableId}`, moved);
+    } catch (err) {
+      console.error("드래그 상태 업데이트 오류:", err);
+    }
   };
 
   const handleAdd = () => setModal({ open: true, task: null });
   const handleEdit = (task) => setModal({ open: true, task });
   const handleDelete = async (id) => {
-    await fetch(`/api/tasks/${id}`, { method: "DELETE" });
-    setTasks(tasks.filter((t) => t.task_id !== id));
+    try {
+      await axios.delete(`/api/tasks/${id}`);
+      setTasks(tasks.filter((t) => t.task_id !== id));
+    } catch (err) {
+      console.error("삭제 오류:", err);
+    }
   };
 
   const handleSave = async (task) => {
@@ -42,29 +48,25 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
       team_id: teamId,
     };
 
-    if (task.task_id) {
-      await fetch(`/api/tasks/${task.task_id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTask),
-      });
-      setTasks(tasks.map((t) => (t.task_id === task.task_id ? newTask : t)));
-    } else {
-      const res = await fetch("/api/tasks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTask),
-      });
-      const { task_id } = await res.json();
-      setTasks([...tasks, { ...newTask, task_id }]);
+    try {
+      if (task.task_id) {
+        await axios.put(`/api/tasks/${task.task_id}`, newTask);
+        setTasks(tasks.map((t) => (t.task_id === task.task_id ? newTask : t)));
+      } else {
+        const res = await axios.post("/api/tasks", newTask);
+        const { task_id } = res.data;
+        setTasks([...tasks, { ...newTask, task_id }]);
+      }
+      setModal({ open: false, task: null });
+    } catch (err) {
+      console.error("저장 오류:", err);
     }
-    setModal({ open: false, task: null });
   };
 
   return (
     <main style={{ padding: 20 }}>
       <div className="kanban-header">
-        <h1>🗂️ 칸반보드</h1>
+        <h1>칸반보드</h1>
         <button className="kanban-add-button" onClick={handleAdd}>+ 할 일 추가</button>
       </div>
       <DragDropContext onDragEnd={handleDragEnd}>

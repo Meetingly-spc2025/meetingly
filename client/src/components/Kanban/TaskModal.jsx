@@ -5,30 +5,19 @@ export default function TaskModal({ task, onClose, onSave, teamMembers }) {
   const [assigneeId, setAssigneeId] = useState("");
   const [status, setStatus] = useState("todo");
 
-  // ✅ 드롭다운에서 보여질 assignee 이름/닉네임 표시용 (선택된 멤버!)
-  const [assigneeNickname, setAssigneeNickname] = useState("");
-
   useEffect(() => {
     if (task) {
       setContent(task.content);
-      setAssigneeId(task.assignee_id || ""); // 실제 저장되는 값 (user_id)
+      setAssigneeId(task.assignee_id || "");
       setStatus(task.status);
-
-      // 👉 task의 assignee_id에 맞는 팀 멤버 닉네임 찾기
-      const selectedMember = teamMembers.find((m) => m.user_id === task.assignee_id);
-      if (selectedMember) {
-        setAssigneeNickname(`${selectedMember.nickname} (${selectedMember.name})`);
-      } else {
-        setAssigneeNickname("");
-      }
     }
-  }, [task, teamMembers]);
+  }, [task]);
 
   const handleSubmit = () => {
     const newTask = {
       task_id: task?.task_id,
       content,
-      assignee_id: assigneeId || null, // null 허용
+      assignee_id: assigneeId || null, // null 처리
       status,
     };
     onSave(newTask);
@@ -44,7 +33,6 @@ export default function TaskModal({ task, onClose, onSave, teamMembers }) {
           onChange={(e) => setContent(e.target.value)}
           placeholder="할 일 내용"
         />
-
         <select
           className="taskmodal-select"
           value={assigneeId}
@@ -57,14 +45,6 @@ export default function TaskModal({ task, onClose, onSave, teamMembers }) {
             </option>
           ))}
         </select>
-
-        {/* 👉 선택된 담당자 이름/닉네임 표시 */}
-        {assigneeNickname && (
-          <div style={{ marginTop: "8px", fontSize: "0.9rem", color: "#888" }}>
-            현재 담당자: {assigneeNickname}
-          </div>
-        )}
-
         <select
           className="taskmodal-select"
           value={status}
@@ -74,7 +54,6 @@ export default function TaskModal({ task, onClose, onSave, teamMembers }) {
           <option value="doing">DOING</option>
           <option value="done">DONE</option>
         </select>
-
         <div className="taskmodal-buttons">
           <button onClick={handleSubmit}>저장</button>
           <button onClick={onClose} className="taskmodal-cancel">취소</button>

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import SummaryBlock from "../../components/Taskboard/SummaryBlock";
-import AudioPlayer from "../../components/Taskboard/AudioPlayer";
-import FileList from "../../components/Taskboard/FileList";
 import DiscussionList from "../../components/Taskboard/DiscusstionList";
 import KanbanBoard from "../../components/Kanban/KanbanBoard";
 import MeetingInfo from "../../components/Taskboard/MeetingInfo";
@@ -26,37 +24,39 @@ const MeetingDetail = () => {
   const [kanbanTasks, setKanbanTasks] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
 
+  // 회의 상세 페이지 정보(회의 요약 정보) 불러오기
   useEffect(() => {
     const fetchMeetingDetail = async () => {
       try {
-        console.log("🚀 호출된 meetingId:", meetingId);
+        console.log("호출된 meetingId:", meetingId);
         const res = await axios.get(`/api/meeting/${meetingId}?teamId=${teamId}`);
         setMeetingInfo(res.data.meeting);
         setSummaries(res.data.summaries);
       } catch (err) {
-        console.error("❌ 회의 상세 데이터 조회 오류:", err);
+        console.error("회의 상세 데이터 조회 오류:", err);
       }
     };
 
     if (meetingId && teamId) fetchMeetingDetail();
   }, [meetingId, teamId]);
 
+  // 칸반보드 할 일 불러오기
   useEffect(() => {
     const fetchKanbanTasks = async () => {
       try {
-        console.log("🚀 Kanban tasks 요청:", meetingId);
+        console.log("Kanban tasks 요청:", meetingId);
         const res = await axios.get(`/api/tasks/meeting/${meetingId}`);
-        console.log("✅ Kanban tasks fetched:", res.data);
+        console.log("Kanban tasks fetched:", res.data);
         setKanbanTasks(res.data);
       } catch (err) {
-        console.error("❌ Kanban tasks 조회 오류:", err);
+        console.error("Kanban tasks 조회 오류:", err);
       }
     };
 
     if (meetingId) fetchKanbanTasks();
   }, [meetingId]);
 
-  // ✅ 팀 멤버 불러오기
+  // 팀 멤버 불러오기
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
@@ -71,7 +71,7 @@ const MeetingDetail = () => {
     if (teamId) fetchTeamMembers();
   }, [teamId]);
 
-  // ✅ action summary_id 찾기
+  // action summary_id 찾기
   const actionSummary = summaries.find((s) => s.status === "action");
   const actionSummaryId = actionSummary?.summary_id;
 
@@ -83,7 +83,7 @@ const MeetingDetail = () => {
     );
   };
 
-  console.log("📦 teamMembers 상태:", teamMembers);
+  console.log("teamMembers 상태:", teamMembers);
 
   if (!meetingInfo) return <div>로딩 중...</div>;
 
