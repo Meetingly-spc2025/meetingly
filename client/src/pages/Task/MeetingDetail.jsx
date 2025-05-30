@@ -7,7 +7,6 @@ import DiscussionList from "../../components/Taskboard/DiscusstionList";
 import KanbanBoard from "../../components/Kanban/KanbanBoard";
 import MeetingInfo from "../../components/Taskboard/MeetingInfo";
 import "../../styles/Task/MeetingDetail.css";
-
 import { useParams, useSearchParams } from "react-router-dom";
 
 const MeetingDetail = () => {
@@ -25,15 +24,17 @@ const MeetingDetail = () => {
   const [meetingInfo, setMeetingInfo] = useState(null);
   const [summaries, setSummaries] = useState([]);
   const [kanbanTasks, setKanbanTasks] = useState([]);
+  const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
     const fetchMeetingDetail = async () => {
       try {
+        console.log("🚀 호출된 meetingId:", meetingId);
         const res = await axios.get(`/api/meeting/${meetingId}?teamId=${teamId}`);
         setMeetingInfo(res.data.meeting);
         setSummaries(res.data.summaries);
       } catch (err) {
-        console.error("회의 상세 데이터 조회 오류:", err);
+        console.error("❌ 회의 상세 데이터 조회 오류:", err);
       }
     };
 
@@ -43,16 +44,36 @@ const MeetingDetail = () => {
   useEffect(() => {
     const fetchKanbanTasks = async () => {
       try {
+        console.log("🚀 Kanban tasks 요청:", meetingId);
         const res = await axios.get(`/api/tasks/meeting/${meetingId}`);
-        console.log("tasks fetched:", res.data);
+        console.log("✅ Kanban tasks fetched:", res.data);
         setKanbanTasks(res.data);
       } catch (err) {
-        console.error("Kanban tasks 데이터 조회 오류:", err);
+        console.error("❌ Kanban tasks 조회 오류:", err);
       }
     };
 
     if (meetingId) fetchKanbanTasks();
   }, [meetingId]);
+
+  // ✅ 팀 멤버 불러오기
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      try {
+        const res = await axios.get(`/api/tasks/team/${teamId}/members`);
+        setTeamMembers(res.data);
+        console.log("팀 멤버 목록:", res.data);
+      } catch (err) {
+        console.error("팀 멤버 조회 오류:", err);
+      }
+    };
+
+    if (teamId) fetchTeamMembers();
+  }, [teamId]);
+
+  // ✅ action summary_id 찾기
+  const actionSummary = summaries.find((s) => s.status === "action");
+  const actionSummaryId = actionSummary?.summary_id;
 
   const toggleSection = (index) => {
     setSections((prev) =>
@@ -61,6 +82,8 @@ const MeetingDetail = () => {
       )
     );
   };
+
+  console.log("📦 teamMembers 상태:", teamMembers);
 
   if (!meetingInfo) return <div>로딩 중...</div>;
 
@@ -89,7 +112,14 @@ const MeetingDetail = () => {
                   onViewContent={() => console.log("전체 회의 내용 보기")}
                 />
               )}
-              {section.type === "kanban" && <KanbanBoard tasks={kanbanTasks} />}
+              {section.type === "kanban" && (
+                <KanbanBoard
+                  tasks={kanbanTasks}
+                  summaryId={actionSummaryId}
+                  teamId={meetingInfo.team_id}
+                  teamMembers={teamMembers}
+                />
+              )}
               {section.type === "summary" && (
                 <SummaryBlock
                   content={
@@ -98,11 +128,14 @@ const MeetingDetail = () => {
                   }
                 />
               )}
-              {section.type === "discussion" && <DiscussionList
-                discussionContent={
-                  summaries.find((s) => s.status === "discussion")?.content || "논의 내용이 없습니다."
-                }
-              />}
+              {section.type === "discussion" && (
+                <DiscussionList
+                  discussionContent={
+                    summaries.find((s) => s.status === "discussion")?.content ||
+                    "논의 내용이 없습니다."
+                  }
+                />
+              )}
             </>
           )}
         </div>

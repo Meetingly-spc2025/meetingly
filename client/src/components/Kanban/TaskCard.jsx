@@ -1,6 +1,10 @@
 import { Draggable } from "react-beautiful-dnd";
 
-export default function TaskCard({ task, index, onEdit, onDelete }) {
+export default function TaskCard({ task, index, onEdit, onDelete, teamMembers }) {
+  // ✅ 담당자 닉네임 (없으면 “없음”)
+  const assignee = teamMembers?.find((m) => m.user_id === task.assignee_id);
+  const assigneeName = assignee ? `${assignee.nickname} (${assignee.name})` : "없음";
+
   return (
     <Draggable draggableId={String(task.task_id)} index={index}>
       {(provided, snapshot) => (
@@ -15,7 +19,7 @@ export default function TaskCard({ task, index, onEdit, onDelete }) {
         >
           <div className="taskcard-content">{task.content}</div>
           <small className="taskcard-assignee">
-            담당자: {task.assignee_id || "없음"}
+            담당자: {assigneeName}
           </small>
           <div className="taskcard-buttons">
             <button type="button" onClick={() => onEdit(task)}>✏️</button>
