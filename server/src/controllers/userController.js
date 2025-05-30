@@ -43,7 +43,7 @@ exports.loginUser = async (req, res) => {
 
     // 해시된 비밀번호와 비교
     const isMatch = await bcrypt.compare(password, user.password);
-    if(isMatch) {
+    if(!isMatch) {
       console.log("비밀번호 불일치");
       return res.status(401).json({message:"비밀번호가 올바르지 않습니다."});
     }
@@ -68,24 +68,54 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-exports.getUserInfo = (req, res) => {
-  // jwt.verify 로 복호화된 객체
-  const user = req.user;
+// 기존 JWT 토큰 사용자 정보 조회 API
+// exports.getUserInfo = (req, res) => {
+//   // jwt.verify 로 복호화된 객체
+//   const user = req.user;
 
-  console.log("터미널 디버깅 - req.user에 저장된 사용자 정보 응답, ", user);
+//   console.log("터미널 디버깅 - req.user에 저장된 사용자 정보 응답, ", user);
 
-  res.status(200).json({
-    message:
-      "터미널 디버깅 - 프론트에서 헤더에서 꺼내 axios 시킨 토큰값은 우리 서버가 발급한게 맞음",
-    user: {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      nickname: user.nickname,
-      teamId: user.teamId,
-    },
-  });
+//   res.status(200).json({
+//     message:
+//       "터미널 디버깅 - 프론트에서 헤더에서 꺼내 axios 시킨 토큰값은 우리 서버가 발급한게 맞음",
+//     user: {
+//       id: user.id,
+//       email: user.email,
+//       name: user.name,
+//       role: user.role,
+//       nickname: user.nickname,
+//       teamId: user.teamId,
+//     },
+//   });
+// };
+
+// DB 업데이트 반영 JWT 토큰 사용자 정보 조회 API
+exports.getUserInfo = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const [rows] = await db.query("SELECT * FROM users WHERE user_id = ?", [userId]);
+    const user = rows[0];
+
+    if (!user) {
+      return res.status(404).json({message:"사용자를 찾을 수 없습니다."});
+    } else {
+    res.status(200).json({
+      message:"DB에서 조회환 최신 사용자 정보입니다.",
+      user: {
+        id:user.user_id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        nickname:user.nickname,
+        teamId: user.team_id,
+      },
+    });
+    }
+  }catch(error) {
+    console.error("유저 정보 조회 실패: ", error);
+    res.status(500).json({message:"서버 에러"});
+  }
 };
 
 // 이메일 중복 체크
