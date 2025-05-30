@@ -36,7 +36,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("로그인 버튼 눌림"); // 이거 추가
+    console.log("로그인 버튼 눌림");
 
     const newErrors = validate();
 
