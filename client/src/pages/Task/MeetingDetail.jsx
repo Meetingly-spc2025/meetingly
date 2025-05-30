@@ -17,10 +17,8 @@ const MeetingDetail = () => {
 
   const [sections, setSections] = useState([
     { type: "info", collapsed: false },
-    { type: "summary", collapsed: false },
-    { type: "audio", collapsed: false },
-    { type: "files", collapsed: false },
     { type: "discussion", collapsed: false },
+    { type: "summary", collapsed: false },
     { type: "kanban", collapsed: false },
   ]);
 
@@ -91,8 +89,6 @@ const MeetingDetail = () => {
                   onViewContent={() => console.log("전체 회의 내용 보기")}
                 />
               )}
-              {section.type === "audio" && <AudioPlayer />}
-              {section.type === "files" && <FileList />}
               {section.type === "kanban" && <KanbanBoard tasks={kanbanTasks} />}
               {section.type === "summary" && (
                 <SummaryBlock
@@ -102,7 +98,11 @@ const MeetingDetail = () => {
                   }
                 />
               )}
-              {section.type === "discussion" && <DiscussionList />}
+              {section.type === "discussion" && <DiscussionList
+                discussionContent={
+                  summaries.find((s) => s.status === "discussion")?.content || "논의 내용이 없습니다."
+                }
+              />}
             </>
           )}
         </div>

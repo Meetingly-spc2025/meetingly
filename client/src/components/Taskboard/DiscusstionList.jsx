@@ -1,15 +1,30 @@
 import React from "react";
-// import './DiscussionList.css';
 
-const DiscussionList = () => {
+const DiscussionList = ({ discussionContent }) => {
+  if (!discussionContent) {
+    return (
+      <div className="discussion-section">
+        <h3>주요 논의 사항</h3>
+        <p>논의 내용이 없습니다.</p>
+      </div>
+    );
+  }
+
+  // 내용이 여러 줄이면 나눠서 리스트로 출력, 단일 문단이면 그대로 출력
+  const lines = discussionContent.split("\n").filter((line) => line.trim() !== "");
+
   return (
     <div className="discussion-section">
       <h3>주요 논의 사항</h3>
-      <ul style={{ listStyle: "square inside", paddingLeft: 0, margin: 0 }}>
-        <li>프로젝트 일정 조정</li>
-        <li>디자인 수정 요청 사항 논의</li>
-        <li>QA 테스트 프로세스 확정</li>
-      </ul>
+      {lines.length > 1 ? (
+        <ul style={{ listStyle: "none", paddingLeft: 0, margin: 0 }}>
+          {lines.map((line, idx) => (
+            <li key={idx}>{line}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>{discussionContent}</p>
+      )}
     </div>
   );
 };
