@@ -39,22 +39,34 @@ router.post('/upload/record', upload.single("audio"), async (req, res) => {
     const currentTimestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const generateUUID = () => uuidv4();
 
-    // ✅ tasks가 "없음"으로 간주되는 경우 처리
+    // ✅ tasks 처리: "false" 문자열 등 예외 처리
     const noTaskValues = ["/", "false", "", null, undefined];
     let taskArray = [];
 
     if (!noTaskValues.includes(tasks)) {
       if (typeof tasks === "string") {
-        try {
-          taskArray = JSON.parse(tasks);
-        } catch (err) {
-          console.error("tasks를 JSON으로 파싱 실패:", err);
+        if (tasks === "false") {
+          console.log("[⚠️] tasks가 'false' 문자열로 전달됨 (tasks 저장 스킵)");
           taskArray = [];
+        } else {
+          try {
+            const parsed = JSON.parse(tasks);
+            if (Array.isArray(parsed)) {
+              taskArray = parsed;
+            } else {
+              console.warn("[⚠️] JSON 파싱 결과가 배열이 아님 (tasks 저장 스킵):", parsed);
+              taskArray = [];
+            }
+          } catch (err) {
+            console.error("tasks를 JSON으로 파싱 실패:", err);
+            taskArray = [];
+          }
         }
       } else if (Array.isArray(tasks)) {
         taskArray = tasks;
       } else {
-        console.warn("tasks 형식이 배열/문자열이 아님 (tasks 무시됨):", tasks);
+        console.warn("[⚠️] tasks 형식이 배열/문자열이 아님 (tasks 저장 스킵):", tasks);
+        taskArray = [];
       }
     } else {
       console.log("[⚠️] tasks가 없음으로 간주되는 값 (tasks 저장 스킵):", tasks);
@@ -67,7 +79,7 @@ router.post('/upload/record', upload.single("audio"), async (req, res) => {
       {
         summary_id: generateUUID(),
         status: 'action',
-        content: noTaskValues.includes(tasks) ? null : JSON.stringify(tasks),
+        content: taskArray.length === 0 ? null : JSON.stringify(taskArray),
         created_at: currentTimestamp
       },
       { summary_id: generateUUID(), status: 'discussion', content: discussion, created_at: currentTimestamp }
