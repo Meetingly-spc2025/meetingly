@@ -108,7 +108,6 @@ router.get("/:teamId/members", async (req, res) => {
 
     const { team_name: teamName, team_url: teamUrl } = teamInfo;
 
-    console.log("팀 이름 뽑았니?", teamName);
     res.status(200).json({ teamName, teamUrl, members });
   } catch (error) {
     console.error(error);

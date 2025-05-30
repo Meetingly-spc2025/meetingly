@@ -1,10 +1,11 @@
-const axios = require("axios");
+const db = require("../models/db_users");
 
 // [GET] /api/mypage/check-nickname
 exports.validateNickname = async (req, res) => {
   const { nickname } = req.query;
 
   try {
+    console.log(`바꿀 닉네임 : ${nickname}`);
     const [rows] = await db.query("SELECT * FROM users WHERE nickname = ?", [
       nickname,
     ]);
@@ -20,10 +21,12 @@ exports.validateNickname = async (req, res) => {
 
 // [PUT] /api/mypage/update-nickname
 exports.updateNickname = async (req, res) => {
-  const { userId, nickname } = req.body;
+  const { userInfo, nickname } = req.body;
+  console.log("userInfo :: ", userInfo);
+  const userId = userInfo.userId;
 
   try {
-    await db.query("UPDATE users SET nickname = ? WHERE id = ?", [
+    await db.query("UPDATE users SET nickname = ? WHERE user_id = ?", [
       nickname,
       userId,
     ]);

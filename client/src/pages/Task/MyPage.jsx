@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+5;
 import "../../styles/Task/MyPage.css";
 
 function MyPage() {
@@ -15,6 +18,7 @@ function MyPage() {
   });
 
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -24,13 +28,17 @@ function MyPage() {
         });
 
         const user = res.data.user;
+        console.log("user는 :: ", user);
         setUserInfo({
+          userId: user.id,
           name: user.name,
           email: user.email,
         });
         setNickname(user.nickname || "");
         setTeamName(user.teamId || "");
       } catch (err) {
+        alert("로그인을 해야 이용 가능한 페이지 입니다.😊");
+        navigate("/login");
         console.error("유저 정보 조회 실패:", err);
       }
     };
@@ -48,14 +56,15 @@ function MyPage() {
   const handleNicknameSave = async () => {
     try {
       await axios.put(
-        "/api/users/update-nickname",
-        { nickname },
+        "/api/mypage/update-nickname",
+        { userInfo, nickname },
         {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
       console.log("닉네임 저장 성공:", nickname);
       setIsNicknameEditable(false);
+      window.location.reload();
     } catch (err) {
       console.error("닉네임 저장 실패:", err);
     }
@@ -65,7 +74,7 @@ function MyPage() {
   const handleCheckDuplicate = async () => {
     try {
       const res = await axios.get(
-        `/api/users/check-nickname?nickname=${nickname}`,
+        `/api/mypage/check-nickname?nickname=${nickname}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -73,6 +82,8 @@ function MyPage() {
       setIsAvailable(res.data.available); // true/false
       setIsChecked(true);
     } catch (err) {
+      alert("이미 존재하는 닉네임 입니다. 다른 닉네임으로 입력해주세요.");
+      window.location.reload();
       console.error("중복 확인 에러", err);
     }
   };
