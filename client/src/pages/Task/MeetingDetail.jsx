@@ -75,6 +75,10 @@ const MeetingDetail = () => {
   const actionSummary = summaries.find((s) => s.status === "action");
   const actionSummaryId = actionSummary?.summary_id;
 
+  // fulltext 찾기
+  const fulltextSummary = summaries.find((s) => s.status === "fulltext");
+  const fullTextContent = fulltextSummary?.content || "전체 회의 내용이 없습니다.";
+
   const toggleSection = (index) => {
     setSections((prev) =>
       prev.map((section, i) =>
@@ -110,6 +114,7 @@ const MeetingDetail = () => {
                   creator={meetingInfo.host}
                   totalDuration={meetingInfo.totalDuration || "00:00:00"}
                   onViewContent={() => console.log("전체 회의 내용 보기")}
+                  fullText={fullTextContent}
                 />
               )}
               {section.type === "kanban" && (

@@ -81,7 +81,6 @@ function App() {
               </SidebarLayout>
             }
           />
-
           <Route
             path="/meeting/:id"
             element={

@@ -35,6 +35,7 @@ router.post('/upload/record', upload.single("audio"), async (req, res) => {
       { headers: { "Content-Type": "application/json" } }
     );
 
+    // recordPipeline 으로부터 받아온 데이터
     const { transcript, summary, tasks, discussion } = aiRes.data;
     const currentTimestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const generateUUID = () => uuidv4();
@@ -98,6 +99,7 @@ router.post('/upload/record', upload.single("audio"), async (req, res) => {
 
     // tasks 테이블 저장
     if (taskArray.length > 0) {
+      // summaries 테이블에서 action값 추출
       const actionSummaryId = summaries.find(s => s.status === 'action').summary_id;
       const taskQuery = `
         INSERT INTO tasks (task_id, content, assignee_id, status, created_at, summary_id)
