@@ -5,7 +5,13 @@ exports.createMeeting = async (req, res) => {
   const start_time = new Date();
 
   try {
-    const meeting_id = await meetingModel.createMeeting({ title, room_fullname, start_time, creator_id, teamId });
+    const meeting_id = await meetingModel.createMeeting({
+      title,
+      room_fullname,
+      start_time,
+      creator_id,
+      teamId,
+    });
     res.json({ meeting_id });
   } catch (err) {
     res.status(500).json({ error: "회의 생성 실패", details: err.message });
