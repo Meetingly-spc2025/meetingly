@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models/db_users");
 
-// GET /api/meeting/:meetingId?teamId=xxx
+// [GET] /api/meeting/:meetingId?teamId=xxx
 // 특정 회의의 상세 정보를 가져오는 라우트
 router.get("/:meetingId", async (req, res) => {
   const { meetingId } = req.params;       // URL 파라미터로 전달되는 meetingId

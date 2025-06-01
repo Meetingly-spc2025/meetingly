@@ -18,6 +18,7 @@ import AudioRecorder from "./pages/Room/AudioRecorder";
 import TeamEmpty from "./components/Team/TeamEmpty";
 import TeamRedirect from "./components/Team/TeamRedirect";
 import MeetingListRedirect from "./pages/Task/MeetingListRedirect";
+import CalendarRedirect from "./pages/Task/CalendarRedirect";
 import "./App.css";
 
 function App() {
@@ -98,11 +99,16 @@ function App() {
             }
           />
           <Route
-            path="/calendarPage"
+            path="/calendarPage/:id"
             element={
               <SidebarLayout>
                 <CalendarPage />
               </SidebarLayout>
+            }
+          />
+          <Route path="/calendarPage"
+            element={
+              <CalendarRedirect />
             }
           />
           <Route

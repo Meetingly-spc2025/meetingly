@@ -29,7 +29,7 @@ const MeetingDetail = () => {
     const fetchMeetingDetail = async () => {
       try {
         console.log("호출된 meetingId:", meetingId);
-        const res = await axios.get(`/api/meeting/${meetingId}?teamId=${teamId}`);
+        const res = await axios.get(`/api/meetingDetail/${meetingId}?teamId=${teamId}`);
         setMeetingInfo(res.data.meeting);
         setSummaries(res.data.summaries);
       } catch (err) {

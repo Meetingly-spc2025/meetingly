@@ -41,7 +41,7 @@ app.use("/api/mypage", mypageRouter);
 app.use("/api/tasks", taskRouter);
 app.use("/api/meetinglists", meetinglistsRouter);
 app.use("/api/saveSummary", summaryRouter);
-app.use("/api/meeting", meetingDetailRouter);
+app.use("/api/meetingDetail", meetingDetailRouter);
 
 // 배포 모드
 // if (process.env.NODE_ENV === "production") {
