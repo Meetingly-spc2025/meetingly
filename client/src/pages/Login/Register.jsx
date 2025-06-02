@@ -24,6 +24,8 @@ const Register = () => {
   const [serverCode, setServerCode] = useState(""); // 서버에서 받은 코드
   const [isEmailConfirmed, setIsEmailConfirmed] = useState(false); // 인증번호 일치 여부
   const [isVerificationLoading, setIsVerificationLoading] = useState(false); // 로딩 중 여부
+  const [showEmailSentMessage, setShowEmailSentMessage] = useState(false);
+  
 
   // 닉네임 중복 확인 변수 설정
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
@@ -52,6 +54,10 @@ const Register = () => {
       newErrors.email = "이메일 중복 확인이 필요합니다.";
     }
 
+    if (!isEmailConfirmed) {
+      newErrors.email = "이메일 인증이 완료되어야 합니다.";
+    }
+
     if (!formData.password) {
       newErrors.password = "비밀번호는 공백일 수 없습니다.";
     } else if (formData.password.length < 8) {
@@ -71,12 +77,15 @@ const Register = () => {
     try{
       const response = await axios.post("/api/users/verify-email", {
         email: formData.email,
-      })
+      });
 
       setIsVerificationSent(true);
       setServerCode(response.data.code);
+
+      setShowEmailSentMessage(true);
+      setTimeout( ()=> setShowEmailSentMessage(false), 5000);
+
       alert("인증번호가 이메일로 전송되었습니다.")
-      
     }catch(error) {
       console.log("이메일 인증 전송 실패: ", error)
       alert("이메일 인증 실패")
@@ -217,6 +226,13 @@ const Register = () => {
 
 <div className="form-group">
   <label htmlFor="email">이메일</label>
+
+  {isVerificationLoading && (
+    <div className="loading-message">
+    이메일을 전송 중입니다. 잠시만 기다려주세요.
+    </div>
+  )}
+
   <div className="input-with-button">
     <input
       type="email"
@@ -242,7 +258,7 @@ const Register = () => {
     >
       {isEmailConfirmed
         ? "인증 완료"                        
-        : isVerificationSent
+        : isVerificationLoading
         ? "이메일 인증중..."                
         : isEmailVerified
         ? "이메일 인증"                   
@@ -252,7 +268,13 @@ const Register = () => {
 
   {errors.email && <div className="error-message">{errors.email}</div>}
 
-  {isVerificationSent && !isEmailConfirmed && (
+  {showEmailSentMessage && (
+    <>
+    <div className="loading-message">
+      인증번호 전송 중입니다. 이메일을 확인해주세요.
+    </div>
+
+
     <div className="form-group" style={{ marginTop: "10px" }}>
       <label htmlFor="verificationCode">인증번호</label>
       <div className="input-with-button">
@@ -269,6 +291,7 @@ const Register = () => {
         </button>
       </div>
     </div>
+    </>
   )}
 </div>
 
