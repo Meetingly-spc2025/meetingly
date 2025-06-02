@@ -7,6 +7,9 @@ import {
 import axios from "axios";
 import "../../styles/Room/CreateMeeting.css";
 
+// 전체적인 코드 흐름:: JWT인증 -> 회의 생성 폼 -> 서버로 회의 생성 요청 -> 초대링크/입장
+// 초대링크로 입장 시 팀 ID 검증
+
 const CreateMeeting = () => {
   const navigate = useNavigate();
 
@@ -20,6 +23,8 @@ const CreateMeeting = () => {
   const [createdRoomName, setCreatedRoomName] = useState("");
   const [showEnterRoomBtn, setShowEnterRoomBtn] = useState(false);
 
+  //페이지 진입 시 사용자 인증 확인 (JWT 토큰 검사)
+  //인증 성공 시 회의 생성 폼 노출, 미인증시 로그인 페이지로 이동
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -52,6 +57,8 @@ const CreateMeeting = () => {
 
   const joinLinkRef = useRef();
 
+  // uuid로 고유한 회의방을 생성하고, 서버에 방 생성 요청
+  //성공 시 초대링크 표시
   const handleRoomSubmit = async (e) => {
     e.preventDefault();
     if (!roomTitle || !roomSubject || !roomDate) {
@@ -99,6 +106,7 @@ const CreateMeeting = () => {
     navigate(`/room/${createdRoomName}`);
   };
 
+  //초대링크 복사: 클립보드 API 활용
   const copyLink = () => {
     navigator.clipboard
       .writeText(inviteLink)
@@ -109,7 +117,9 @@ const CreateMeeting = () => {
       });
   };
 
+  // 초대링크로 입장 시 팀 ID검증
   const joinByLink = async () => {
+    //링크의 roomName추출
     const input = joinLinkRef.current.value.trim();
     if (!input || !input.startsWith("http")) {
       alert("유효한 초대 링크를 입력하세요.");
@@ -125,6 +135,7 @@ const CreateMeeting = () => {
 
     // 방 정보 조회
     try {
+      //참여하려는 방 여부 확인
       // 1. meeting_id 기준 조회
       const res1 = await axios.get(`/api/meetings/roomName/${roomName}`);
       if (res1.status !== 200) throw new Error("방 정보를 불러올 수 없습니다.");
@@ -135,6 +146,7 @@ const CreateMeeting = () => {
         return;
       }
 
+      //참여하려는 방의 team_id 확인
       // 2. team_id 기준 조회
       const res2 = await axios.get(`/api/meetings/${meetingId}`);
       if (res2.status !== 200) throw new Error("방 정보를 불러올 수 없습니다.");

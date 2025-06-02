@@ -1,5 +1,5 @@
 import React from "react";
-import useMediaRecorder from "./MediaRecorder";
+// import useMediaRecorder from "./MediaRecorder";
 import { BsFillMicFill, BsFillMicMuteFill, BsCameraVideoFill, BsCameraVideoOffFill, BsBoxArrowLeft } from "react-icons/bs";
 import { MdFiberManualRecord, MdStop } from "react-icons/md";
 
@@ -12,11 +12,26 @@ const Controls = ({
   toggleCamera,
   changeCamera,
   handleLeaveRoom,
-  myStream,
+  // myStream,
   roomId,
+  isCreator,
+  socket,
+  recording,
+  setRecording, 
+  recordingDone,
 }) => {
   
-  const { recording, startRecording, stopRecording } = useMediaRecorder({ myStream, roomId });
+  // const { recording, startRecording, stopRecording } = useMediaRecorder({ myStream, roomId });
+
+  const handleStartRecording = () => {
+    socket.emit("start_recording", roomId);
+    setRecording(true);
+  };
+
+  const handleStopRecording = () => {
+    socket.emit("stop_recording", roomId);
+    setRecording(false);
+  };
 
   return (
     <div id="controls">
@@ -24,10 +39,21 @@ const Controls = ({
       <button onClick={toggleCamera}>
         {cameraOff ? <BsCameraVideoOffFill style={{ fontSize: "1.5rem" }} /> : <BsCameraVideoFill style={{ fontSize: "1.5rem" }} />}
       </button>
-      {!recording ? (
+      {/* {!recording ? (
         <button onClick={startRecording}><MdFiberManualRecord style={{ fontSize: "1.5rem", color: "red" }} /></button>
       ) : (
         <button onClick={stopRecording}><MdStop style={{ fontSize: "1.5rem", color: "black" }} /></button>
+      )} */}
+      {isCreator && !recordingDone && ( 
+        !recording ? (
+          <button onClick={handleStartRecording}>
+            <MdFiberManualRecord style={{ fontSize: "1.5rem", color: "red" }} />
+          </button>
+        ) : (
+          <button onClick={handleStopRecording}>
+            <MdStop style={{ fontSize: "1.5rem", color: "black" }} />
+          </button>
+        )
       )}
       <select value={selectedDeviceId || ""} onChange={changeCamera}>
         {cameras.map((camera) => (
