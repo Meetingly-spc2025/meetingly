@@ -10,7 +10,7 @@ const { message } = require("statuses");
 const bcrypt = require("bcrypt");
 
 // 혜인님 uuid 추가
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 const userId = uuidv4();
 
 exports.loginUser = async (req, res) => {
@@ -36,17 +36,17 @@ exports.loginUser = async (req, res) => {
     console.log("입력된 비밀번호: ", password);
 
     // 기존 평문 비밀번호 비교 사용 X
-    // if (user.password.trim() !== password.trim()) {
+    if (user.password.trim() !== password.trim()) {
+      console.log("비밀번호 불일치");
+      return res.status(401).json({ message: "비밀번호가 올바르지 않습니다." });
+    }
+
+    // 해시된 비밀번호와 비교
+    // const isMatch = await bcrypt.compare(password, user.password);
+    // if (!isMatch) {
     //   console.log("비밀번호 불일치");
     //   return res.status(401).json({ message: "비밀번호가 올바르지 않습니다." });
     // }
-
-    // 해시된 비밀번호와 비교
-    const isMatch = await bcrypt.compare(password, user.password);
-    if(!isMatch) {
-      console.log("비밀번호 불일치");
-      return res.status(401).json({message:"비밀번호가 올바르지 않습니다."});
-    }
 
     const token = jwt.sign(
       {
@@ -94,48 +94,69 @@ exports.getUserInfo = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const [rows] = await db.query("SELECT * FROM users WHERE user_id = ?", [userId]);
+    // [수정] role 얻기 위해서 join
+    // const [rows] = await db.query("SELECT * FROM users WHERE user_id = ?", [
+    //   userId,
+    // ]);
+    const [rows] = await db.query(
+      `
+      SELECT 
+        u.user_id, u.name, u.email, u.team_id, tm.role
+      FROM users u
+      LEFT JOIN team_members tm ON u.user_id = tm.user_id AND u.team_id = tm.team_id
+      WHERE u.user_id = ?
+      `,
+      [userId],
+    );
+
     const user = rows[0];
 
     if (!user) {
-      return res.status(404).json({message:"사용자를 찾을 수 없습니다."});
+      return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
     } else {
-    res.status(200).json({
-      message:"DB에서 조회환 최신 사용자 정보입니다.",
-      user: {
-        id:user.user_id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        nickname:user.nickname,
-        teamId: user.team_id,
-      },
-    });
+      res.status(200).json({
+        message: "DB에서 조회환 최신 사용자 정보입니다.",
+        user: {
+          id: user.user_id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          nickname: user.nickname,
+          teamId: user.team_id,
+        },
+      });
     }
-  }catch(error) {
+  } catch (error) {
     console.error("유저 정보 조회 실패: ", error);
-    res.status(500).json({message:"서버 에러"});
+    res.status(500).json({ message: "서버 에러" });
   }
 };
 
 // 이메일 중복 체크
 exports.checkEmailDuplicate = async (req, res) => {
   const { email } = req.body;
-  console.log("클라이언트가 보낸 이메일은: ", email)
+  console.log("클라이언트가 보낸 이메일은: ", email);
 
   try {
-    const [rows] = await db.query("SELECT email FROM users WHERE email = ?", [email]);
-    res.json( { exists: rows.length > 0 } );
-  }catch (error) {
-    res.status(500).json( { error })
+    const [rows] = await db.query("SELECT email FROM users WHERE email = ?", [
+      email,
+    ]);
+    res.json({ exists: rows.length > 0 });
+  } catch (error) {
+    res.status(500).json({ error });
   }
-}
+};
 
 // 인증번호 이메일 전송
-exports.sendVerificationCode = async (req,res) => {
-
-  console.log("구글 메일 env 설정 맞는지: EMAIL_USER: ",process.env.EMAIL_USER)
-  console.log("구글 메일 env 설정 맞는지: EMAIL_PASS: ",process.env.EMAIL_PASS)
+exports.sendVerificationCode = async (req, res) => {
+  console.log(
+    "구글 메일 env 설정 맞는지: EMAIL_USER: ",
+    process.env.EMAIL_USER,
+  );
+  console.log(
+    "구글 메일 env 설정 맞는지: EMAIL_PASS: ",
+    process.env.EMAIL_PASS,
+  );
   const { email } = req.body;
 
   // 6자리 인증번호.. GPT
@@ -143,30 +164,30 @@ exports.sendVerificationCode = async (req,res) => {
 
   // 메일 전송 세팅
   const transporter = nodemailer.createTransport({
-    service:"gmail",
+    service: "gmail",
     auth: {
-      user:process.env.EMAIL_USER,
-      pass:process.env.EMAIL_PASS
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
-  console.log("메일 전송 세팅값 디버깅: ", transporter)
+  console.log("메일 전송 세팅값 디버깅: ", transporter);
 
   // 실제 메일 전송 시 이메일 옵션 설정
   try {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject:"회원가입 인증번호",
+      subject: "회원가입 인증번호",
       text: `돈도 소중하고 일도 소중하지만, 
       진심으로 별을 바라보거나 
       기타 소리에 미친 듯이 끌려들거나 하는 시기란 인생에서 극히 잠깐밖에 없
-      으며 그것은 매우 소중하다고 합니다. 어쨌든 인증번호는 [${code}] 입니다.`
+      으며 그것은 매우 소중하다고 합니다. 어쨌든 인증번호는 [${code}] 입니다.`,
     };
-    console.log("이메일 옵션 설정 디버깅", mailOptions)
+    console.log("이메일 옵션 설정 디버깅", mailOptions);
     await transporter.sendMail(mailOptions);
     res.status(200).json({ message: "이메일 전송 완료", code });
     console.log("이메일 전송, 서버 응답 성공: ", code);
-  } catch(error) {
+  } catch (error) {
     console.log("이메일 전송 실패: ", error);
     res.status(500).json({ message: "이메일 전송 실패" });
   }
@@ -176,14 +197,14 @@ exports.sendVerificationCode = async (req,res) => {
 exports.checkNicknameDuplicate = async (req, res) => {
   try {
     const { nickname } = req.body;
-    const [rows] = await db.query(
-      "SELECT * FROM users WHERE nickname =?",
-      [nickname]);
-    res.json({exists: rows.length>0});
-    console.log("닉네임 중복 여부 서버에서 체크 성공 후 응답")
-  } catch(error) {
-    console.error("닉네임 확인 오류: ", error)
-    res.status(500).json({error:"닉네임 확인 실패"})
+    const [rows] = await db.query("SELECT * FROM users WHERE nickname =?", [
+      nickname,
+    ]);
+    res.json({ exists: rows.length > 0 });
+    console.log("닉네임 중복 여부 서버에서 체크 성공 후 응답");
+  } catch (error) {
+    console.error("닉네임 확인 오류: ", error);
+    res.status(500).json({ error: "닉네임 확인 실패" });
   }
 };
 
@@ -199,12 +220,12 @@ exports.registerUser = async (req, res) => {
     // 사용자 정보를 DB 저장
     await db.query(
       "INSERT INTO users (user_id, name, email, password, nickname) VALUES (?,?,?,?,?)",
-      [user_id, name, email, hashedPassword, nickname]
+      [user_id, name, email, hashedPassword, nickname],
     );
-    res.status(201).json({message:"회원가입 성공"})
-    console.log("회원가입 성공")
-  } catch(error) {
+    res.status(201).json({ message: "회원가입 성공" });
+    console.log("회원가입 성공");
+  } catch (error) {
     console.error("회원가입 에러: ", error);
-    res.status(500).json({message:"회원가입중 서버 에러 발생"})
+    res.status(500).json({ message: "회원가입중 서버 에러 발생" });
   }
 };

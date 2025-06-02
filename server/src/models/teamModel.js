@@ -3,10 +3,10 @@ const db = require("../models/db_users");
 exports.getTeamMemberList = async ({ teamId }) => {
   const [members] = await db.query(
     `SELECT 
-         u.user_id, u.name, u.email, u.nickname, tm.role
-       FROM team_members tm
-       JOIN users u ON tm.user_id = u.user_id
-       WHERE tm.team_id = ?`,
+      u.user_id, u.name, u.email, u.nickname, tm.role
+      FROM team_members tm
+      JOIN users u ON tm.user_id = u.user_id
+      WHERE tm.team_id = ?`,
     [teamId],
   );
   return members;
@@ -63,4 +63,23 @@ exports.grantMember = async ({ teamId, userId }) => {
        VALUES (?, ?, 'member')`,
     [teamId, userId],
   );
+};
+
+exports.kickoutMember = async ({ teamId, userId }) => {
+  await db.query(`DELETE FROM team_members WHERE team_id = ? AND user_id = ?`, [
+    teamId,
+    userId,
+  ]);
+};
+
+exports.updateTeamName = async ({ name, teamId }) => {
+  await db.query(`UPDATE teams SET team_name = ? WHERE team_id = ?`, [
+    name,
+    teamId,
+  ]);
+};
+
+exports.deleteTeam = async ({ teamId }) => {
+  await db.query(`DELETE FROM team_members WHERE team_id = ?`, [teamId]);
+  await db.query(`DELETE FROM teams WHERE team_id = ?`, [teamId]);
 };

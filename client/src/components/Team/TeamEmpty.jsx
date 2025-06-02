@@ -4,7 +4,7 @@ import axios from "axios";
 import TeamInviteModal from "./TeamInviteModal";
 import TeamCreateModal from "./TeamCreateModal";
 import LoadingScreen from "../LoadingScreen";
-import "../../styles/Task/TeamEmpty.css";
+import "../../styles/Team/TeamEmpty.css";
 
 const TeamEmpty = () => {
   const [user, setUser] = useState(null);

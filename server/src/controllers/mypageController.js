@@ -7,7 +7,7 @@ exports.validateNickname = async (req, res) => {
   try {
     console.log(`바꿀 닉네임 : ${nickname}`);
     const [nicknames] = await mypageModel.validateNicks({ nickname });
-    if (nicknames.length > 0) {
+    if (nicknames !== undefined) {
       return res.json({ available: false });
     }
 
@@ -15,6 +15,21 @@ exports.validateNickname = async (req, res) => {
   } catch (err) {
     console.error("닉네임 중복 확인 오류:", err);
     res.status(500).json({ error: "서버 오류" });
+  }
+};
+
+// [GET] /api/mypage/team-data
+exports.getTeamInfo = async (req, res) => {
+  const { teamId } = req.query;
+  if (!teamId) {
+    return res.status(400).json({ error: "teamId가 전달되지 않았습니다." });
+  }
+
+  const [teamName] = await mypageModel.getTeamName({ teamId });
+  if (teamName === undefined) {
+    res.json({ teamName: null });
+  } else {
+    res.json({ teamName: teamName.team_name });
   }
 };
 
@@ -35,15 +50,28 @@ exports.updateNickname = async (req, res) => {
 
 // [POST] /api/mypage/leave-team
 exports.leaveTeam = async (req, res) => {
-  // const { userId } = req.body;
-  const { userId, teamId } = req.body;
+  const { userInfo } = req.body;
+  const userId = userInfo.userId;
 
   try {
-    // 현재 users에서 teamId가 teamId를 Null로 바뀌는 것만 수행중.. teams table에서도 delete 하는 sql문 필요
     await mypageModel.leaveTeam({ userId });
     res.json({ success: true });
   } catch (err) {
     console.error("팀 탈퇴 오류:", err);
+    res.status(500).json({ error: "서버 오류" });
+  }
+};
+
+// [POST] /api/mypage/leave-meetingly
+exports.leaveMeetingly = async (req, res) => {
+  const { userInfo } = req.body;
+  const userId = userInfo.userId;
+
+  try {
+    await mypageModel.leaveMeetingly({ userId });
+    res.json({ success: true });
+  } catch (err) {
+    console.error("미팅리 탈퇴 오류:", err);
     res.status(500).json({ error: "서버 오류" });
   }
 };

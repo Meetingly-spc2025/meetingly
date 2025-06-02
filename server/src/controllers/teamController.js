@@ -4,7 +4,7 @@ const teamModel = require("../models/teamModel");
 exports.teamList = async (req, res) => {
   const { teamId } = req.params;
   try {
-    const [members] = await teamModel.getTeamMemberList({ teamId });
+    const members = await teamModel.getTeamMemberList({ teamId });
     const [teamInfo] = await teamModel.getTeamInfo({ teamId });
     const { team_name: teamName, team_url: teamUrl } = teamInfo;
 
@@ -55,8 +55,9 @@ exports.joinTeam = async (req, res) => {
     if (existing.length === 0) {
       return res.status(404).send("초대 링크가 유효하지 않습니다");
     }
+    console.log("ex:: ", existing);
 
-    const teamId = existing[0].team_id;
+    const teamId = existing.team_id;
 
     await teamModel.addUserTeam({ teamId, userId });
     await teamModel.grantMember({ teamId, userId });
@@ -65,5 +66,42 @@ exports.joinTeam = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("팀 가입 실패");
+  }
+};
+
+// [DELETE] /api/teams/:teamId/members/:userId
+exports.kickout = async (req, res) => {
+  const { teamId, userId } = req.params;
+  try {
+    await teamModel.kickoutMember({ teamId, userId });
+    res.status(200).send("팀원 강퇴 성공");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("팀원 강퇴 실패");
+  }
+};
+
+// [PATCH] /api/teams/update/:teamId
+exports.updateTeamName = async (req, res) => {
+  const { teamId } = req.params;
+  const { name } = req.body;
+  try {
+    await teamModel.updateTeamName({ name, teamId });
+    res.status(200).send("팀 이름 변경 성공");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("팀 이름 변경 실패");
+  }
+};
+
+// [DELETE] /api/teams/delete/:teamId
+exports.deleteTeam = async (req, res) => {
+  const { teamId } = req.params;
+  try {
+    await teamModel.deleteTeam({ teamId });
+    res.status(200).send("팀 삭제 완료");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("팀 삭제 실패");
   }
 };

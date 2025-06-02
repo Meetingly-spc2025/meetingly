@@ -7,7 +7,7 @@ import Main from "./pages/Main";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Login/Register";
 import MeetingList from "./pages/Task/MeetingList";
-import TeamManagement from "./pages/Task/TeamManagement";
+import TeamManagement from "./pages/Task/TeamManagementPage";
 import CreateMeeting from "./pages/Room/CreateMeeting";
 import MeetingDetail from "./pages/Task/MeetingDetail";
 import MeetingRoom from "./pages/Room/MeetingRoom";
