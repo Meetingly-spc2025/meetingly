@@ -1,4 +1,5 @@
 const teamModel = require("../models/teamModel");
+const { v4: uuidv4 } = require("uuid");
 
 // [GET] /api/teams/:teamId/members
 exports.teamList = async (req, res) => {
@@ -23,7 +24,7 @@ exports.createTeam = async (req, res) => {
   try {
     // 1. 팀 URL 중복 체크
     const [existing] = await teamModel.validateTeamURL({ teamUrl });
-    if (existing.length > 0) {
+    if (existing) {
       return res.status(409).json({ message: "초대 코드 중복" });
     }
     // 2. 팀 생성

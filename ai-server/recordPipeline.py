@@ -14,13 +14,15 @@ SEGMENT_BASE_DIR = "segments"
 def split_audio(input_path, room_id, segment_length=600):
     segment_dir = os.path.join(SEGMENT_BASE_DIR, room_id)
     os.makedirs(segment_dir, exist_ok=True)
-    output_pattern = os.path.join(segment_dir, "part_%03d.wav")
+    output_pattern = os.path.join(segment_dir, "part_%03d.mp3")
     try:
         ffmpeg.input(input_path).output(
             output_pattern,
             f="segment",
             segment_time=segment_length,
-            c="aac",
+            c="libmp3lame",
+            ar=44100,
+            ac=1,
             map="0",
             reset_timestamps=1
         ).run(overwrite_output=True)

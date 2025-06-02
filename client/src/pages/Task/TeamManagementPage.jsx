@@ -162,7 +162,7 @@ const TeamManagementPage = () => {
                       className="cancel-btn"
                       onClick={() => {
                         setIsEditingTeamName(false);
-                        setEditedTeamName(team.team_name);
+                        setEditedTeamName(teamName);
                       }}
                     >
                       ❌ 취소
