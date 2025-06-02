@@ -1,5 +1,85 @@
+.calendar-tile-meetings {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.calendar-tile-meeting-card {
+  background: #e8f0fe;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 0.6rem;
+  cursor: pointer;
+  max-width: 70px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  overflow: hidden;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.calendar-tile-meeting-title,
+.calendar-tile-meeting-members {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calendar-tile-meeting-card:hover {
+  background: #cce4ff;
+}
+
+.calendar-tile-meeting-title {
+  font-weight: 600;
+  color: #333;
+}
+
+.calendar-tile-meeting-members {
+  color: #555;
+  font-size: 0.5rem;
+}
+
+/* CalendarCard (달력 밖에서 모달로 뜨는 경우) */
+.calendarcard-modal-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  width: 120px;
+}
+
+.calendarcard-card {
+  background-color: #f9fafb;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.calendarcard-card:hover {
+  transform: scale(1.05);
+}
+
+.calendarcard-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.calendarcard-info {
+  color: #666;
+  font-size: 0.7rem;
+}
+
+/* CalendarPage 컨테이너 */
 .calendarpage-container {
-  max-width: 750px; /* ✅ 더 크게 */
+  max-width: 750px;
   margin: 60px auto;
   padding: 40px;
   border-radius: 16px;
@@ -17,6 +97,7 @@
 
 .calendar-wrapper {
   margin: 0 auto;
+  position: relative; /* ✅ 모달 위치용 */
 }
 
 .selected-date {
@@ -25,9 +106,9 @@
   color: #444;
 }
 
-/* 캘린더 전체 크기 & 글자 키우기 */
+/* 캘린더 기본 스타일 수정 */
 .react-calendar {
-  width: 100% !important; /* ✅ 전체 너비 채움 */
+  width: 100% !important;
   max-width: 100%;
   font-size: 1.2rem;
   border: none;
@@ -35,7 +116,7 @@
 
 /* 요일 헤더 */
 .react-calendar__month-view__weekdays {
-  display: grid !important; /* ✅ 요일도 균등 분포 */
+  display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
   font-weight: bold;
   color: #666;
@@ -43,9 +124,9 @@
   font-size: 1rem;
 }
 
-/* 날짜 칸을 그리드로 균등하게! */
+/* 날짜 셀 그리드 */
 .react-calendar__month-view__days {
-  display: grid !important; /* ✅ 그리드로 정렬 */
+  display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
   grid-gap: 5px;
 }
@@ -53,11 +134,13 @@
 /* 날짜 박스 크기 & 중앙 정렬 */
 .react-calendar__tile {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
-  padding: 20px 0 !important; /* ✅ 세로 높이 크게 */
+  padding: 8px 0 !important;
   border-radius: 10px;
   transition: background 0.2s;
+  position: relative;
 }
 
 .react-calendar__tile--active {

@@ -1,0 +1,43 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import LoadingScreen from "../../components/LoadingScreen";
+
+const CalendarRedirect = () => {
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkUserTeam = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("/api/users/jwtauth", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const user = res.data.user;
+
+        if (user.teamId) {
+          // 팀이 존재하면 → 해당 팀의 캘린더 페이지로 이동
+          navigate(`/calendarPage/${user.teamId}`);
+        } else {
+          // 팀 없으면 → 팀 생성/가입 페이지로 이동
+          navigate("/team/join");
+        }
+      } catch (err) {
+        console.error("유저 팀 정보 확인 실패:", err);
+        alert("로그인을 하신 후 서비스 이용이 가능합니다.😊");
+        navigate("/login");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkUserTeam();
+  }, [navigate]);
+
+  if (loading) return <LoadingScreen />;
+
+  return null; // 이동 중에는 아무것도 안 보이게
+};
+
+export default CalendarRedirect;

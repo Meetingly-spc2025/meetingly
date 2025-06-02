@@ -56,7 +56,7 @@ const useMediaRecorder = ({ myStream, roomId }) => {
 
     try {
       const res = await axios.post(
-        `http://localhost:${port}/audio/upload/record`,
+        `http://localhost:${port}/api/saveSummary/upload/record`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
