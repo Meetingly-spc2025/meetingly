@@ -10,6 +10,9 @@ import useWebRTC from "../../components/Room/useWebRTC";
 import useSocket from "../../components/Room/useSocket";
 import "../../styles/Room/MeetingRoom.css";
 
+//전체적인 코드 흐름:: JWT재검증 -> meeting_id 불러오기 -> 소켓 연결 -> Peer미디어 준비, 회의참가 등록, join_room emit
+//                 -> useSocket, useWebRTC 사용
+
 const port = import.meta.env.VITE_SERVER_PORT;
 const socket = io(`http://localhost:${port}`, { autoConnect: false });
 const MAX_PARTICIPANTS = 4;
@@ -39,6 +42,7 @@ const MeetingRoom = () => {
 
   const [meetingId, setMeetingId] = useState(localStorage.getItem("meeting_id") || null);
 
+  //사용자 재검증
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -53,6 +57,7 @@ const MeetingRoom = () => {
         });
         if (!response.data || !response.data.user) {
           alert("로그인이 필요합니다.");
+          socket?.disconnect();
           navigate("/login");
           return;
         }
@@ -64,6 +69,7 @@ const MeetingRoom = () => {
     })();
   }, [navigate]);
 
+  //meeting_id가 없을 경우 roomName으로 서버에서 조회 후 localstorage에 저장
   useEffect(() => {
     if (!meetingId && roomName) {
       axios
@@ -75,6 +81,7 @@ const MeetingRoom = () => {
             setMeetingId(data.meeting_id);
           } else {
             alert("유효하지 않은 회의방입니다.");
+            localStorage.removeItem("meeting_id");
             navigate("/");
           }
         })
@@ -85,6 +92,7 @@ const MeetingRoom = () => {
     }
   }, [meetingId, roomName, navigate]);
 
+  //socket.connect()로 실시간 연결을 하고, 연결이 완료되면 연결 상태/소켓 ID관리
   useEffect(() => {
     socket.connect();
     socket.on("connect", () => {
@@ -138,6 +146,7 @@ const MeetingRoom = () => {
 
   const [teamVerified, setTeamVerified] = useState(false);
 
+  //createRoom에서 팀 검증을 하지만, 브라우저 주소창에 직접 초대링크를 입력 한 경우 팀 검증
   useEffect(() => {
     if (!user || !roomName) return;
 
@@ -169,6 +178,8 @@ const MeetingRoom = () => {
     fetchAndCheckTeam();
   }, [user, roomName, navigate]);
 
+  //소켓연결, 유저정보, meetingId, 팀검증이 모두 완료되면 getMedia()로 미디어 스트림을 받고, 
+  //서버에 참가자 등록 api 호출을 한 뒤, join_room이벤트로 signaling을 시작한다 (signaling 로직은 useWebSocket.jsx 파일에 작성)
   useEffect(() => {
     const join = async () => {
       if (socketConnected && user?.nickname && roomName && meetingId && user?.teamId && teamVerified) {
@@ -179,18 +190,21 @@ const MeetingRoom = () => {
           navigate("/");
           return;
         }
+        // 실제 signaling 시작점
         socket.emit("join_room", { roomName, nickname: user?.nickname, meeting_id: meetingId });
       }
     };
     join();
   }, [socketConnected, user, roomName, getMedia, meetingId, navigate, teamVerified]);
 
+  // 방 나가기 버튼 클릭 시 모든 PeerConnection 종료 및 소켓 연결 해제, meeting_id 삭제, 홈으로 이동
   const handleLeaveRoom = () => {
     leaveRoom();
     localStorage.removeItem("meeting_id");
     setTimeout(() => navigate("/"), 100);
   };
 
+  // 채팅 메세지 전송
   const sendMessage = () => {
     const input = document.getElementById("chatMessage");
     const text = input.value.trim();
