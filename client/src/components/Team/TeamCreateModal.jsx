@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/Task/TeamCreateModal.css";
+import "../../styles/Team/TeamCreateModal.css";
 
 const TeamCreateModal = ({ onClose, onCreate, userId, userName }) => {
   const [teamName, setTeamName] = useState("");

@@ -16,7 +16,8 @@ function initSocket(server) {
   io.on("connection", (socket) => {
     socket.on("join_room", async ({ roomName, nickname, meeting_id }) => {
       socket.join(roomName);
-      
+
+      // 방이 존재하지 않을 경우 -> 생성
       if (!rooms[roomName]) {
         rooms[roomName] = {
           users: [],
@@ -25,6 +26,7 @@ function initSocket(server) {
         nickInfo[roomName] = {};
       }
 
+      // 방의 인원이 4인 이상이면, return
       if (rooms[roomName].users.length >= 4) {
         socket.emit("room_full");
         return;
@@ -34,15 +36,18 @@ function initSocket(server) {
       nickInfo[roomName][socket.id] = nickname;
 
       const userList = rooms[roomName].users
-        .filter(id => id !== socket.id)
-        .map(id => ({ id, nickname: nickInfo[roomName][id] }));
+        .filter((id) => id !== socket.id)
+        .map((id) => ({ id, nickname: nickInfo[roomName][id] }));
 
       socket.emit("welcome", userList);
       socket.to(roomName).emit("user_joined", {
         id: socket.id,
         nickname: nickInfo[roomName][socket.id],
       });
-      io.to(roomName).emit("notice", `${nickInfo[roomName][socket.id]}님이 입장하셨습니다.`);
+      io.to(roomName).emit(
+        "notice",
+        `${nickInfo[roomName][socket.id]}님이 입장하셨습니다.`,
+      );
       io.to(roomName).emit("updateNicks", nickInfo[roomName]);
     });
 
@@ -61,7 +66,7 @@ function initSocket(server) {
     });
 
     socket.on("send", (msgData) => {
-      const roomName = [...socket.rooms].find(r => r !== socket.id);
+      const roomName = [...socket.rooms].find((r) => r !== socket.id);
       if (msgData.dm === "all") {
         io.to(roomName).emit("message", {
           id: msgData.myNick,
@@ -82,14 +87,19 @@ function initSocket(server) {
     });
 
     socket.on("disconnecting", async () => {
-      const roomsJoined = [...socket.rooms].filter(r => r !== socket.id);
+      const roomsJoined = [...socket.rooms].filter((r) => r !== socket.id);
 
       for (const roomName of roomsJoined) {
         if (!rooms[roomName]) continue;
 
-        rooms[roomName].users = rooms[roomName].users.filter(id => id !== socket.id);
+        rooms[roomName].users = rooms[roomName].users.filter(
+          (id) => id !== socket.id,
+        );
         socket.to(roomName).emit("left_room", socket.id);
-        io.to(roomName).emit("notice", `${nickInfo[roomName][socket.id]}님이 퇴장하셨습니다.`);
+        io.to(roomName).emit(
+          "notice",
+          `${nickInfo[roomName][socket.id]}님이 퇴장하셨습니다.`,
+        );
         delete nickInfo[roomName][socket.id];
 
         if (rooms[roomName].users.length > 0) {
@@ -111,7 +121,6 @@ function initSocket(server) {
     });
 
     socket.on("disconnect", () => {});
-
   });
 }
 

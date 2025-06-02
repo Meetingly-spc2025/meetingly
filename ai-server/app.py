@@ -2,10 +2,10 @@ from flask import Flask, request, jsonify
 from pydub import AudioSegment
 import os
 import filePipeline, recordPipeline
-from dotenv import load_dotenv  # ✅ 추가
+from dotenv import load_dotenv 
 
 
-load_dotenv(dotenv_path="../.env")  # 또는 "server/.env"로 경로 조정
+load_dotenv(dotenv_path="../.env")
 
 
 app = Flask(__name__)

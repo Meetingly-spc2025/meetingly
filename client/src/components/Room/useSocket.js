@@ -23,11 +23,13 @@ const useSocket = ({
 
     if (!nickname || !socketId) return;
 
+    // socket 연결 상태 관리
     socket.on("connect", () => {
       console.log("[socket connected] id:", socket.id);
       setSocketConnected(true);
     });
 
+    // 방 입장 시에 peer 연결 준비
     socket.on("welcome", async (users) => {
       console.log("[welcome] users:", users);
       for (const { id, nickname: userNick } of users) {
@@ -35,6 +37,7 @@ const useSocket = ({
       }
     });
 
+    // 새 유저 입장 시에 Offer/Answer 생성
     socket.on("user_joined", async ({ id, nickname: userNick }) => {
       const pc = createPeerConnection(id, userNick);
       const offer = await pc.createOffer();
@@ -76,6 +79,7 @@ const useSocket = ({
       await flushIceQueue(userId);
     });
 
+    // ICE Candidate 수신/연결
     socket.on("ice", async (ice, userId) => {
       const pc = peerConnections.current[userId];
       if (!pc) return;
@@ -91,6 +95,7 @@ const useSocket = ({
       }
     });
 
+    // 퇴장, 방 초과 인원, 공지 처리
     socket.on("left_room", (userId) => {
       peerConnections.current[userId]?.close();
       delete peerConnections.current[userId];
@@ -109,6 +114,7 @@ const useSocket = ({
       addMessage({ system: true, message: msg });
     });
 
+    // 닉네임 리스트 및 메세지 수신
     socket.on("updateNicks", (nickInfo) => {
       const recipients = Object.entries(nickInfo)
         .map(([id, name]) => ({ id, name }))

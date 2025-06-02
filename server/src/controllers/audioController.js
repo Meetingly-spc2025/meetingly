@@ -13,11 +13,15 @@ exports.postUploadAudio = async (req, res) => {
 
   try {
     // AI 서버에 파일 경로 전달
-    const aiRes = await axios.post("http://localhost:4000/process-file", {
-      filePath: savePath,
-    }, {
-      headers: { "Content-Type": "application/json" }
-    });
+    const aiRes = await axios.post(
+      "http://localhost:4000/process-file",
+      {
+        filePath: savePath,
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
 
     console.log("ai:: ", aiRes.data);
 
@@ -27,7 +31,6 @@ exports.postUploadAudio = async (req, res) => {
 
     // 응답 반환
     res.json({ message: "파일 업로드 완료", aiResult: aiRes.data });
-
   } catch (error) {
     console.error("오류 발생:", error);
 
