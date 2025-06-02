@@ -193,3 +193,13 @@
   margin-top: 5px;
   font-size: 0.9rem;
 }
+
+.loading-message {
+  margin: 8px 0;
+  color:"#555";
+  font-size: "0.9rem";
+}
+/* 
+.spinner{
+
+}  */
