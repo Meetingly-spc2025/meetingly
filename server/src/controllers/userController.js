@@ -8,7 +8,6 @@ const { message } = require("statuses");
 
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require('uuid');
-const userId = uuidv4();
 
 // 로그인 API 컨트롤러 함수 : 
 // POST /api/users/login 요청에 대해 이메일/비밀번호 받아 로그인 처리 & JWT 토큰 발급 후 클라이언트로 돌려주는 역할
