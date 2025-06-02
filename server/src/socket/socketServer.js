@@ -48,6 +48,23 @@ function initSocket(server) {
       });
       io.to(roomName).emit("notice", `${nickInfo[roomName][socket.id]}님이 입장하셨습니다.`);
       io.to(roomName).emit("updateNicks", nickInfo[roomName]);
+
+      socket.on("start_recording", (roomId) => {
+        const room = rooms[roomId];
+        if (!room) return;
+
+        if (room.recorded) {
+          socket.emit("notice", "이미 녹음이 완료된 방입니다.");
+          return;
+        }
+
+        room.recorded = true;
+        io.to(roomId).emit("member_start_recording");
+      });
+
+      socket.on("stop_recording", (roomId) => {
+        io.to(roomId).emit("member_stop_recording");
+      });
     });
 
     //한 참가자가 상대방에게 offer 전달 요청 시, 상대 Peer에게 1:1로 전달
@@ -119,7 +136,9 @@ function initSocket(server) {
       }
     });
 
-    socket.on("disconnect", () => {});
+    socket.on("disconnect", (e) => {
+      console.log("소켓 연결 끊어짐::", e);
+    });
 
   });
 }

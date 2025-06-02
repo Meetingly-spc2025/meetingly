@@ -17,6 +17,9 @@ const useSocket = ({
   getMedia,
   setRecipientList,
   setSocketConnected,
+  startRecording,
+  stopRecording,
+  setRecordingDone,
 }) => {
   useEffect(() => {
     if (!roomName) {
@@ -134,6 +137,17 @@ const useSocket = ({
       addMessage(msg);
     });
 
+    socket.on("member_start_recording", () => {
+      console.log("녹음 시작 감지");
+      startRecording();
+    });
+
+    socket.on("member_stop_recording", () => {
+      console.log("녹음 종료 감지");
+      stopRecording();
+      setRecordingDone(true);
+    });
+
     return () => {
       socket.off("connect");
       socket.off("welcome");
@@ -146,6 +160,8 @@ const useSocket = ({
       socket.off("notice");
       socket.off("updateNicks");
       socket.off("message");
+      socket.off("member_start_recording");
+      socket.off("member_stop_recording");
     };
   }, [
     socket,
@@ -161,6 +177,9 @@ const useSocket = ({
     getMedia,
     setRecipientList,
     setSocketConnected,
+    startRecording,
+    stopRecording,
+    setRecordingDone,
   ]);
 };
 

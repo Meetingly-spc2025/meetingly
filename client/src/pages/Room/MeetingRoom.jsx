@@ -8,6 +8,7 @@ import Controls from "../../components/Room/Controls";
 import ChatBox from "../../components/Room/ChatBox";
 import useWebRTC from "../../components/Room/useWebRTC";
 import useSocket from "../../components/Room/useSocket";
+import useMediaRecorder from "../../components/Room/MediaRecorder";
 import "../../styles/Room/MeetingRoom.css";
 
 //전체적인 코드 흐름:: JWT재검증 -> meeting_id 불러오기 -> 소켓 연결 -> Peer미디어 준비, 회의참가 등록, join_room emit
@@ -33,14 +34,17 @@ const MeetingRoom = () => {
   const [recipientId, setRecipientId] = useState("all");
   const [socketConnected, setSocketConnected] = useState(false);
   const [socketId, setSocketId] = useState(null);
+  const [meetingId, setMeetingId] = useState(localStorage.getItem("meeting_id") || null);
+  const [recording, setRecording] = useState(false);
+  const [teamVerified, setTeamVerified] = useState(false);
+  const [creatorId, setCreatorId] = useState(null);
+  const [recordingDone, setRecordingDone] = useState(false);
 
   const videoRefs = useRef([]);
 
   const addMessage = useCallback((msg) => {
     setMessages((prev) => [...prev, msg]);
   }, []);
-
-  const [meetingId, setMeetingId] = useState(localStorage.getItem("meeting_id") || null);
 
   //사용자 재검증
   useEffect(() => {
@@ -128,6 +132,8 @@ const MeetingRoom = () => {
     videoRefs,
   });
 
+  const { startRecording, stopRecording } = useMediaRecorder({ myStream: myStreamRef.current, roomId: roomName });
+
   useSocket({
     socket,
     socketId,
@@ -142,9 +148,10 @@ const MeetingRoom = () => {
     getMedia,
     setRecipientList,
     setSocketConnected,
+    startRecording,
+    stopRecording,
+    setRecordingDone,
   });
-
-  const [teamVerified, setTeamVerified] = useState(false);
 
   //createRoom에서 팀 검증을 하지만, 브라우저 주소창에 직접 초대링크를 입력 한 경우 팀 검증
   useEffect(() => {
@@ -159,6 +166,7 @@ const MeetingRoom = () => {
 
         const res2 = await axios.get(`/api/meetings/${id}`);
         const data2 = res2.data;
+        console.log("미팅 데이터::", data2);
         const meetingTeamId = data2.team_id || data2.teamId;
         if (!meetingTeamId) throw new Error("회의방 팀 정보가 없습니다.");
 
@@ -168,6 +176,7 @@ const MeetingRoom = () => {
           return;
         }
         setMeetingId(id);
+        setCreatorId(data2.creator_id);
         setTeamVerified(true);
       } catch (err) {
         alert(err.message || "방 입장에 실패했습니다.");
@@ -233,8 +242,13 @@ const MeetingRoom = () => {
             toggleCamera={toggleCamera}
             changeCamera={(e) => changeCamera(e.target.value)}
             handleLeaveRoom={handleLeaveRoom}
-            myStream={myStreamRef.current}
+            // myStream={myStreamRef.current}
             roomId={roomName}
+            isCreator={user?.id === creatorId}
+            socket={socket}
+            recording={recording}
+            setRecording={setRecording}
+            recordingDone={recordingDone}
           />
         </div>
       </div>

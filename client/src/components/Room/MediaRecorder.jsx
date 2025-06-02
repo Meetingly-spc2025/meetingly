@@ -60,10 +60,11 @@ const useMediaRecorder = ({ myStream, roomId }) => {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      alert("업로드 완료:\n" + JSON.stringify(res.data, null, 2));
+      // alert("업로드 완료:\n" + JSON.stringify(res.data, null, 2));
+      console.log("업로드 완료:\n" + JSON.stringify(res.data, null, 2));
     } catch (error) {
       console.error("업로드 처리 실패:", error);
-      alert("업로드 실패:\n" + error.message);
+      // alert("업로드 실패:\n" + error.message);
     }
   };
 
