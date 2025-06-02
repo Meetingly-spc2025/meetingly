@@ -17,12 +17,21 @@ const MeetingInfo = ({
   creator,
   totalDuration,
   fullText,
+  isCreator,
+  onDelete,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="meeting-detail-container">
-      <h3 className="meeting-info-title">회의 정보</h3>
+      <div className="meeting-info-header">
+        <h3 className="meeting-info-title">회의 정보</h3>
+        {isCreator && (
+          <div className="meeting-info-buttons">
+            <button onClick={onDelete}>삭제</button>
+          </div>
+        )}
+      </div>
       <div className="cards-wrapper">
         <div className="meeting-detail-card">
           <div className="meeting-info-item row">
@@ -63,7 +72,7 @@ const MeetingInfo = ({
       {isModalOpen && (
         <Modal
           onClose={() => setIsModalOpen(false)}
-          content={fullText || "전체 회의 내용이 없습니다."}
+          content={fullText}
         />
       )}
     </div>

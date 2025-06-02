@@ -1,6 +1,11 @@
 import React from "react";
+import "../../styles/Task/DiscussionList.css";
 
-const DiscussionList = ({ discussionContent }) => {
+const DiscussionList = ({
+  discussionContent,
+  isCreator,
+  onEdit
+}) => {
   if (!discussionContent) {
     return (
       <div className="discussion-section">
@@ -15,7 +20,15 @@ const DiscussionList = ({ discussionContent }) => {
 
   return (
     <div className="discussion-section">
-      <h3>주요 논의 사항</h3>
+      <div className="discussion-header">
+        <h3 className="discussion-title">주요 논의 사항</h3>
+        {isCreator && (
+          <div className="discussion-buttons">
+            <button onClick={onEdit}>수정</button>
+          </div>
+        )}
+      </div>
+
       {lines.length > 1 ? (
         <ul style={{ listStyle: "none", paddingLeft: 0, margin: 0 }}>
           {lines.map((line, idx) => (

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models/db_users");
 
-// [GET] /api/meeting/:meetingId?teamId=xxx
+// [GET] /api/meetingDetail/${meetingId}?teamId=${teamId}
 // 특정 회의의 상세 정보를 가져오는 라우트
 router.get("/:meetingId", async (req, res) => {
   const { meetingId } = req.params;       // URL 파라미터로 전달되는 meetingId
@@ -17,6 +17,7 @@ router.get("/:meetingId", async (req, res) => {
       SELECT
         m.meeting_id,
         m.title,
+        m.creator_id,
         DATE_FORMAT(m.start_time, '%Y. %m. %d') AS date, -- 날짜 형식 포맷
         TIME_FORMAT(TIMEDIFF(m.end_time, m.start_time), '%H:%i:%s') AS totalDuration, -- 소요 시간 계산
         u.name AS host, -- 호스트 이름
@@ -55,5 +56,31 @@ router.get("/:meetingId", async (req, res) => {
     res.status(500).json({ error: "조회 실패" });
   }
 });
+
+// [DELETE] /api/meetingDetail/meeting/:meetingId
+router.delete("/meeting/:meetingId", async (req, res) => {
+  const { meetingId } = req.params;
+  try {
+    await db.query("DELETE FROM meetings WHERE meeting_id = ?", [meetingId]);
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("회의 삭제 오류:", err);
+    res.status(500).json({ error: "삭제 실패" });
+  }
+});
+
+// [PUT] /api/meetingDetail/summary/:summaryId
+router.put("/summary/:summaryId", async (req, res) => {
+  const { summaryId } = req.params;
+  const { content } = req.body;
+  try {
+    await db.query("UPDATE summaries SET content = ? WHERE summary_id = ?", [content, summaryId]);
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("Summary 수정 오류:", err);
+    res.status(500).json({ error: "수정 실패" });
+  }
+});
+
 
 module.exports = router;

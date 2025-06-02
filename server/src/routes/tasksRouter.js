@@ -3,23 +3,8 @@ const router = express.Router();
 const db = require("../models/db_users");
 const { v4: uuidv4 } = require("uuid");
 
-// 특정 summary에 연결된 tasks 조회
-router.get("/summary/:summary_id", async (req, res) => {
-  const { summary_id } = req.params;
-  try {
-    // summary_id로 연결된 모든 task를 created_at 기준으로 오름차순 조회
-    const [tasks] = await db.query(
-      "SELECT * FROM tasks WHERE summary_id = ? ORDER BY created_at ASC",
-      [summary_id]
-    );
-    res.json(tasks);
-  } catch (err) {
-    console.error("GET /summary/:summary_id 에러:", err);
-    res.status(500).json({ error: "조회 실패" });
-  }
-});
-
 // 특정 meeting의 action summary_id만 연결된 tasks 조회
+// [GET] /api/tasks/meeting/${meetingId}
 router.get("/meeting/:meeting_id", async (req, res) => {
   const { meeting_id } = req.params;
   try {
@@ -57,6 +42,7 @@ router.get("/meeting/:meeting_id", async (req, res) => {
 });
 
 // 새로운 task 추가 (assignee_id는 선택)
+// [POST] /api/tasks
 router.post("/", async (req, res) => {
   const { content, assignee_id, status, summary_id } = req.body;
   const task_id = uuidv4();
@@ -75,6 +61,7 @@ router.post("/", async (req, res) => {
 });
 
 // 특정 task 수정
+// [PUT] /api/tasks/${task.task_id}
 router.put("/:task_id", async (req, res) => {
   const { task_id } = req.params;
   const { content, assignee_id, status } = req.body;
@@ -96,6 +83,7 @@ router.put("/:task_id", async (req, res) => {
 });
 
 // 특정 task 삭제
+// [DELETE] /api/tasks/${id}
 router.delete("/:task_id", async (req, res) => {
   const { task_id } = req.params;
   try {
@@ -108,6 +96,7 @@ router.delete("/:task_id", async (req, res) => {
 });
 
 // 특정 팀의 멤버 목록 조회
+// [GET] /api/tasks/team/${teamId}/members
 router.get("/team/:team_id/members", async (req, res) => {
   const { team_id } = req.params;
   try {

@@ -142,3 +142,41 @@
   background-color: #0F123F;
   color: white;
 }
+
+/* 정렬, 검색 */
+.meetinglist-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.meetinglist-controls select,
+.meetinglist-controls input {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+/* 미팅 없을 떄 */
+.no-meetings {
+  text-align: center;
+  padding: 20px;
+  color: black;
+}
+
+.create-meeting-btn {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background-color: #194C99;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.create-meeting-btn:hover {
+  background-color: #1d4ed8;
+}

@@ -108,3 +108,14 @@
     cursor: pointer;
   }
   
+  .meeting-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .meeting-info-buttons button {
+    margin-left: 8px;
+  }
+  
