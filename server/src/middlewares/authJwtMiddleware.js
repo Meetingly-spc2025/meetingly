@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "default-secret";
 
+// 미들웨어 함수 작성
 exports.authenticate = (req, res, next) => {
     const authHeader = req.headers.authorization;
     console.log("터미널 디버깅 - 헤더 정보:, ", authHeader)

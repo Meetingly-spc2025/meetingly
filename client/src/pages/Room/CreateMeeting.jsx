@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { RoomForm, JoinByLink } from "../../components/Room/MeetingFormComponents";
+import {
+  RoomForm,
+  JoinByLink,
+} from "../../components/Room/MeetingFormComponents";
 import axios from "axios";
 import "../../styles/Room/CreateMeeting.css";
 
@@ -62,7 +65,7 @@ const CreateMeeting = () => {
       alert("모든 정보를 입력해주세요.");
       return;
     }
-  
+
     const uuid = crypto.randomUUID();
     const roomName = `${roomTitle}__${uuid}`;
     const link = `${window.location.origin}/room/${roomName}`;
@@ -86,7 +89,7 @@ const CreateMeeting = () => {
       console.log("회의방 생성 실패: " + err.message);
       return;
     }
-  
+
     setInviteLink(link);
     setShowInviteLink(true);
     setCreatedRoomName(roomName);
@@ -121,17 +124,19 @@ const CreateMeeting = () => {
     if (!input || !input.startsWith("http")) {
       alert("유효한 초대 링크를 입력하세요.");
       return;
-    } 
+    }
     const relativePath = input.replace(window.location.origin, "");
     const match = relativePath.match(/\/room\/(.+)$/);
     if (!match) {
       alert("유효한 초대 링크를 입력하세요.");
       return;
     }
-    const roomName = match[1];
+    const roomName = match[1]; // /room/:roomName 패턴에서 roomName 추출
 
+    // 방 정보 조회
     try {
       //참여하려는 방 여부 확인
+      // 1. meeting_id 기준 조회
       const res1 = await axios.get(`/api/meetings/roomName/${roomName}`);
       if (res1.status !== 200) throw new Error("방 정보를 불러올 수 없습니다.");
       const data1 = res1.data;
@@ -142,11 +147,12 @@ const CreateMeeting = () => {
       }
 
       //참여하려는 방의 team_id 확인
+      // 2. team_id 기준 조회
       const res2 = await axios.get(`/api/meetings/${meetingId}`);
       if (res2.status !== 200) throw new Error("방 정보를 불러올 수 없습니다.");
       const data2 = res2.data;
       const meetingTeamId = data2.team_id || data2.teamId;
-        
+
       if (!meetingTeamId) {
         alert("회의방 team_id를 찾을 수 없습니다.");
         return;
@@ -185,10 +191,7 @@ const CreateMeeting = () => {
               onCopyLink={copyLink}
               onEnterRoom={handleEnterRoom}
             />
-            <JoinByLink
-              onJoin={joinByLink}
-              joinLinkRef={joinLinkRef}
-            />
+            <JoinByLink onJoin={joinByLink} joinLinkRef={joinLinkRef} />
           </>
         )}
       </div>

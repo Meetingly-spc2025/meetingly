@@ -90,6 +90,20 @@
   padding: 1rem;
   border-radius: 10px;
   background-color: white;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.member-card:hover {
+  background-color: #f1f5f9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease-in-out;
+}
+
+/* admin인 팀원의 member-card 강조 */
+.member-card.admin-member {
+  border: 2px solid #0ea5e9; /* 파란 테두리 */
+  background-color: #e0f2fe; /* 연한 파란 배경 */
 }
 
 .member-photo {
@@ -160,4 +174,108 @@
   width: 250px;
   color: #334155;
   background-color: #f8fafc;
+}
+
+/* admin */
+.admin-controls {
+  margin-bottom: 24px;
+  margin-top: 1rem;
+  background: #f8fafc;
+  padding: 1.2rem;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-badge {
+  font-size: 0.75rem;
+  background-color: #0284c7;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-left: 8px;
+}
+
+.edit-team-name {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.teamname-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.teamname-input:disabled {
+  background-color: #f1f5f9;
+  color: #888;
+}
+
+.button-group {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn,
+.update-btn,
+.cancel-btn,
+.delete-btn {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-btn {
+  background-color: #0284c7;
+  color: white;
+}
+
+.update-btn {
+  background-color: #16a34a;
+  color: white;
+}
+
+.cancel-btn {
+  background-color: #f87171;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #ef4444;
+  color: white;
+  margin-top: 8px;
+}
+
+.update-btn:hover {
+  background-color: #2563eb;
+}
+
+.delete-btn:hover {
+  background-color: #dc2626;
+}
+
+/* Kick Button */
+.kick-btn {
+  margin-left: auto;
+  background-color: #f87171; /* 연한 레드 */
+  color: white;
+  padding: 0.4rem 0.9rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.kick-btn:hover {
+  background-color: #ef4444; /* 진한 레드 */
 }

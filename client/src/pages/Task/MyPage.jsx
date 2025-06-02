@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useId } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+5;
 import "../../styles/Task/MyPage.css";
 
 function MyPage() {
@@ -7,30 +10,42 @@ function MyPage() {
   const [isChecked, setIsChecked] = useState(false);
   const [isAvailable, setIsAvailable] = useState(null);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
-  const [teamName, setTeamName] = useState("개발팀");
+  const [teamName, setTeamName] = useState("");
   const [userInfo, setUserInfo] = useState({
+    useId: "",
     name: "",
     email: "",
-    teamName: "",
+    teamId: "",
   });
 
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const res = await axios.get("/api/users/jwtauth", {
+        const resUser = await axios.get("/api/users/jwtauth", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const user = res.data.user;
+        const user = resUser.data.user;
+        console.log("user는 :: ", user);
         setUserInfo({
+          userId: user.id,
           name: user.name,
           email: user.email,
+          teamId: user.teamId,
         });
         setNickname(user.nickname || "");
-        setTeamName(user.teamId || "");
+
+        const resTeam = await axios.get(
+          `/api/mypage/team-data?teamId=${user.teamId}`,
+        );
+        const teamData = resTeam.data.teamName || "";
+        setTeamName(teamData);
       } catch (err) {
+        alert("로그인을 해야 이용 가능한 페이지 입니다.😊");
+        navigate("/login");
         console.error("유저 정보 조회 실패:", err);
       }
     };
@@ -48,14 +63,15 @@ function MyPage() {
   const handleNicknameSave = async () => {
     try {
       await axios.put(
-        "/api/users/update-nickname",
-        { nickname },
+        "/api/mypage/update-nickname",
+        { userInfo, nickname },
         {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
       console.log("닉네임 저장 성공:", nickname);
       setIsNicknameEditable(false);
+      window.location.reload();
     } catch (err) {
       console.error("닉네임 저장 실패:", err);
     }
@@ -65,7 +81,7 @@ function MyPage() {
   const handleCheckDuplicate = async () => {
     try {
       const res = await axios.get(
-        `/api/users/check-nickname?nickname=${nickname}`,
+        `/api/mypage/check-nickname?nickname=${nickname}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -73,25 +89,49 @@ function MyPage() {
       setIsAvailable(res.data.available); // true/false
       setIsChecked(true);
     } catch (err) {
+      alert("이미 존재하는 닉네임 입니다. 다른 닉네임으로 입력해주세요.");
+      window.location.reload();
       console.error("중복 확인 에러", err);
     }
   };
 
-  const handleTeamWithdraw = () => {
+  // 서비스 탈퇴
+  const handleMeetinglyWithdraw = async () => {
+    try {
+      await axios.post(
+        "/api/mypage/leave-meetingly",
+        { userInfo },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      console.log("미팅리 탈퇴 완료");
+      setTeamId("");
+    } catch (err) {
+      console.error("미팅리 탈퇴 실패:", err);
+    } finally {
+      setShowWithdrawModal(false);
+    }
+  };
+
+  // 팀 탈퇴 버튼
+  const handleTeamWithdraw = async () => {
     setShowWithdrawModal(true);
   };
 
   const confirmWithdraw = async () => {
     try {
       await axios.post(
-        "/api/users/leave-team",
-        {},
+        "/api/mypage/leave-team",
+        { userInfo },
         {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
       console.log("팀 탈퇴 완료");
-      setTeamName("");
+      setUserInfo.teamId(null);
+      alert("팀 탈퇴가 완료되었습니다.");
+      navigate("/team");
     } catch (err) {
       console.error("팀 탈퇴 실패:", err);
     } finally {
@@ -187,8 +227,8 @@ function MyPage() {
           <div className="change-input">
             <input
               type="text"
-              placeholder="소속 팀을 입력하세요."
-              value={teamName}
+              placeholder="소속 팀이 없습니다. 팀에 가입하고 서비스를 이용해보세요."
+              value={teamName || ""}
               disabled
             />
             {teamName && (
@@ -211,7 +251,11 @@ function MyPage() {
           <a href="/change-password" className="link-button">
             비밀번호 변경
           </a>
-          <a href="/withdraw-user" className="link-button danger">
+          <a
+            href="/withdraw-user"
+            className="link-button danger"
+            onClick={handleMeetinglyWithdraw}
+          >
             탈퇴하기
           </a>
         </div>
