@@ -21,17 +21,17 @@ exports.loginUser = async (req, res) => {
     const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
-    console.log("DB 쿼리 결과: ", rows);
+    // console.log("DB 쿼리 결과: ", rows);
 
     const user = rows[0];
 
     if (!user) {
-      console.log("이메일 없을때 뜨는 디버그. 사용자 없습니다.");
+      // console.log("이메일 없을때 뜨는 디버그. 사용자 없습니다.");
       return res.status(401).json({ message: "존재하지 않는 이메일입니다." });
     }
 
-    console.log("DB 상 비밀번호: ", user.password);
-    console.log("입력된 비밀번호: ", password);
+    // console.log("DB 상 비밀번호: ", user.password);
+    // console.log("입력된 비밀번호: ", password);
 
     // 클라이언트가 입력한 평문비밀번호 password (req.body) 와 DB에 저장된 암호화된 해시 비밀번호 user.password 비교
     const isMatch = await bcrypt.compare(password, user.password);
@@ -45,14 +45,24 @@ exports.loginUser = async (req, res) => {
         id: user.user_id,
         email: user.email,
         name: user.name,
-        role: user.role,
         nickname: user.nickname,
         teamId: user.team_id,
       },
       JWT_SECRET,
       { expiresIn: "2h" },
     );
-    res.status(200).json({ message: "로그인 성공", token });
+    res.status(200).json({ message: "로그인 성공",
+      token,
+      user: {
+        id:user.user_id,
+        name:user.name,
+        email:user.email,
+        role:user.role,
+        nickname:user.nickname,
+        teamId:user.team_id
+      }
+    });
+    console.log("user: ", user)
   } catch (error) {
     console.error("로그인 실패:", error);
     res.status(500).json({ message: "서버 에러" });
