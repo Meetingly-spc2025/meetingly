@@ -2,9 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/Navbar.css";
 import { useUser } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
+
 
 const Navbar = () => {
-  const { user } = useUser(); 
+  const { user, setUser } = useUser(); 
+  const navigate = useNavigate();
 
   return (
     <header className="nav-header">
@@ -29,7 +32,10 @@ const Navbar = () => {
                 className="nav-logout-button"
                 onClick={() => {
                   localStorage.removeItem("token");
-                  window.location.href = "/login"; // or use navigate()
+                  localStorage.removeItem("meeting_id");
+                  localStorage.removeItem("nickname");
+                  setUser(null);
+                  navigate("/login");
                 }}
               >
                 로그아웃
