@@ -34,7 +34,6 @@ router.get("/:meetingId", async (req, res) => {
     if (meetingResult.length === 0) {
       return res.status(404).json({ error: "회의를 찾을 수 없습니다." });
     }
-
     // 2. 회의에 연결된 summaries 정보 조회 (ex. 논의사항, 요약, fulltext 등)
     //   - room_fullname으로 연결
     const [summaries] = await db.query(`
@@ -44,7 +43,6 @@ router.get("/:meetingId", async (req, res) => {
         SELECT room_fullname FROM meetings WHERE meeting_id = ?
       )
     `, [meetingId]);
-
     // 최종 JSON으로 회의 정보 + summaries 반환
     res.json({
       meeting: meetingResult[0],
@@ -61,6 +59,27 @@ router.get("/:meetingId", async (req, res) => {
 router.delete("/meeting/:meetingId", async (req, res) => {
   const { meetingId } = req.params;
   try {
+    const [[roomRow] = []] = await db.query(
+      "SELECT room_fullname FROM meetings WHERE meeting_id = ?",
+      [meetingId]
+    );
+    if (!roomRow || !roomRow.room_fullname) {
+      return res.status(404).json({ error: "회의를 찾을 수 없습니다." });
+    }
+    const roomFullname = roomRow.room_fullname;
+    const [summaryRows] = await db.query(
+      "SELECT summary_id FROM summaries WHERE room_fullname = ?",
+      [roomFullname]
+    );
+    const summaryIds = summaryRows.map((row) => row.summary_id);
+    if (summaryIds.length > 0) {
+      await db.query(
+        `DELETE FROM tasks WHERE summary_id IN (${summaryIds.map(() => '?').join(',')})`,
+        summaryIds
+      );
+    }
+    await db.query("DELETE FROM summaries WHERE room_fullname = ?", [roomFullname]);
+    await db.query("DELETE FROM participants WHERE meeting_id = ?", [meetingId]);
     await db.query("DELETE FROM meetings WHERE meeting_id = ?", [meetingId]);
     res.sendStatus(200);
   } catch (err) {
@@ -69,18 +88,52 @@ router.delete("/meeting/:meetingId", async (req, res) => {
   }
 });
 
+
+
+// [PATCH] /api/meetingDetail/meeting/:meetingId
+router.patch("/meeting/:meetingId", async (req, res) => {
+  const { meetingId } = req.params;
+  const { meetingName } = req.body;
+  if (!meetingName) {
+    return res.status(400).json({ error: "meetingName이 필요합니다." });
+  }
+  try {
+    const [result] = await db.query(
+      "UPDATE meetings SET title = ? WHERE meeting_id = ?",
+      [meetingName, meetingId]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "해당 회의를 찾을 수 없습니다." });
+    }
+    res.status(200).json({ message: "회의 제목이 성공적으로 수정되었습니다." });
+  } catch (err) {
+    console.error("회의 제목 수정 오류:", err);
+    res.status(500).json({ error: "수정 실패" });
+  }
+});
+
 // [PUT] /api/meetingDetail/summary/:summaryId
 router.put("/summary/:summaryId", async (req, res) => {
   const { summaryId } = req.params;
   const { content } = req.body;
+  if (!content) {
+    return res.status(400).json({ error: "content는 필수입니다." });
+  }
   try {
-    await db.query("UPDATE summaries SET content = ? WHERE summary_id = ?", [content, summaryId]);
-    res.sendStatus(200);
+    const [result] = await db.query(
+      "UPDATE summaries SET content = ? WHERE summary_id = ?",
+      [content, summaryId]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "해당 요약이 존재하지 않습니다." });
+    }
+    res.status(200).json({ message: "요약이 성공적으로 수정되었습니다." });
   } catch (err) {
     console.error("Summary 수정 오류:", err);
     res.status(500).json({ error: "수정 실패" });
   }
 });
+
 
 
 module.exports = router;

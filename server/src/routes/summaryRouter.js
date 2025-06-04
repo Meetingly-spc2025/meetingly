@@ -35,52 +35,18 @@ router.post('/upload/record', upload.single("audio"), async (req, res) => {
       { headers: { "Content-Type": "application/json" } }
     );
 
-    // recordPipeline 으로부터 받아온 데이터
     const { transcript, summary, tasks, discussion } = aiRes.data;
     const currentTimestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const generateUUID = () => uuidv4();
 
-    // tasks 처리: "false" 문자열 등 예외 처리
-    const noTaskValues = ["/", "false", "", null, undefined];
-    let taskArray = [];
-
-    if (!noTaskValues.includes(tasks)) {
-      if (typeof tasks === "string") {
-        if (tasks === "false") {
-          console.log("tasks가 'false' 문자열로 전달됨 (tasks 저장 스킵)");
-          taskArray = [];
-        } else {
-          try {
-            const parsed = JSON.parse(tasks);
-            if (Array.isArray(parsed)) {
-              taskArray = parsed;
-            } else {
-              console.warn("JSON 파싱 결과가 배열이 아님 (tasks 저장 스킵):", parsed);
-              taskArray = [];
-            }
-          } catch (err) {
-            console.error("tasks를 JSON으로 파싱 실패:", err);
-            taskArray = [];
-          }
-        }
-      } else if (Array.isArray(tasks)) {
-        taskArray = tasks;
-      } else {
-        console.warn("tasks 형식이 배열/문자열이 아님 (tasks 저장 스킵):", tasks);
-        taskArray = [];
-      }
-    } else {
-      console.log("tasks가 없음으로 간주되는 값 (tasks 저장 스킵):", tasks);
-    }
-
-    // summaries 테이블 저장 (action은 content=null 처리)
+    // summaries 테이블 저장
     const summaries = [
       { summary_id: generateUUID(), status: 'fulltext', content: transcript, created_at: currentTimestamp },
       { summary_id: generateUUID(), status: 'keypoint', content: summary, created_at: currentTimestamp },
       {
         summary_id: generateUUID(),
         status: 'action',
-        content: taskArray.length === 0 ? null : JSON.stringify(taskArray),
+        content: tasks,
         created_at: currentTimestamp
       },
       { summary_id: generateUUID(), status: 'discussion', content: discussion, created_at: currentTimestamp }
@@ -97,9 +63,33 @@ router.post('/upload/record', upload.single("audio"), async (req, res) => {
     }
     console.log("summaries 테이블 저장 완료");
 
+    // tasks 문자열 클렌징 및 파싱
+    let taskArray = [];
+
+    if (typeof tasks === "string") {
+      const cleaned = tasks.replace(/```json|```/g, "").trim();
+
+      if (cleaned.toLowerCase() !== "false") {
+        try {
+          const parsed = JSON.parse(cleaned);
+          if (Array.isArray(parsed)) {
+            taskArray = parsed;
+            console.log("📋 파싱된 taskArray:", taskArray);
+          } else {
+            console.warn("tasks 파싱 결과가 배열이 아님:", parsed);
+          }
+        } catch (err) {
+          console.warn("tasks 파싱 실패:", err.message);
+        }
+      } else {
+        console.log("tasks 값이 'false' 문자열 -> 저장 스킵");
+      }
+    } else if (Array.isArray(tasks)) {
+      taskArray = tasks;
+    }
+
     // tasks 테이블 저장
     if (taskArray.length > 0) {
-      // summaries 테이블에서 action값 추출
       const actionSummaryId = summaries.find(s => s.status === 'action').summary_id;
       const taskQuery = `
         INSERT INTO tasks (task_id, content, assignee_id, status, created_at, summary_id)
@@ -113,10 +103,11 @@ router.post('/upload/record', upload.single("audio"), async (req, res) => {
       }
       console.log("tasks 테이블 저장 완료");
     } else {
-      console.log("taskArray가 비어있음 (tasks 저장 스킵)");
+      console.log("tasks 저장 스킵 (비어 있거나 유효하지 않음)");
     }
 
     res.json({ message: "녹음 업로드 및 DB 저장 완료", aiResult: aiRes.data });
+
   } catch (error) {
     console.error('AI 서버 or DB 저장 오류:', error.response ? error.response.data : error.message);
     res.status(500).json({

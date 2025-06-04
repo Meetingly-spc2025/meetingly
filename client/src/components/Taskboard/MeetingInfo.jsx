@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import "../../styles/Task/MeetingInfo.css";
 
-const Modal = ({ onClose, content }) => (
+const Modal = ({ onClose, children }) => (
   <div className="modal-overlay">
     <div className="modal-content">
       <button className="modal-close" onClick={onClose}>X</button>
-      <div className="modal-text">{content}</div>
+      <div className="modal-text">{children}</div>
     </div>
   </div>
 );
@@ -18,9 +18,23 @@ const MeetingInfo = ({
   totalDuration,
   fullText,
   isCreator,
+  onEdit,
   onDelete,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false); 
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedMeetingName, setEditedMeetingName] = useState(meetingName);
+
+  const handleSave = () => {
+    if (onEdit) onEdit(editedMeetingName);
+    setIsEditing(false);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (onDelete) onDelete();
+    setIsDeleteConfirmOpen(false);
+  };
 
   return (
     <div className="meeting-detail-container">
@@ -28,20 +42,41 @@ const MeetingInfo = ({
         <h3 className="meeting-info-title">회의 정보</h3>
         {isCreator && (
           <div className="meeting-info-buttons">
-            <button onClick={onDelete}>삭제</button>
+            {isEditing ? (
+              <>
+                <button onClick={handleSave}>저장</button>
+                <button onClick={() => setIsEditing(false)}>취소</button>
+              </>
+            ) : (
+              <>
+                <button onClick={() => setIsEditing(true)}>수정</button>
+                <button onClick={() => setIsDeleteConfirmOpen(true)}>삭제</button>
+              </>
+            )}
           </div>
         )}
       </div>
+
       <div className="cards-wrapper">
         <div className="meeting-detail-card">
           <div className="meeting-info-item row">
             <span className="label">회의 이름</span>
-            <span>{meetingName}</span>
+            {isEditing ? (
+              <input
+                type="text"
+                value={editedMeetingName}
+                onChange={(e) => setEditedMeetingName(e.target.value)}
+              />
+            ) : (
+              <span>{meetingName}</span>
+            )}
           </div>
+
           <div className="meeting-info-item row">
             <span className="label">참여자 이름</span>
             <span>{participants}</span>
           </div>
+
           <div className="meeting-info-item row">
             <span className="label">회의 날짜</span>
             <span>{date}</span>
@@ -53,6 +88,7 @@ const MeetingInfo = ({
             <span className="label">회의 생성자</span>
             <span>{creator}</span>
           </div>
+
           <div className="meeting-info-item row">
             <span className="label">전체 회의 내용</span>
             <button
@@ -62,6 +98,7 @@ const MeetingInfo = ({
               보기 📄
             </button>
           </div>
+
           <div className="meeting-info-item row">
             <span className="label">총 회의시간</span>
             <span>{totalDuration}</span>
@@ -70,10 +107,21 @@ const MeetingInfo = ({
       </div>
 
       {isModalOpen && (
-        <Modal
-          onClose={() => setIsModalOpen(false)}
-          content={fullText}
-        />
+        <Modal onClose={() => setIsModalOpen(false)}>
+          <div style={{ whiteSpace: "pre-wrap" }}>{fullText}</div>
+        </Modal>
+      )}
+
+      {isDeleteConfirmOpen && (
+        <Modal onClose={() => setIsDeleteConfirmOpen(false)}>
+          <p>정말로 이 회의를 삭제하시겠습니까?</p>
+          <div style={{ marginTop: "1rem", textAlign: "right" }}>
+            <button onClick={handleDeleteConfirm} style={{ marginRight: "10px" }}>
+              확인
+            </button>
+            <button onClick={() => setIsDeleteConfirmOpen(false)}>취소</button>
+          </div>
+        </Modal>
       )}
     </div>
   );
