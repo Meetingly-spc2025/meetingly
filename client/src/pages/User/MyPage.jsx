@@ -12,7 +12,6 @@ function MyPage() {
     "/images/profile4.png",
     "/images/profile5.png",
   ];
-  const [selectedImage, setSelectedImage] = useState(currentUser.user_image);
 
   const [isNicknameEditable, setIsNicknameEditable] = useState(false);
   const [nickname, setNickname] = useState("");
