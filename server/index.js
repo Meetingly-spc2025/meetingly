@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const http = require("http");
-const db = require("./src/models/db_users"); // 네가 만든 db pool 불러오기
+const db = require("./src/models/meetingly_db"); // 네가 만든 db pool 불러오기
 
 // .env 적용된 상태에서 라우터 실행
 const initSocket = require("./src/socket/socketServer");

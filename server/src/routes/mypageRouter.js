@@ -1,5 +1,5 @@
 const express = require("express");
-const db = require("../models/db_users");
+const db = require("../models/meetingly_db");
 const controller = require("../controllers/mypageController");
 const router = express.Router();
 

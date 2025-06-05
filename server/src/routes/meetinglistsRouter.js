@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../models/db_users");
+const db = require("../models/meetingly_db");
 const { v4: uuidv4 } = require("uuid");
 const { authenticate } = require("../middlewares/authJwtMiddleware");
 
@@ -30,7 +30,8 @@ router.get("/task/:teamId", authenticate, async (req, res) => {
 
     queryParams.push(pageSize, offset);
 
-    const [meetings] = await db.query(`
+    const [meetings] = await db.query(
+      `
       SELECT
         m.meeting_id,
         m.title,
@@ -47,14 +48,17 @@ router.get("/task/:teamId", authenticate, async (req, res) => {
       GROUP BY m.meeting_id
       ORDER BY m.start_time ${sortOrder}
       LIMIT ? OFFSET ?
-    `, queryParams);
+    `,
+      queryParams,
+    );
 
     const countQueryParams = [teamId, `%${searchKeyword}%`];
     if (createdByMe === "me" && userId) {
       countQueryParams.push(userId);
     }
 
-    const [totalCountResult] = await db.query(`
+    const [totalCountResult] = await db.query(
+      `
       SELECT COUNT(DISTINCT m.meeting_id) AS totalCount
       FROM meetings m
       JOIN users u ON m.creator_id = u.user_id
@@ -62,11 +66,13 @@ router.get("/task/:teamId", authenticate, async (req, res) => {
       JOIN users u2 ON p.user_id = u2.user_id
       WHERE m.team_id = ? AND m.title LIKE ?
       ${createdByMe === "me" && userId ? "AND m.creator_id = ?" : ""}
-    `, countQueryParams);
+    `,
+      countQueryParams,
+    );
 
     res.json({
       meetings,
-      totalDataCount: totalCountResult[0].totalCount
+      totalDataCount: totalCountResult[0].totalCount,
     });
   } catch (error) {
     console.error("GET /api/meetinglists/task/:teamId 에러:", error);
@@ -77,8 +83,8 @@ router.get("/task/:teamId", authenticate, async (req, res) => {
 // [GET] /api/meetinglists/task/${teamId}/by-month?year=${year}&month=${month}
 // 특정 팀의 '특정 날짜' 회의 목록만 조회하는 라우터
 router.get("/task/:teamId/by-date", async (req, res) => {
-  const { teamId } = req.params;         // URL 파라미터 (팀 ID)
-  const { date } = req.query;            // 쿼리 파라미터 (조회할 날짜: YYYY-MM-DD)
+  const { teamId } = req.params; // URL 파라미터 (팀 ID)
+  const { date } = req.query; // 쿼리 파라미터 (조회할 날짜: YYYY-MM-DD)
   const page = parseInt(req.query.page) || 1;
   const pageSize = 6;
   const offset = (page - 1) * pageSize;
@@ -91,7 +97,8 @@ router.get("/task/:teamId/by-date", async (req, res) => {
 
   try {
     // 1. 팀 ID + 날짜로 회의 목록 조회
-    const [meetings] = await db.query(`
+    const [meetings] = await db.query(
+      `
       SELECT
         m.meeting_id,
         m.title,
@@ -106,19 +113,24 @@ router.get("/task/:teamId/by-date", async (req, res) => {
       GROUP BY m.meeting_id
       ORDER BY m.start_time DESC
       LIMIT ? OFFSET ?
-    `, [teamId, date, pageSize, offset]);
+    `,
+      [teamId, date, pageSize, offset],
+    );
 
     // 2. 전체 개수 조회 (날짜 기준)
-    const [totalCountResult] = await db.query(`
+    const [totalCountResult] = await db.query(
+      `
       SELECT COUNT(*) AS totalCount
       FROM meetings
       WHERE team_id = ? AND DATE(start_time) = ?
-    `, [teamId, date]);
+    `,
+      [teamId, date],
+    );
 
     // 3. 응답
     res.json({
       meetings,
-      totalDataCount: totalCountResult[0].totalCount
+      totalDataCount: totalCountResult[0].totalCount,
     });
   } catch (error) {
     console.error("GET /api/meetinglists/task/:teamId/by-date 에러:", error);
@@ -147,7 +159,7 @@ router.get("/task/:teamId/by-month", async (req, res) => {
       GROUP BY m.meeting_id
       ORDER BY m.start_time ASC
       `,
-      [teamId, year, month]
+      [teamId, year, month],
     );
 
     res.json({ meetings });

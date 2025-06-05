@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../models/db_users");
+const db = require("../models/meetingly_db");
 const { v4: uuidv4 } = require("uuid");
 
 // 특정 meeting의 action summary_id만 연결된 tasks 조회
@@ -11,17 +11,19 @@ router.get("/meeting/:meeting_id", async (req, res) => {
     // 1. meeting_id로부터 room_fullname 조회
     const [roomResult] = await db.query(
       "SELECT room_fullname FROM meetings WHERE meeting_id = ?",
-      [meeting_id]
+      [meeting_id],
     );
     const room_fullname = roomResult[0]?.room_fullname;
     if (!room_fullname) {
-      return res.status(404).json({ error: "meeting_id의 room_fullname이 없습니다." });
+      return res
+        .status(404)
+        .json({ error: "meeting_id의 room_fullname이 없습니다." });
     }
 
     // 2. 해당 room_fullname과 status=action인 summary_id 찾기
     const [summaryResult] = await db.query(
       "SELECT summary_id FROM summaries WHERE room_fullname = ? AND status = 'action'",
-      [room_fullname]
+      [room_fullname],
     );
     const summary_id = summaryResult[0]?.summary_id;
     if (!summary_id) {
@@ -31,7 +33,7 @@ router.get("/meeting/:meeting_id", async (req, res) => {
     // 3. 찾은 summary_id에 연결된 tasks 조회
     const [tasks] = await db.query(
       "SELECT * FROM tasks WHERE summary_id = ? ORDER BY created_at ASC",
-      [summary_id]
+      [summary_id],
     );
 
     res.json(tasks);
@@ -51,7 +53,7 @@ router.post("/", async (req, res) => {
     // 새로운 task 데이터를 INSERT (assignee_id가 없으면 null로 처리)
     await db.query(
       "INSERT INTO tasks (task_id, content, assignee_id, status, summary_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
-      [task_id, content, assignee_id || null, status, summary_id]
+      [task_id, content, assignee_id || null, status, summary_id],
     );
     res.status(201).json({ task_id }); // 생성된 task_id 반환
   } catch (err) {
@@ -73,7 +75,7 @@ router.put("/:task_id", async (req, res) => {
     // task_id 기준으로 내용, 담당자, 상태를 수정
     await db.query(
       "UPDATE tasks SET content = ?, assignee_id = ?, status = ? WHERE task_id = ?",
-      [content, finalAssigneeId, status, task_id]
+      [content, finalAssigneeId, status, task_id],
     );
     res.sendStatus(200);
   } catch (err) {
@@ -106,7 +108,7 @@ router.get("/team/:team_id/members", async (req, res) => {
        FROM team_members tm
        JOIN users u ON tm.user_id = u.user_id
        WHERE tm.team_id = ?`,
-      [team_id]
+      [team_id],
     );
     res.json(members);
   } catch (err) {

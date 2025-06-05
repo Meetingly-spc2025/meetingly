@@ -10,12 +10,10 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
   const [muted, setMuted] = useState(false);
   const [cameraOff, setCameraOff] = useState(false);
 
-  //PeerConnection과 실제 미디어/비디오 할당을 담당하는 컴포넌트
-  //코드흐름:: 내 스트림, 상대 스트림 관리 -> 각 PeerConnection 이벤트 -> 비디오 슬롯에 stream/nickname 배정
+  // 코드흐름:: 내 스트림, 상대 스트림 관리 -> 각 PeerConnection 이벤트 -> 비디오 슬롯에 stream/nickname 배정
 
-  //최대인원수에 맞게 미리 만들어둔 슬롯
-  //각 userId에 대한 video slot에 stream과 닉네임 할당
-  // 영상 스트림 유저 슬롯 배정
+  // 각 userId에 대한 video slot에 stream과 닉네임 할당
+  // 영상 스트림 유저 슬롯(최대 4명) 배정
   const assignStreamToSlot = useCallback(
     (userId, stream, name) => {
       let index = videoRefs.current.findIndex(
@@ -29,9 +27,7 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
         return;
       }
 
-      index = videoRefs.current.findIndex(
-        (videoEl) => !videoEl?.dataset?.userid,
-      );
+      index = videoRefs.current.findIndex((videoEl) => !videoEl?.dataset?.userid);
       if (index === -1) return;
 
       const video = videoRefs.current[index];
@@ -42,8 +38,7 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
     [videoRefs],
   );
 
-  //사용자의 오디오/비디오 스트림을 가져오고, 내 비디오 slot에 연결. 기기 목록(카메라)도 설정
-  // 카메라, 마이크 접근 설정
+  // 사용자의 오디오/비디오 스트림을 가져오고, 내 비디오 slot에 연결. 기기 목록(카메라)도 설정
   const getMedia = useCallback(
     async (deviceId) => {
       try {
@@ -52,16 +47,16 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
           : { audio: true, video: { facingMode: "user" } }; //기본카메라를 사용하도록 설정
 
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        //사용자의 슬롯에 해당 스트림 연결
+        // 사용자의 슬롯에 해당 스트림 연결
         myStreamRef.current = stream;
 
         assignStreamToSlot(socketId, stream, nickname);
 
         // 첫 실행 시 모든 카메라 장치 목록 불러오고, 현재 사용 중인 카메라 Id 저장
         if (!deviceId) {
-          //유저의 모든 디바이스를 가져온다
+          // 유저의 모든 디바이스 가져옴
           const devices = await navigator.mediaDevices.enumerateDevices();
-          //가져온 모든 디바이스 중 videoinput만 고른다
+          // 가져온 모든 디바이스 중 videoinput 선택
           const videoInputs = devices.filter((device) => device.kind === "videoinput");
           setCameras(videoInputs);
           const currentTrack = stream.getVideoTracks()[0];
@@ -79,8 +74,7 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
     [nickname, socketId, assignStreamToSlot],
   );
 
-  //유저가 접속을 종료하거나 카메라 변경 시 해당 슬롯을 비운다
-  // 사용자 퇴장
+  // 유저가 접속을 종료하거나 카메라 변경 시 해당 슬롯을 비움
   const clearSlot = useCallback(
     (userId) => {
       const index = videoRefs.current.findIndex(
@@ -97,12 +91,11 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
     [videoRefs],
   );
 
-  //각 상대방 userId마다 PeerConnection 생성, ICE/track 이벤트 등록, 내 stream을 addTrack
   // WebRTC 연결 생성 및 관리
   const createPeerConnection = useCallback(
     (userId, nick) => {
       const pc = new RTCPeerConnection({
-        //임의로 구글에서 제공하는 STUN서버를 사용하고 있으나, coturn으로 개별 서버를 만들 예정입니다
+        // 구글에서 제공하는 STUN서버를 사용 중
         iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
       });
 
@@ -133,19 +126,14 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
     [assignStreamToSlot, socket, socketId],
   );
 
-  // 아래는 음소거/해제, 카메라on/off, 카메라 변경 기능
-  // 마이크 및 카메라 켜기/끄기
+  // 마이크 및 카메라 켜기/끄기/변경
   const toggleMute = () => {
-    myStreamRef.current
-      ?.getAudioTracks()
-      .forEach((track) => (track.enabled = muted));
+    myStreamRef.current?.getAudioTracks().forEach((track) => (track.enabled = muted));
     setMuted((prev) => !prev);
   };
 
   const toggleCamera = () => {
-    myStreamRef.current
-      ?.getVideoTracks()
-      .forEach((track) => (track.enabled = cameraOff));
+    myStreamRef.current?.getVideoTracks().forEach((track) => (track.enabled = cameraOff));
     setCameraOff((prev) => !prev);
   };
 
@@ -155,14 +143,11 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
     await getMedia(deviceId);
     const videoTrack = myStreamRef.current?.getVideoTracks()[0];
     Object.values(peerConnections.current).forEach((pc) => {
-      const sender = pc
-        .getSenders()
-        .find((sender) => sender.track.kind === "video");
+      const sender = pc.getSenders().find((sender) => sender.track.kind === "video");
       if (sender && videoTrack) sender.replaceTrack(videoTrack);
     });
   };
 
-  //모든 PeerConnection/미디어 트랙 종료, 소켓 연결 해제
   // 방 나가기 및 연결 종료
   const leaveRoom = useCallback(() => {
     Object.values(peerConnections.current).forEach((pc) => pc.close());

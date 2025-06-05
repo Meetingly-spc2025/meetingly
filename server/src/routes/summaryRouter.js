@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const db = require("../models/db_users");
+const db = require("../models/meetingly_db");
 const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 const path = require("path");
@@ -9,7 +9,7 @@ const axios = require("axios");
 
 const upload = multer({ dest: "uploads/" });
 
-router.post('/upload/record', upload.single("audio"), async (req, res) => {
+router.post("/upload/record", upload.single("audio"), async (req, res) => {
   const { roomId } = req.body;
   const file = req.file;
 
@@ -32,12 +32,12 @@ router.post('/upload/record', upload.single("audio"), async (req, res) => {
     const aiRes = await axios.post(
       "http://127.0.0.1:4000/process-room",
       { roomId, audioPath: savePath },
-      { headers: { "Content-Type": "application/json" } }
+      { headers: { "Content-Type": "application/json" } },
     );
 
     // recordPipeline 으로부터 받아온 데이터
     const { transcript, summary, tasks, discussion } = aiRes.data;
-    const currentTimestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const currentTimestamp = new Date().toISOString().slice(0, 19).replace("T", " ");
     const generateUUID = () => uuidv4();
 
     // tasks 처리: "false" 문자열 등 예외 처리
@@ -75,15 +75,30 @@ router.post('/upload/record', upload.single("audio"), async (req, res) => {
 
     // summaries 테이블 저장 (action은 content=null 처리)
     const summaries = [
-      { summary_id: generateUUID(), status: 'fulltext', content: transcript, created_at: currentTimestamp },
-      { summary_id: generateUUID(), status: 'keypoint', content: summary, created_at: currentTimestamp },
       {
         summary_id: generateUUID(),
-        status: 'action',
-        content: taskArray.length === 0 ? null : JSON.stringify(taskArray),
-        created_at: currentTimestamp
+        status: "fulltext",
+        content: transcript,
+        created_at: currentTimestamp,
       },
-      { summary_id: generateUUID(), status: 'discussion', content: discussion, created_at: currentTimestamp }
+      {
+        summary_id: generateUUID(),
+        status: "keypoint",
+        content: summary,
+        created_at: currentTimestamp,
+      },
+      {
+        summary_id: generateUUID(),
+        status: "action",
+        content: taskArray.length === 0 ? null : JSON.stringify(taskArray),
+        created_at: currentTimestamp,
+      },
+      {
+        summary_id: generateUUID(),
+        status: "discussion",
+        content: discussion,
+        created_at: currentTimestamp,
+      },
     ];
 
     const summaryQuery = `
@@ -92,7 +107,13 @@ router.post('/upload/record', upload.single("audio"), async (req, res) => {
     `;
 
     for (let item of summaries) {
-      const values = [item.summary_id, item.status, item.content, item.created_at, roomId];
+      const values = [
+        item.summary_id,
+        item.status,
+        item.content,
+        item.created_at,
+        roomId,
+      ];
       await db.execute(summaryQuery, values);
     }
     console.log("summaries 테이블 저장 완료");
@@ -100,7 +121,7 @@ router.post('/upload/record', upload.single("audio"), async (req, res) => {
     // tasks 테이블 저장
     if (taskArray.length > 0) {
       // summaries 테이블에서 action값 추출
-      const actionSummaryId = summaries.find(s => s.status === 'action').summary_id;
+      const actionSummaryId = summaries.find((s) => s.status === "action").summary_id;
       const taskQuery = `
         INSERT INTO tasks (task_id, content, assignee_id, status, created_at, summary_id)
         VALUES (?, ?, NULL, 'todo', ?, ?)
@@ -117,11 +138,16 @@ router.post('/upload/record', upload.single("audio"), async (req, res) => {
     }
 
     res.json({ message: "녹음 업로드 및 DB 저장 완료", aiResult: aiRes.data });
-  } catch (error) {
-    console.error('AI 서버 or DB 저장 오류:', error.response ? error.response.data : error.message);
-    res.status(500).json({
-      error: "서버 오류",
-      details: error.response ? error.response.data : error.message
+  } catch (err) {
+    if (err.response && err.response.data && err.response.data.error) {
+      return res.status(err.response.status).json({
+        error: err.response.data.error,
+      });
+    }
+    // 알 수 없는 오류 (네트워크 등)
+    console.error("AI 서버 요청 실패:", err.message);
+    return res.status(500).json({
+      error: "AI 서버 요청 중 문제가 발생했습니다.",
     });
   }
 });

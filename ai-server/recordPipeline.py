@@ -1,7 +1,7 @@
 import os
 import shutil
 import ffmpeg
-from openai import OpenAI, OpenAIError, BadRequestError
+from openai import OpenAI, BadRequestError
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,7 +23,6 @@ def split_audio(input_path, room_id, segment_length=600):
             c="libmp3lame",
             ar=44100,
             ac=1,
-            map="0",
             reset_timestamps=1
         ).run(overwrite_output=True)
         print(f"오디오 분할 완료: {segment_dir}")
@@ -46,13 +45,56 @@ def transcribe_audio(path):
     except Exception as e:
         print(f"전사 실패: {path}, 에러: {e}")
         return ""
+    
+# 3. 3문단 요약 (전체 텍스트 병합 및 요약)
+def summarize_full_text(full_text):
+    if len(full_text) < 5000:
+        print("텍스트가 짧아, 바로 3문단 요약 실행")
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": "당신은 전문 요약가입니다."},
+                    {"role": "user", "content": f"다음 내용을 한 문단마다 두 번씩 줄 바꿈을 해주고, 총 3문단으로 너무 길지 않도록 요약해 주세요. 요약의 내용은 감정을 뺀 정보 위주로 해주세요. :\n\n{full_text}"}
+                ]
+            )
+            return response.choices[0].message.content.strip()
+        except BadRequestError as e:
+            print(f"요약 실패 (토큰 초과): {e}")
+        except Exception as e:
+            print(f"최종 요약 실패: {e}")
+        return ""
+    else:
+        print("텍스트가 길어, chunk 분할 후 2단계 요약 실행")
+        chunks = chunk_text(full_text)
+        summaries = []
+        for i, chunk in enumerate(chunks):
+            print(f"1차 요약 중: {i+1}/{len(chunks)}")
+            summaries.append(summarize_chunk(chunk, i))
+        combined = "\n\n".join(summaries)
 
-# 3. 텍스트 chunk 나누기
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": "당신은 전문 요약가입니다."},
+                    {"role": "user", "content": f"다음 내용을 한 문단마다 두 번씩 줄 바꿈을 해주고, 총 3문단으로 너무 길지 않도록 요약해 주세요. 요약의 내용은 감정을 뺀 정보 위주로 해주세요. :\n\n{combined}"}
+                ]
+            )
+            return response.choices[0].message.content.strip()
+        except BadRequestError as e:
+            print(f"최종 요약 실패 (토큰 초과): {e}")
+        except Exception as e:
+            print(f"2차 요약 실패: {e}")
+        return ""
+
+
+# 4. 텍스트 chunk 나누기
 def chunk_text(text, max_chars = 5000):
     import textwrap
     return textwrap.wrap(text, max_chars)
 
-# 4. 1차 요약
+# 5. 2차 요약
 def summarize_chunk(chunk, index):
     try:
         response = client.chat.completions.create(
@@ -69,47 +111,7 @@ def summarize_chunk(chunk, index):
         print(f"1차 요약 실패: {e}")
     return ""
 
-# 5. 2차 요약 (전체 텍스트 병합 및 요약)
-def summarize_full_text(full_text):
-    if len(full_text) < 5000:
-        print("텍스트가 짧아, 바로 3문단 요약 실행")
-        try:
-            response = client.chat.completions.create(
-                model="gpt-4",
-                messages=[
-                    {"role": "system", "content": "당신은 전문 요약가입니다."},
-                    {"role": "user", "content": f"다음 내용을 <br>로 나눈3문단으로 요약해 주세요. 요약의 내용은 감정을 뺀 정보 위주로 해주세요. :\n\n{full_text}"}
-                ]
-            )
-            return response.choices[0].message.content.strip()
-        except BadRequestError as e:
-            print(f"요약 실패 (토큰 초과): {e}")
-        except Exception as e:
-            print(f"최종 요약 실패: {e}")
-        return ""
-    else:
-        print("텍스트가 길어, chunk 분할 후 2단계 요약 실행")
-        chunks = chunk_text(full_text)
-        summaries = []
-        for i, chunk in enumerate(chunks):
-            print(f"1차 요약 중: {i+1}/{len(chunks)}")
-            summaries.append(summarize_chunk(chunk, i))
-        combined = "\n".join(summaries)
 
-        try:
-            response = client.chat.completions.create(
-                model="gpt-4",
-                messages=[
-                    {"role": "system", "content": "당신은 전문 요약가입니다."},
-                    {"role": "user", "content": f"다음 내용을 3문단으로 요약해 주세요:\n\n{combined}"}
-                ]
-            )
-            return response.choices[0].message.content.strip()
-        except BadRequestError as e:
-            print(f"최종 요약 실패 (토큰 초과): {e}")
-        except Exception as e:
-            print(f"2차 요약 실패: {e}")
-        return ""
 
 # 6. 주요 논의 사항 추출
 def summaries_discussion(summary):
@@ -136,7 +138,7 @@ def summaries_discussion(summary):
     return ""
 
 # 7. 할 일 추출
-def extract_tasks(summary: str) -> str:
+def extract_tasks(summary):
     prompt = f"""
 다음 요약된 회의 내용을 기반으로 해야 할 작업 목록을 항목별로 정리해 주세요.
 - 각 항목은 한 문장으로 간결하게 작성.

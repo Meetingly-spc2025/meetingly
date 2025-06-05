@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/Login/Auth.css";
-import axios from "axios"
+import axios from "axios";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const Register = () => {
     password: "",
     nickname: "",
   });
-  
+
   const [errors, setErrors] = useState({});
   const [nameFeedback, setNameFeedback] = useState("");
 
@@ -25,7 +25,6 @@ const Register = () => {
   const [isEmailConfirmed, setIsEmailConfirmed] = useState(false); // 인증번호 일치 여부
   const [isVerificationLoading, setIsVerificationLoading] = useState(false); // 로딩 중 여부
   const [showEmailSentMessage, setShowEmailSentMessage] = useState(false);
-  
 
   // 닉네임 중복 확인 변수 설정
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
@@ -74,50 +73,49 @@ const Register = () => {
   // 이메일 인증번호 전송 함수
   const sendEmailVerification = async () => {
     setIsVerificationLoading(true);
-    try{
+    try {
       const response = await axios.post("/api/users/verify-email", {
         email: formData.email,
-      })
+      });
 
       setIsVerificationSent(true);
       setServerCode(response.data.code);
-      alert("인증번호가 이메일로 전송되었습니다.")
-      
-    }catch(error) {
-      console.log("이메일 인증 전송 실패: ", error)
-      alert("이메일 인증 실패")
-    }finally {setIsVerificationLoading(false);
-
+      alert("인증번호가 이메일로 전송되었습니다.");
+    } catch (error) {
+      console.log("이메일 인증 전송 실패: ", error);
+      alert("이메일 인증 실패");
+    } finally {
+      setIsVerificationLoading(false);
     }
-  }
+  };
 
   // 이메일 인증번호 확인 함수
-  const verifyCode =() => {
+  const verifyCode = () => {
     if (verificationCode === serverCode) {
       setIsEmailConfirmed(true);
-      alert("이메일 인증이 완료")
+      alert("이메일 인증이 완료");
     } else {
-      alert("이메일 인증 불가")
+      alert("이메일 인증 불가");
     }
-  }
+  };
 
   // 회원가입 시 유효성 검사 함수 목록
   // 회원가입 시 이름 유효성 검사 (마우스)
   const handleNameBlur = () => {
     const name = formData.name;
-    
+
     // 공백 있음
-    if(name.includes(" ") || name === "") {
+    if (name.includes(" ") || name === "") {
       setErrors((prev) => ({
         ...prev,
-        name: "이름은 공백을 포함할 수 없습니다."
+        name: "이름은 공백을 포함할 수 없습니다.",
       }));
       setNameFeedback(""); // 환영 메세지 초기화 (중요)
     } else {
-      setErrors((prev) => ({...prev, name:null}));
+      setErrors((prev) => ({ ...prev, name: null }));
       setNameFeedback(`${name}님 환영합니다.`);
     }
-  }
+  };
   // 회원가입 시 이름 유효성 검사 (엔터키)
   const handleNameKeyUp = (e) => {
     if (e.key === "Enter") {
@@ -125,7 +123,7 @@ const Register = () => {
       handleNameBlur();
       emailRef.current.focus();
     }
-  }
+  };
 
   // 이메일 중복 검사 함수
   const checkEmailDuplicate = async () => {
@@ -136,17 +134,17 @@ const Register = () => {
 
     try {
       const response = await axios.post("/api/users/check-email", {
-                email: formData.email
+        email: formData.email,
       });
 
-      if(response.data.exists) {
+      if (response.data.exists) {
         // 이메일 True
-        setErrors({...errors, email:"이미 사용중인 이메일입니다."});
+        setErrors({ ...errors, email: "이미 사용중인 이메일입니다." });
       } else {
         // 이메일 False
-        setErrors({...errors, email:null});
+        setErrors({ ...errors, email: null });
         setIsEmailVerified(true);
-        alert("사응 가능한 이메일입니다.")
+        alert("사응 가능한 이메일입니다.");
       }
     } catch (error) {
       console.error("이메일 중복 확인 기능 자체가 안됨:", error);
@@ -165,7 +163,7 @@ const Register = () => {
 
     try {
       await axios.post("/api/users/register", formData);
-      alert("회원가입 성공! 로그인 창으로 이동합니다.")
+      alert("회원가입 성공! 로그인 창으로 이동합니다.");
       navigate("/login");
     } catch (error) {
       console.error("회원가입 오류:", error);
@@ -176,27 +174,32 @@ const Register = () => {
   // 닉네임 유효성 검사 함수
   const checkNicknameDuplicate = async () => {
     const nickname = formData.nickname;
-    
-    if(!nickname) {
-      setErrors(prev => ({ ...prev, nickname:"닉네임을 입력해주세요"}));
+
+    if (!nickname) {
+      setErrors((prev) => ({ ...prev, nickname: "닉네임을 입력해주세요" }));
       return;
     }
     try {
-    const response = await axios.post("/api/users/check-nickname", { nickname });
-    if (response.data.exists) {
-      setErrors(prev => ({ ...prev, nickname: "이미 사용중인 닉네임입니다." }));
-      setIsNicknameChecked(false);
-    } else {
-      setErrors(prev => ({ ...prev, nickname: null }));
-      setIsNicknameChecked(true);
+      const response = await axios.post("/api/users/check-nickname", {
+        nickname,
+      });
+      if (response.data.exists) {
+        setErrors((prev) => ({
+          ...prev,
+          nickname: "이미 사용중인 닉네임입니다.",
+        }));
+        setIsNicknameChecked(false);
+      } else {
+        setErrors((prev) => ({ ...prev, nickname: null }));
+        setIsNicknameChecked(true);
+      }
+    } catch (err) {
+      setErrors((prev) => ({
+        ...prev,
+        nickname: "닉네임 확인 중 오류가 발생했습니다.",
+      }));
     }
-  } catch (err) {
-    setErrors(prev => ({ ...prev, nickname: "닉네임 확인 중 오류가 발생했습니다." }));
-  }
   };
-
-
-
 
   return (
     <div className="auth-container">
@@ -217,74 +220,78 @@ const Register = () => {
               className={errors.name ? "input-error" : ""}
               placeholder="이름을 입력하세요"
             />
-            {!errors.name && nameFeedback && (<div className="welcome-message">{nameFeedback}</div>)}
+            {!errors.name && nameFeedback && (
+              <div className="welcome-message">{nameFeedback}</div>
+            )}
             {errors.name && <div className="error-message">{errors.name}</div>}
           </div>
 
-<div className="form-group">
-  <label htmlFor="email">이메일</label>
+          <div className="form-group">
+            <label htmlFor="email">이메일</label>
 
-  {/* {isVerificationLoading && (
+            {/* {isVerificationLoading && (
     <div className="loading-message">
     이메일을 전송 중입니다. 잠시만 기다려주세요.
     </div>
   )} */}
 
-  <div className="input-with-button">
-    <input
-      type="email"
-      id="email"
-      name="email"
-      value={formData.email}
-      onChange={handleChange}
-      placeholder="이메일 주소를 입력하세요"
-      disabled={isEmailConfirmed}
-      className={`email-input ${isEmailConfirmed ? "email-confirmed" : ""}`}
-    />
+            <div className="input-with-button">
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="이메일 주소를 입력하세요"
+                disabled={isEmailConfirmed}
+                className={`email-input ${
+                  isEmailConfirmed ? "email-confirmed" : ""
+                }`}
+              />
 
-    <button
-      type="button"
-      onClick={
-        isEmailVerified
-          ? sendEmailVerification   
-          : checkEmailDuplicate    
-      }
-      disabled={isVerificationSent || isEmailConfirmed}
-      className={`email-button ${isEmailConfirmed ? "email-confirmed" : ""}`}
+              <button
+                type="button"
+                onClick={
+                  isEmailVerified ? sendEmailVerification : checkEmailDuplicate
+                }
+                disabled={isVerificationSent || isEmailConfirmed}
+                className={`email-button ${
+                  isEmailConfirmed ? "email-confirmed" : ""
+                }`}
+              >
+                {isEmailConfirmed
+                  ? "인증 완료"
+                  : isVerificationLoading
+                  ? "이메일 인증중..."
+                  : isEmailVerified
+                  ? "이메일 인증"
+                  : "중복확인"}
+              </button>
+            </div>
 
-    >
-      {isEmailConfirmed
-        ? "인증 완료"                        
-        : isVerificationLoading
-        ? "이메일 인증중..."                
-        : isEmailVerified
-        ? "이메일 인증"                   
-        : "중복확인"}                
-    </button>
-  </div>
+            {errors.email && (
+              <div className="error-message">{errors.email}</div>
+            )}
 
-  {errors.email && <div className="error-message">{errors.email}</div>}
-
-  {isVerificationSent && !isEmailConfirmed && (
-    <div className="form-group" style={{ marginTop: "10px" }}>
-      <label htmlFor="verificationCode">인증번호</label>
-      <div className="input-with-button">
-        <input
-          type="text"
-          id="verificationCode"
-          value={verificationCode}
-          onChange={(e) => setVerificationCode(e.target.value)}
-          placeholder="인증번호 입력"
-          className="verification-input"
-        />
-        <button type="button" onClick={verifyCode}>
-          인증 확인
-        </button>
-      </div>
-    </div>
-  )}
-</div>
-
+            {isVerificationSent && !isEmailConfirmed && (
+              <div className="form-group" style={{ marginTop: "10px" }}>
+                <label htmlFor="verificationCode">인증번호</label>
+                <div className="input-with-button">
+                  <input
+                    type="text"
+                    id="verificationCode"
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value)}
+                    placeholder="인증번호 입력"
+                    className="verification-input"
+                  />
+                  <button type="button" onClick={verifyCode}>
+                    인증 확인
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="form-group">
             <label htmlFor="password">비밀번호</label>
@@ -311,7 +318,7 @@ const Register = () => {
               value={formData.nickname}
               onChange={handleChange}
               onBlur={checkNicknameDuplicate}
-              onKeyDown={(e)=> {
+              onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
                   checkNicknameDuplicate();
@@ -322,7 +329,7 @@ const Register = () => {
             />
 
             {isNicknameChecked && !errors.nickname && (
-            <div className="success-message">사용 가능한 닉네임입니다.</div>
+              <div className="success-message">사용 가능한 닉네임입니다.</div>
             )}
 
             {errors.nickname && (

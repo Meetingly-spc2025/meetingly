@@ -36,8 +36,6 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("로그인 버튼 눌림");
-
     const newErrors = validate();
 
     if (Object.keys(newErrors).length > 0) {

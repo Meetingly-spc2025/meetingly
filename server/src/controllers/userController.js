@@ -1,10 +1,8 @@
 const { encodingExists } = require("iconv-lite");
-const db = require("../models/db_users");
+const db = require("../models/meetingly_db");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "default-secret";
 const nodemailer = require("nodemailer");
-const { from } = require("form-data");
-const { message } = require("statuses");
 
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
@@ -13,16 +11,11 @@ const { v4: uuidv4 } = require("uuid");
 // POST /api/users/login 요청에 대해 이메일/비밀번호 받아 로그인 처리 & JWT 토큰 발급 후 클라이언트로 돌려주는 역할
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
-  // console.log("로그인 axios 요청 도착");
-  console.log("로그인 axios 로 받은 email은, ", email);
-  console.log("로그인 axios 로 받은 password는, ", password);
   // MySQL 이메일로 사용자 장보 조회하는 쿼리 수행
   try {
     const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [
       email,
     ]);
-    console.log("DB 쿼리 결과: ", rows);
-
     const user = rows[0];
 
     if (!user) {
@@ -61,14 +54,10 @@ exports.loginUser = async (req, res) => {
 
 // JWT 토큰 기반 사용자 정보 조회 API 컨트롤러 함수 :
 // POST /api/users/jwtauth 요청에 대해 JWT 토큰에서 ID 꺼낸뒤, DB 에서 최신 사용자 정보 반영해서 돌려줌
-// 로그인할때 받은 토큰만 갖고는 변경된 유저의 실시간 정보를 알 수가 없어서 작성
 exports.getUserInfo = async (req, res) => {
   try {
     // JWT 를 복호화해서 서버가 미들웨어로 넣어준 객체
     const userId = req.user.id;
-    // const [rows] = await db.query("SELECT * FROM users WHERE user_id = ?", [
-    //   userId,
-    // ]);
     const [rows] = await db.query(
       `
       SELECT 
@@ -102,9 +91,6 @@ exports.getUserInfo = async (req, res) => {
     res.status(500).json({ message: "서버 에러" });
   }
 };
-// 25.05.31 - 코드 리뷰할때 정리점.. 혜인님..
-// 개선점 + 추가로 가져가볼게요
-// 기능이 로그인 기반이다보니, 어떻게 설명해야할지 논의 필요 @강혜인 @김병희
 
 // 이메일 중복 체크
 exports.checkEmailDuplicate = async (req, res) => {
@@ -133,7 +119,7 @@ exports.sendVerificationCode = async (req, res) => {
   );
   const { email } = req.body;
 
-  // 6자리 인증번호.. GPT
+  // 6자리 인증번호
   const code = Math.floor(100000 + Math.random() * 900000).toString();
 
   // 메일 전송 세팅
