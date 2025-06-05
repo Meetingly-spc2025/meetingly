@@ -1,5 +1,11 @@
 import React from "react";
-import { BsFillMicFill, BsFillMicMuteFill, BsCameraVideoFill, BsCameraVideoOffFill, BsBoxArrowLeft } from "react-icons/bs";
+import {
+  BsFillMicFill,
+  BsFillMicMuteFill,
+  BsCameraVideoFill,
+  BsCameraVideoOffFill,
+  BsBoxArrowLeft,
+} from "react-icons/bs";
 import { MdFiberManualRecord, MdStop } from "react-icons/md";
 
 const Controls = ({
@@ -15,10 +21,9 @@ const Controls = ({
   isCreator,
   socket,
   recording,
-  setRecording, 
+  setRecording,
   recordingDone,
 }) => {
-  
   const handleStartRecording = () => {
     socket.emit("start_recording", roomId);
     setRecording(true);
@@ -31,12 +36,24 @@ const Controls = ({
 
   return (
     <div id="controls">
-      <button onClick={toggleMute}>{muted ? <BsFillMicMuteFill style={{ fontSize: "1.5rem" }} /> : <BsFillMicFill style={{ fontSize: "1.5rem" }} />}</button>
-      <button onClick={toggleCamera}>
-        {cameraOff ? <BsCameraVideoOffFill style={{ fontSize: "1.5rem" }} /> : <BsCameraVideoFill style={{ fontSize: "1.5rem" }} />}
+      <button onClick={toggleMute}>
+        {muted ? (
+          <BsFillMicMuteFill style={{ fontSize: "1.5rem" }} />
+        ) : (
+          <BsFillMicFill style={{ fontSize: "1.5rem" }} />
+        )}
       </button>
-      {isCreator && !recordingDone && ( 
-        !recording ? (
+      <button onClick={toggleCamera}>
+        {cameraOff ? (
+          <BsCameraVideoOffFill style={{ fontSize: "1.5rem" }} />
+        ) : (
+          <BsCameraVideoFill style={{ fontSize: "1.5rem" }} />
+        )}
+      </button>
+
+      {isCreator &&
+        !recordingDone &&
+        (!recording ? (
           <button onClick={handleStartRecording}>
             <MdFiberManualRecord style={{ fontSize: "1.5rem", color: "red" }} />
           </button>
@@ -44,8 +61,7 @@ const Controls = ({
           <button onClick={handleStopRecording}>
             <MdStop style={{ fontSize: "1.5rem", color: "black" }} />
           </button>
-        )
-      )}
+        ))}
       <select value={selectedDeviceId || ""} onChange={changeCamera}>
         {cameras.map((camera) => (
           <option key={camera.deviceId} value={camera.deviceId}>
@@ -53,7 +69,9 @@ const Controls = ({
           </option>
         ))}
       </select>
-      <button onClick={handleLeaveRoom}><BsBoxArrowLeft style={{ fontSize: "1.5rem" }} /></button>
+      <button onClick={handleLeaveRoom}>
+        <BsBoxArrowLeft style={{ fontSize: "1.5rem" }} />
+      </button>
     </div>
   );
 };

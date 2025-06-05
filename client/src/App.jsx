@@ -3,15 +3,16 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SidebarLayout from "./layouts/SidebarLayout";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ErrorPage from "./pages/ErrorPage";
 import Main from "./pages/Main";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Login/Register";
 import MeetingList from "./pages/Task/MeetingList";
-import TeamManagement from "./pages/Task/TeamManagementPage";
+import TeamManagement from "./pages/User/TeamManagementPage";
 import CreateMeeting from "./pages/Room/CreateMeeting";
 import MeetingDetail from "./pages/Task/MeetingDetail";
 import MeetingRoom from "./pages/Room/MeetingRoom";
-import MyPage from "./pages/Task/MyPage";
+import MyPage from "./pages/User/MyPage";
 import ResetPassword from "./pages/Login/ResetPassword";
 import CalendarPage from "./pages/Task/CalendarPage";
 import AudioRecorder from "./pages/Room/AudioRecorder";
@@ -19,6 +20,8 @@ import TeamEmpty from "./components/Team/TeamEmpty";
 import TeamRedirect from "./components/Team/TeamRedirect";
 import MeetingListRedirect from "./pages/Task/MeetingListRedirect";
 import CalendarRedirect from "./pages/Task/CalendarRedirect";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import { UserProvider } from "./context/UserContext";
 
@@ -27,6 +30,7 @@ function App() {
     <UserProvider>
     <div className="app-container">
       <Navbar />
+      <ToastContainer position="top-right" autoClose={3000} />
       <main className="app-main">
         <Routes>
           <Route path="/" element={<Main />} />
@@ -108,11 +112,7 @@ function App() {
               </SidebarLayout>
             }
           />
-          <Route path="/calendarPage"
-            element={
-              <CalendarRedirect />
-            }
-          />
+          <Route path="/calendarPage" element={<CalendarRedirect />} />
           <Route
             path="/audio"
             element={
@@ -121,6 +121,8 @@ function App() {
               </SidebarLayout>
             }
           />
+
+          <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>
     </div>

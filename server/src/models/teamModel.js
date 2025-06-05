@@ -1,4 +1,4 @@
-const db = require("../models/db_users");
+const db = require("./meetingly_db");
 
 exports.getTeamMemberList = async ({ teamId }) => {
   const [members] = await db.query(

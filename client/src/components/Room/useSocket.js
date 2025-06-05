@@ -30,14 +30,12 @@ const useSocket = ({
 
     if (!nickname || !socketId) return;
 
-    //소켓 연결 이벤트
     // socket 연결 상태 관리
     socket.on("connect", () => {
       console.log("[소켓연결됨] id:", socket.id);
       setSocketConnected(true);
     });
 
-    //방 입장시 기존 유저 목록 -> 각 PeerConnection 준비
     // 방 입장 시에 peer 연결 준비
     socket.on("welcome", async (users) => {
       console.log("[welcome] users:", users);
@@ -46,8 +44,7 @@ const useSocket = ({
       }
     });
 
-    //새로운 참가자가 입장 -> offer 생성 및 전송
-    // 새 유저 입장 시에 Offer/Answer 생성
+    // 새로운 유저 입장 시에 offer 생성 및 전송
     socket.on("user_joined", async ({ id, nickname: userNick }) => {
       const pc = createPeerConnection(id, userNick);
       const offer = await pc.createOffer();
@@ -55,8 +52,8 @@ const useSocket = ({
       socket.emit("offer", offer, id, socketId);
     });
 
-    //먼저 도착해서 바로 추가하지 못한 ICE 후보들을 임시 배열(큐)에 쌓아두었다가 remoteDescription이 준비되면 한 번에 모두 적용하는 함수
-    //이 함수를 추가한 이유가 remoteDescription이 준비되기 전에 addIceCandidate이 호출되니까 에러가 생겼음
+    // 먼저 도착해서 바로 추가하지 못한 ICE 후보들을 임시 배열(큐)에 쌓아두었다가 remoteDescription이 준비되면 한 번에 모두 적용하는 함수
+    // 이 함수를 추가한 이유가 remoteDescription이 준비되기 전에 addIceCandidate이 호출되니까 에러가 생겼음
     async function flushIceQueue(userId) {
       const pc = peerConnections.current[userId];
       if (pc && pc.iceQueue) {
@@ -71,7 +68,7 @@ const useSocket = ({
       }
     }
 
-    //offer 수신 시 PeerConnection 생성 -> setRemoteDescription 후 answer 생성/전송
+    // offer 수신 시 PeerConnection 생성 -> setRemoteDescription 후 answer 생성/전송
     socket.on("offer", async (offer, callerId, callerNick) => {
       let pc = peerConnections.current[callerId];
       if (!pc) {
@@ -87,14 +84,12 @@ const useSocket = ({
       }
     });
 
-    //answer 수신 시 setRemoteDescription
     socket.on("answer", async (answer, userId) => {
       await peerConnections.current[userId]?.setRemoteDescription(answer);
       await flushIceQueue(userId);
     });
 
-    //ice candidate 수신 시 addIceCandidate
-    // ICE Candidate 수신/연결
+    // ICE Candidate 수신/연결 -> addIceCandidate
     socket.on("ice", async (ice, userId) => {
       const pc = peerConnections.current[userId];
       if (!pc) return;
@@ -110,15 +105,14 @@ const useSocket = ({
       }
     });
 
-    // 퇴장 시 해당 PeerConnection 종료 및 슬롯 비우기
-    // 퇴장, 방 초과 인원, 공지 처리
+    // 퇴장 시 해당 PeerConnection 종료 및 슬롯 비우기 (퇴장, 방 초과 인원, 공지 처리)
     socket.on("left_room", (userId) => {
       peerConnections.current[userId]?.close();
       delete peerConnections.current[userId];
       clearSlot(userId);
     });
 
-    //방 최대 인원 설정
+    // 방 최대 인원 설정
     socket.on("room_full", () => {
       alert("최대 4명까지만 참여할 수 있습니다.");
       socket.disconnect();
@@ -127,12 +121,11 @@ const useSocket = ({
       navigate("/", { replace: true });
     });
 
-    //아래는 채팅관련 이벤트:: 시스템 메세지, 닉네임 리스트, 채팅
+    // 아래는 채팅관련 이벤트:: 시스템 메세지, 닉네임 리스트, 채팅
     socket.on("notice", (msg) => {
       addMessage({ system: true, message: msg });
     });
 
-    // 닉네임 리스트 및 메세지 수신
     socket.on("updateNicks", (nickInfo) => {
       const recipients = Object.entries(nickInfo)
         .map(([id, name]) => ({ id, name }))

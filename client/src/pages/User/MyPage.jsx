@@ -5,6 +5,15 @@ import axios from "axios";
 import "../../styles/Task/MyPage.css";
 
 function MyPage() {
+  const imageOptions = [
+    "/images/profile1.png",
+    "/images/profile2.png",
+    "/images/profile3.png",
+    "/images/profile4.png",
+    "/images/profile5.png",
+  ];
+  const [selectedImage, setSelectedImage] = useState(currentUser.user_image);
+
   const [isNicknameEditable, setIsNicknameEditable] = useState(false);
   const [nickname, setNickname] = useState("");
   const [isChecked, setIsChecked] = useState(false);
@@ -38,9 +47,7 @@ function MyPage() {
         });
         setNickname(user.nickname || "");
 
-        const resTeam = await axios.get(
-          `/api/mypage/team-data?teamId=${user.teamId}`,
-        );
+        const resTeam = await axios.get(`/api/mypage/team-data?teamId=${user.teamId}`);
         const teamData = resTeam.data.teamName || "";
         setTeamName(teamData);
       } catch (err) {
@@ -80,12 +87,9 @@ function MyPage() {
   // 닉네임 중복검사
   const handleCheckDuplicate = async () => {
     try {
-      const res = await axios.get(
-        `/api/mypage/check-nickname?nickname=${nickname}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      const res = await axios.get(`/api/mypage/check-nickname?nickname=${nickname}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setIsAvailable(res.data.available); // true/false
       setIsChecked(true);
     } catch (err) {
@@ -149,11 +153,7 @@ function MyPage() {
 
       <div className="profile-section">
         <div className="profile-image-wrapper">
-          <img
-            src="/default-profile.png"
-            alt="프로필"
-            className="profile-image"
-          />
+          <img src="/default-profile.png" alt="프로필" className="profile-image" />
           <button className="edit-button">사진 변경</button>
         </div>
 
@@ -210,14 +210,8 @@ function MyPage() {
             )}
           </div>
           {isChecked && (
-            <div
-              className={`check-result ${
-                isAvailable ? "available" : "unavailable"
-              }`}
-            >
-              {isAvailable
-                ? "사용 가능한 닉네임입니다."
-                : "이미 사용 중인 닉네임입니다."}
+            <div className={`check-result ${isAvailable ? "available" : "unavailable"}`}>
+              {isAvailable ? "사용 가능한 닉네임입니다." : "이미 사용 중인 닉네임입니다."}
             </div>
           )}
         </div>
@@ -269,10 +263,7 @@ function MyPage() {
               <button className="modal-button cancel" onClick={cancelWithdraw}>
                 취소
               </button>
-              <button
-                className="modal-button confirm"
-                onClick={confirmWithdraw}
-              >
+              <button className="modal-button confirm" onClick={confirmWithdraw}>
                 탈퇴
               </button>
             </div>

@@ -1,10 +1,8 @@
 const { encodingExists } = require("iconv-lite");
-const db = require("../models/db_users");
+const db = require("../models/meetingly_db");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "default-secret";
 const nodemailer = require("nodemailer");
-const { from } = require("form-data");
-const { message } = require("statuses");
 
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
@@ -13,16 +11,9 @@ const { v4: uuidv4 } = require("uuid");
 // POST /api/users/login 요청에 대해 이메일/비밀번호 받아 로그인 처리 & JWT 토큰 발급 후 클라이언트로 돌려주는 역할
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
-  // console.log("로그인 axios 요청 도착");
-  console.log("로그인 axios 로 받은 email은, ", email);
-  console.log("로그인 axios 로 받은 password는, ", password);
   // MySQL 이메일로 사용자 장보 조회하는 쿼리 수행
   try {
-    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [
-      email,
-    ]);
-    // console.log("DB 쿼리 결과: ", rows);
-
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
     const user = rows[0];
 
     if (!user) {
@@ -51,18 +42,19 @@ exports.loginUser = async (req, res) => {
       JWT_SECRET,
       { expiresIn: "2h" },
     );
-    res.status(200).json({ message: "로그인 성공",
+    res.status(200).json({
+      message: "로그인 성공",
       token,
       user: {
-        id:user.user_id,
-        name:user.name,
-        email:user.email,
-        role:user.role,
-        nickname:user.nickname,
-        teamId:user.team_id
-      }
+        id: user.user_id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        nickname: user.nickname,
+        teamId: user.team_id,
+      },
     });
-    console.log("user: ", user)
+    console.log("user: ", user);
   } catch (error) {
     console.error("로그인 실패:", error);
     res.status(500).json({ message: "서버 에러" });
@@ -71,14 +63,10 @@ exports.loginUser = async (req, res) => {
 
 // JWT 토큰 기반 사용자 정보 조회 API 컨트롤러 함수 :
 // POST /api/users/jwtauth 요청에 대해 JWT 토큰에서 ID 꺼낸뒤, DB 에서 최신 사용자 정보 반영해서 돌려줌
-// 로그인할때 받은 토큰만 갖고는 변경된 유저의 실시간 정보를 알 수가 없어서 작성
 exports.getUserInfo = async (req, res) => {
   try {
     // JWT 를 복호화해서 서버가 미들웨어로 넣어준 객체
     const userId = req.user.id;
-    // const [rows] = await db.query("SELECT * FROM users WHERE user_id = ?", [
-    //   userId,
-    // ]);
     const [rows] = await db.query(
       `
       SELECT 
@@ -119,9 +107,10 @@ exports.checkEmailDuplicate = async (req, res) => {
   console.log("클라이언트가 보낸 이메일은: ", email);
 
   try {
-    const [rows] = await db.query("SELECT email FROM users WHERE email = ? AND is_deleted = false", [
-      email,
-    ]);
+    const [rows] = await db.query(
+      "SELECT email FROM users WHERE email = ? AND is_deleted = false",
+      [email],
+    );
     res.json({ exists: rows.length > 0 });
   } catch (error) {
     res.status(500).json({ error });
@@ -130,24 +119,16 @@ exports.checkEmailDuplicate = async (req, res) => {
 
 // 이메일 인증번호 전송 컨트롤러 함수
 exports.sendVerificationCode = async (req, res) => {
-  console.log(
-    "구글 메일 env 설정 맞는지: EMAIL_USER: ",
-    process.env.EMAIL_USER,
-  );
-  console.log(
-    "구글 메일 env 설정 맞는지: EMAIL_PASS: ",
-    process.env.EMAIL_PASS,
-  );
+  console.log("구글 메일 env 설정 맞는지: EMAIL_USER: ", process.env.EMAIL_USER);
+  console.log("구글 메일 env 설정 맞는지: EMAIL_PASS: ", process.env.EMAIL_PASS);
   const { email } = req.body;
-
-  // 6자리 인증번호 생성
   const code = Math.floor(100000 + Math.random() * 900000).toString();
 
   // 세션에 저장 (25.06.05 추가)
   req.session.verificationCode = code;
   req.session.verificationEmail = email;
 
-  // 메일 전송 세팅 
+  // 메일 전송 세팅
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -168,8 +149,7 @@ exports.sendVerificationCode = async (req, res) => {
     console.log("이메일 옵션 설정 디버깅", mailOptions);
     await transporter.sendMail(mailOptions);
 
-    res.status(200).json({ message: "이메일 전송 완료"});
-
+    res.status(200).json({ message: "이메일 전송 완료" });
   } catch (error) {
     console.log("이메일 전송 실패: ", error);
     res.status(500).json({ message: "이메일 전송 실패" });
@@ -180,26 +160,23 @@ exports.sendVerificationCode = async (req, res) => {
 exports.verifyAuthCode = (req, res) => {
   const { code } = req.body;
 
-  if(!req.session.verificationCode) {
-    return res.status(400).json({message:"인증번호 세션 없음"})
+  if (!req.session.verificationCode) {
+    return res.status(400).json({ message: "인증번호 세션 없음" });
   }
 
-  if(req.session.verificationCode === code) {
+  if (req.session.verificationCode === code) {
     req.session.verificationCode = null;
-    return res.status(200).json({message:"인증 성공"});
-  }else {
-    return res.status(400).json({message:"인증번호가 일치하지 않습니다."})
+    return res.status(200).json({ message: "인증 성공" });
+  } else {
+    return res.status(400).json({ message: "인증번호가 일치하지 않습니다." });
   }
-}
-
+};
 
 // 닉네임 체크 함수
 exports.checkNicknameDuplicate = async (req, res) => {
   try {
     const { nickname } = req.body;
-    const [rows] = await db.query("SELECT * FROM users WHERE nickname =?", [
-      nickname,
-    ]);
+    const [rows] = await db.query("SELECT * FROM users WHERE nickname =?", [nickname]);
     res.json({ exists: rows.length > 0 });
     console.log("닉네임 중복 여부 서버에서 체크 성공 후 응답");
   } catch (error) {
@@ -213,7 +190,7 @@ exports.registerUser = async (req, res) => {
   const { name, email, password, nickname } = req.body;
 
   if (!req.session.isEmailVerified) {
-    return res.status(403).json({message:"이메일 인증이 필요합니다"});
+    return res.status(403).json({ message: "이메일 인증이 필요합니다" });
   }
   try {
     // 비밀번호 해시

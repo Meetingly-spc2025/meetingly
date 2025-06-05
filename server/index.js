@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const http = require("http");
-const db = require("./src/models/db_users");
+const db = require("./src/models/meetingly_db"); // 네가 만든 db pool 불러오기
 const session = require("express-session");
 const cookieParse = require("cookie-parser");
 
@@ -27,26 +27,26 @@ app.use(cors());
 app.use(express.json());
 
 // HTTP 와 HTTPS 모두 동작하게끔..
-const isRealServer = process.env.NODE_ENV ==="production";
+const isRealServer = process.env.NODE_ENV === "production";
 
 // HTTPS 프록시 환경 대응
 if (isRealServer) {
-  app.set("trust proxy", 1); 
+  app.set("trust proxy", 1);
 }
 
 app.use(cookieParse());
 
 app.use(
   session({
-    secret:process.env.SESSION_SECRET,
-    resave:false,
+    secret: process.env.SESSION_SECRET,
+    resave: false,
     saveUninitialized: true,
     cookie: {
-      secure:isRealServer,
+      secure: isRealServer,
       maxAge: 10000 * 60 * 5, // 5분
-    }
-  })
-)
+    },
+  }),
+);
 
 // 디버깅용 라우터
 app.use((req, res, next) => {

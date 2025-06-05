@@ -53,24 +53,22 @@ const MeetingDetail = () => {
 
   // creator 여부 비교
   const isCreator =
-    meetingInfo?.creator_id?.trim().toLowerCase() === userInfo.userId?.trim().toLowerCase();
+    meetingInfo?.creator_id?.trim().toLowerCase() ===
+    userInfo.userId?.trim().toLowerCase();
 
   useEffect(() => {
-
     console.log("creator_id:", meetingInfo);
     console.log("currentUserId:", userInfo);
-    console.log(
-      "비교 결과 (소문자, trim):",
-      isCreator
-    );
-
+    console.log("비교 결과 (소문자, trim):", isCreator);
   }, [meetingInfo, userInfo.userId, isCreator]);
 
   // 회의 상세 정보 불러오기
   useEffect(() => {
     const fetchMeetingDetail = async () => {
       try {
-        const res = await axios.get(`/api/meetingData/meetingDetail/${meetingId}?teamId=${teamId}`);
+        const res = await axios.get(
+          `/api/meetingData/meetingDetail/${meetingId}?teamId=${teamId}`,
+        );
         setMeetingInfo(res.data.meeting);
         setSummaries(res.data.summaries);
       } catch (err) {
@@ -118,8 +116,8 @@ const MeetingDetail = () => {
   const toggleSection = (index) => {
     setSections((prev) =>
       prev.map((section, i) =>
-        i === index ? { ...section, collapsed: !section.collapsed } : section
-      )
+        i === index ? { ...section, collapsed: !section.collapsed } : section,
+      ),
     );
   };
 
@@ -139,12 +137,17 @@ const MeetingDetail = () => {
   // 회의 제목 수정
   const handleEditMeeting = async (newTitle) => {
     try {
-      const res = await axios.patch(`/api/meetingData/meetingDetail/meeting/${meetingId}`, {
-        meetingName: newTitle,
-      });
+      const res = await axios.patch(
+        `/api/meetingData/meetingDetail/meeting/${meetingId}`,
+        {
+          meetingName: newTitle,
+        },
+      );
       alert("회의 제목이 수정되었습니다.");
       // 변경 후 다시 불러오기
-      const updated = await axios.get(`/api/meetingData/meetingDetail/${meetingId}?teamId=${teamId}`);
+      const updated = await axios.get(
+        `/api/meetingData/meetingDetail/${meetingId}?teamId=${teamId}`,
+      );
       setMeetingInfo(updated.data.meeting);
     } catch (err) {
       console.error("회의 수정 실패:", err);
@@ -157,9 +160,12 @@ const MeetingDetail = () => {
     if (!discussionSummary) return alert("논의 summary가 없습니다.");
 
     try {
-      await axios.put(`/api/meetingData/meetingDetail/summary/${discussionSummary.summary_id}`, {
-        content: newContent,
-      });
+      await axios.put(
+        `/api/meetingData/meetingDetail/summary/${discussionSummary.summary_id}`,
+        {
+          content: newContent,
+        },
+      );
       alert("논의 내용이 수정되었습니다!");
 
       // 상태 즉시 반영
@@ -167,15 +173,14 @@ const MeetingDetail = () => {
         prev.map((s) =>
           s.summary_id === discussionSummary.summary_id
             ? { ...s, content: newContent }
-            : s
-        )
+            : s,
+        ),
       );
     } catch (err) {
       console.error("논의 수정 오류:", err);
       alert("수정 실패!");
     }
   };
-
 
   // 요약 수정
   const keypointSummary = summaries.find((s) => s.status === "keypoint");
@@ -187,24 +192,24 @@ const MeetingDetail = () => {
     }
 
     try {
-      const res = await axios.put(`/api/meetingData/meetingDetail/summary/${keypointSummary.summary_id}`, {
-        content: newContent,
-      });
+      const res = await axios.put(
+        `/api/meetingData/meetingDetail/summary/${keypointSummary.summary_id}`,
+        {
+          content: newContent,
+        },
+      );
       alert("요약 내용이 수정되었습니다!");
 
       // 상태 업데이트 (즉시 반영)
       setSummaries((prev) =>
         prev.map((s) =>
-          s.summary_id === keypointSummary.summary_id
-            ? { ...s, content: newContent }
-            : s
-        )
+          s.summary_id === keypointSummary.summary_id ? { ...s, content: newContent } : s,
+        ),
       );
     } catch (err) {
       console.error("요약 수정 실패:", err);
     }
   };
-
 
   if (!meetingInfo) return <div>로딩 중...</div>;
 
@@ -248,7 +253,8 @@ const MeetingDetail = () => {
                   summaryId={actionSummaryId}
                   teamId={meetingInfo.team_id}
                   teamMembers={teamMembers}
-                  onTasksUpdate={setKanbanTasks} />
+                  onTasksUpdate={setKanbanTasks}
+                />
               )}
               {section.type === "summary" && (
                 <SummaryBlock

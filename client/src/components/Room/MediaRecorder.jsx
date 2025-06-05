@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 const useMediaRecorder = ({ myStream, roomId, isCreator }) => {
@@ -6,6 +7,7 @@ const useMediaRecorder = ({ myStream, roomId, isCreator }) => {
   const audioChunksRef = useRef([]);
   const [recording, setRecording] = useState(false);
 
+  // 오디오 녹음 시작
   const startRecording = () => {
     if (!myStream) {
       alert("마이크 스트림을 찾을 수 없습니다!");
@@ -17,7 +19,7 @@ const useMediaRecorder = ({ myStream, roomId, isCreator }) => {
       return;
     }
     const audioStream = new MediaStream();
-    audioTracks.forEach(track => audioStream.addTrack(track));
+    audioTracks.forEach((track) => audioStream.addTrack(track));
     const mediaRecorder = new window.MediaRecorder(audioStream);
 
     mediaRecorderRef.current = mediaRecorder;
@@ -27,6 +29,7 @@ const useMediaRecorder = ({ myStream, roomId, isCreator }) => {
       if (event.data.size > 0) audioChunksRef.current.push(event.data);
     };
 
+    // 녹음 종료 및 자동 서버 업로드
     mediaRecorder.onstop = async () => {
       const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
       const file = new File([blob], `audio_${roomId}_${Date.now()}.webm`, {
@@ -59,11 +62,16 @@ const useMediaRecorder = ({ myStream, roomId, isCreator }) => {
       const res = await axios.post(
         `http://localhost:${port}/api/saveSummary/upload/record`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
       console.log("업로드 완료:\n" + JSON.stringify(res.data, null, 2));
+      toast.success("AI 회의록 녹음이 완료되었습니다.");
     } catch (error) {
-      console.error("업로드 처리 실패:", error);
+      if (error.response?.data?.error) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("서버 오류가 발생했습니다.");
+      }
     }
   };
 
