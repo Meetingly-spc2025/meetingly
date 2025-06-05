@@ -25,7 +25,7 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
     setTasks(updated);
 
     try {
-      await axios.put(`/api/tasks/${draggableId}`, moved);
+      await axios.put(`/api/meetingData/tasks/${draggableId}`, moved);
     } catch (err) {
       console.error("드래그 상태 업데이트 오류:", err);
     }
@@ -36,7 +36,7 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/tasks/${id}`);
+      await axios.delete(`/api/meetingData/tasks/${id}`);
       setTasks(tasks.filter((t) => t.task_id !== id));
     } catch (err) {
       console.error("삭제 오류:", err);
@@ -48,10 +48,10 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
 
     try {
       if (task.task_id) {
-        await axios.put(`/api/tasks/${task.task_id}`, newTask);
+        await axios.put(`/api/meetingData/tasks/${task.task_id}`, newTask);
         setTasks(tasks.map((t) => (t.task_id === task.task_id ? newTask : t)));
       } else {
-        const res = await axios.post("/api/tasks", newTask);
+        const res = await axios.post("/api/meetingData/tasks", newTask);
         const { task_id } = res.data;
         setTasks([...tasks, { ...newTask, task_id }]);
       }

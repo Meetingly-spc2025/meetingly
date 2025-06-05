@@ -11,13 +11,10 @@ const initSocket = require("./src/socket/socketServer");
 // Route
 const userRouter = require("./src/routes/userRouter");
 const meetingRouter = require("./src/routes/meetingRouter");
-const taskRouter = require("./src/routes/tasksRouter");
-const meetinglistsRouter = require("./src/routes/meetinglistsRouter");
-const summaryRouter = require("./src/routes/summaryRouter");
-const audioRouter = require("./src/routes/audioRouter");
 const teamRouter = require("./src/routes/teamRouter");
 const mypageRouter = require("./src/routes/mypageRouter");
-const meetingDetailRouter = require("./src/routes/meetingDetailRouter");
+const summaryRouter = require("./src/routes/summaryRouter");
+const meetingDataRouter = require("./src/routes/meetingDataRouter");
 
 dotenv.config({ path: "../.env" });
 const app = express();
@@ -34,14 +31,11 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/users", userRouter);
-app.use("/audio", audioRouter);
 app.use("/api/meetings", meetingRouter);
 app.use("/api/teams", teamRouter);
 app.use("/api/mypage", mypageRouter);
-app.use("/api/tasks", taskRouter);
-app.use("/api/meetinglists", meetinglistsRouter);
+app.use("/api/meetingData", meetingDataRouter);
 app.use("/api/saveSummary", summaryRouter);
-app.use("/api/meetingDetail", meetingDetailRouter);
 
 // 배포 모드
 // if (process.env.NODE_ENV === "production") {

@@ -18,7 +18,7 @@ const MeetingList = () => {
   const fetchMeetings = async () => {
     try {
       console.log("팀 ID (from URL):", teamId);
-      const res = await axios.get(`/api/meetinglists/task/${teamId}`, {
+      const res = await axios.get(`/api/meetingData/meetinglists/task/${teamId}`, {
         headers: { Authorization: `Bearer ${token}` },
         params: {
           page,

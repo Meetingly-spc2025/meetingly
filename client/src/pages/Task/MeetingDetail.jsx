@@ -67,7 +67,7 @@ const MeetingDetail = () => {
   useEffect(() => {
     const fetchMeetingDetail = async () => {
       try {
-        const res = await axios.get(`/api/meetingDetail/${meetingId}?teamId=${teamId}`);
+        const res = await axios.get(`/api/meetingData/meetingDetail/${meetingId}?teamId=${teamId}`);
         setMeetingInfo(res.data.meeting);
         setSummaries(res.data.summaries);
       } catch (err) {
@@ -81,7 +81,7 @@ const MeetingDetail = () => {
   useEffect(() => {
     const fetchKanbanTasks = async () => {
       try {
-        const res = await axios.get(`/api/tasks/meeting/${meetingId}`);
+        const res = await axios.get(`/api/meetingData/tasks/meeting/${meetingId}`);
         setKanbanTasks(res.data);
       } catch (err) {
         console.error("Kanban tasks 조회 오류:", err);
@@ -94,7 +94,7 @@ const MeetingDetail = () => {
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
-        const res = await axios.get(`/api/tasks/team/${teamId}/members`);
+        const res = await axios.get(`/api/meetingData/tasks/team/${teamId}/members`);
         setTeamMembers(res.data);
       } catch (err) {
         console.error("팀 멤버 조회 오류:", err);
@@ -123,7 +123,7 @@ const MeetingDetail = () => {
   // 회의 삭제
 const handleDeleteMeeting = async () => {
   try {
-    await axios.delete(`/api/meetingDetail/meeting/${meetingId}`);
+    await axios.delete(`/api/meetingData/meetingDetail/meeting/${meetingId}`);
     alert("회의가 삭제되었습니다!");
     // 예: 전체 목록 페이지로 리디렉션
     window.location.href = "/meetings";
@@ -136,12 +136,12 @@ const handleDeleteMeeting = async () => {
 // 회의 제목 수정
 const handleEditMeeting = async (newTitle) => {
   try {
-    const res = await axios.patch(`/api/meetingDetail/meeting/${meetingId}`, {
+    const res = await axios.patch(`/api/meetingData/meetingDetail/meeting/${meetingId}`, {
       meetingName: newTitle,
     });
     alert("회의 제목이 수정되었습니다.");
     // 변경 후 다시 불러오기
-    const updated = await axios.get(`/api/meetingDetail/${meetingId}?teamId=${teamId}`);
+    const updated = await axios.get(`/api/meetingData/meetingDetail/${meetingId}?teamId=${teamId}`);
     setMeetingInfo(updated.data.meeting);
   } catch (err) {
     console.error("회의 수정 실패:", err);
@@ -154,7 +154,7 @@ const handleEditDiscussion = async (newContent) => {
   if (!discussionSummary) return alert("논의 summary가 없습니다.");
 
   try {
-    await axios.put(`/api/meetingDetail/summary/${discussionSummary.summary_id}`, {
+    await axios.put(`/api/meetingData/meetingDetail/summary/${discussionSummary.summary_id}`, {
       content: newContent,
     });
     alert("논의 내용이 수정되었습니다!");
@@ -184,7 +184,7 @@ const handleEditSummary = async (newContent) => {
   }
 
   try {
-    const res = await axios.put(`/api/meetingDetail/summary/${keypointSummary.summary_id}`, {
+    const res = await axios.put(`/api/meetingData/meetingDetail/summary/${keypointSummary.summary_id}`, {
       content: newContent,
     });
     alert("요약 내용이 수정되었습니다!");

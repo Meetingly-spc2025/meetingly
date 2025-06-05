@@ -42,7 +42,7 @@ const CalendarPage = () => {
     if (!teamId) return;
     try {
       const res = await axios.get(
-        `/api/meetinglists/task/${teamId}/by-month?year=${year}&month=${month}`
+        `/api/meetingData/meetinglists/task/${teamId}/by-month?year=${year}&month=${month}`
       );
       const meetings = res.data.meetings;
       const grouped = meetings.reduce((acc, meeting) => {
