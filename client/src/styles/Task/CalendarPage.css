@@ -1,4 +1,5 @@
 .calendar-tile-meetings {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -7,18 +8,23 @@
 }
 
 .calendar-tile-meeting-card {
-  background: #e8f0fe;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   border-radius: 4px;
   padding: 2px 4px;
   font-size: 0.6rem;
   cursor: pointer;
-  max-width: 70px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   text-align: left;
   display: flex;
   align-items: center;
   gap: 2px;
+  background-color: lavender;
+}
+.calendar-tile-meeting-card:hover{
+  background-color: #cce4ff;
 }
 
 .calendar-tile-meeting-title,
@@ -26,10 +32,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.calendar-tile-meeting-card:hover {
-  background: #cce4ff;
+  max-width: 100%;
 }
 
 .calendar-tile-meeting-title {
@@ -97,7 +100,7 @@
 
 .calendar-wrapper {
   margin: 0 auto;
-  position: relative; /* ✅ 모달 위치용 */
+  position: relative; /* 모달 위치용 */
 }
 
 .selected-date {
@@ -150,7 +153,7 @@
 }
 
 .react-calendar__tile--now {
-  background: #f3f3f3;
+  background: #5ca6fa;
   font-weight: bold;
   border: 1px solid #aaa;
 }

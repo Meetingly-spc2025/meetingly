@@ -1,21 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import "../../styles/Task/SummaryBlock.css";
 
-const SummaryBlock = ({ content, isCreator, onEdit}) => {
-  if (!content) return null;
+const SummaryBlock = ({ content, isCreator, onEdit }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(content);
+
+  const handleSave = () => {
+    onEdit({ content: editedContent });
+    setIsEditing(false);
+  };
 
   return (
     <div className="summary-block">
       <div className="summary-header">
         <h3 className="summary-title">3문단 요약</h3>
-        {isCreator && (
+        {isCreator && !isEditing && (
           <div className="summary-buttons">
-            <button onClick={onEdit}>수정</button>
+            <button onClick={() => setIsEditing(true)}>수정</button>
+          </div>
+        )}
+        {isCreator && isEditing && (
+          <div className="summary-buttons">
+            <button onClick={handleSave}>저장</button>
+            <button onClick={() => setIsEditing(false)}>취소</button>
           </div>
         )}
       </div>
 
-      <p>{content}</p>
+      {isEditing ? (
+        <textarea
+          value={editedContent}
+          onChange={(e) => setEditedContent(e.target.value)}
+          style={{ width: "100%", height: "100px" }}
+        />
+      ) : (
+        <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
+          {content}
+        </pre>
+      )}
     </div>
   );
 };

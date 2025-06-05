@@ -45,7 +45,7 @@ function App() {
             }
           />
           <Route
-            path="/meetinglists/task/:id"
+            path="/meetingData/meetinglists/task/:id"
             element={
               <SidebarLayout>
                 <MeetingList />
