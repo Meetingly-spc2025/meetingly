@@ -1,7 +1,9 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 import VideoGrid from "../../components/Room/VideoGrid";
 import Controls from "../../components/Room/Controls";
@@ -132,7 +134,18 @@ const MeetingRoom = () => {
     videoRefs,
   });
 
-  const { startRecording, stopRecording } = useMediaRecorder({ myStream: myStreamRef.current, roomId: roomName });
+  const isCreator = useMemo(() => {
+    return user?.id && creatorId && user.id === creatorId;
+  }, [user?.id, creatorId]);
+
+  const {
+    startRecording,
+    stopRecording
+  } = useMediaRecorder({
+    myStream: myStreamRef.current,
+    roomId: roomName,
+    isCreator,
+  });
 
   useSocket({
     socket,
@@ -206,24 +219,42 @@ const MeetingRoom = () => {
     join();
   }, [socketConnected, user, roomName, getMedia, meetingId, navigate, teamVerified]);
 
+  // 컴포넌트 언마운트 시 leaveRoom 호출
+  useEffect(() => {
+    return () => {
+      leaveRoom();
+    };
+  }, []);
+
+  // 새로고침 또는 브라우저 닫기 시 leaveRoom 호출
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      leaveRoom();
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
   // 방 나가기 버튼 클릭 시 모든 PeerConnection 종료 및 소켓 연결 해제, meeting_id 삭제, 홈으로 이동
   const handleLeaveRoom = () => {
     leaveRoom();
-    localStorage.removeItem("meeting_id");
     setTimeout(() => navigate("/"), 100);
   };
 
   // 채팅 메세지 전송
-  const sendMessage = () => {
-    const input = document.getElementById("chatMessage");
-    const text = input.value.trim();
-    if (!text) return;
+  const sendMessage = (text) => {
+    if (typeof text !== "string") {
+      console.error("Invalid text:", text);
+      return;
+    }
+
     socket.emit("send", {
       myNick: user?.nickname,
       dm: recipientId,
       msg: text,
     });
-    input.value = "";
   };
 
   if (!user) return null;
@@ -242,9 +273,8 @@ const MeetingRoom = () => {
             toggleCamera={toggleCamera}
             changeCamera={(e) => changeCamera(e.target.value)}
             handleLeaveRoom={handleLeaveRoom}
-            // myStream={myStreamRef.current}
             roomId={roomName}
-            isCreator={user?.id === creatorId}
+            isCreator={isCreator}
             socket={socket}
             recording={recording}
             setRecording={setRecording}
@@ -265,6 +295,7 @@ const MeetingRoom = () => {
           socketId={socketId}
         />
       </div>
+      <ToastContainer position="top-center" autoClose={2000} hideProgressBar theme="colored" />
     </div>
   );
 };

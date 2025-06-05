@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { BsSend } from "react-icons/bs";
 
 const ChatBox = ({
@@ -10,6 +10,22 @@ const ChatBox = ({
   sendMessage,
   socketId,
 }) => {
+  const [text, setText] = useState("");
+  const messagesEndRef = useRef(null);
+  const [isComposing, setIsComposing] = useState(false);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSend = () => {
+    const trimmedText = text.trim();
+    if (!trimmedText) return;
+
+    sendMessage(trimmedText);
+    setText("");
+  };
+
   return (
     <div id="chat-container">
 
@@ -25,6 +41,7 @@ const ChatBox = ({
             </div>
           )
         )}
+        <div ref={messagesEndRef} />
       </div>
 
       <div id="chat-input">
@@ -46,14 +63,18 @@ const ChatBox = ({
           type="text"
           placeholder="메시지 입력"
           style={{ resize: "none" }}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onCompositionStart={() => setIsComposing(true)}
+          onCompositionEnd={() => setIsComposing(false)}
           onKeyDown={(event) => {
-            if (event.key === "Enter" && !event.shiftKey) {
+            if (event.key === "Enter" && !event.shiftKey && !isComposing) {
               event.preventDefault();
-              sendMessage();
+              handleSend();
             }
           }}
         />
-        <button onClick={sendMessage}><BsSend style={{ fontSize: "1rem" }} /></button>
+        <button onClick={handleSend}><BsSend style={{ fontSize: "1rem" }} /></button>
       </div>
     </div>
   );

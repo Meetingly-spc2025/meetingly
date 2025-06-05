@@ -1,5 +1,4 @@
 import React from "react";
-// import useMediaRecorder from "./MediaRecorder";
 import { BsFillMicFill, BsFillMicMuteFill, BsCameraVideoFill, BsCameraVideoOffFill, BsBoxArrowLeft } from "react-icons/bs";
 import { MdFiberManualRecord, MdStop } from "react-icons/md";
 
@@ -12,7 +11,6 @@ const Controls = ({
   toggleCamera,
   changeCamera,
   handleLeaveRoom,
-  // myStream,
   roomId,
   isCreator,
   socket,
@@ -21,8 +19,6 @@ const Controls = ({
   recordingDone,
 }) => {
   
-  // const { recording, startRecording, stopRecording } = useMediaRecorder({ myStream, roomId });
-
   const handleStartRecording = () => {
     socket.emit("start_recording", roomId);
     setRecording(true);
@@ -39,11 +35,6 @@ const Controls = ({
       <button onClick={toggleCamera}>
         {cameraOff ? <BsCameraVideoOffFill style={{ fontSize: "1.5rem" }} /> : <BsCameraVideoFill style={{ fontSize: "1.5rem" }} />}
       </button>
-      {/* {!recording ? (
-        <button onClick={startRecording}><MdFiberManualRecord style={{ fontSize: "1.5rem", color: "red" }} /></button>
-      ) : (
-        <button onClick={stopRecording}><MdStop style={{ fontSize: "1.5rem", color: "black" }} /></button>
-      )} */}
       {isCreator && !recordingDone && ( 
         !recording ? (
           <button onClick={handleStartRecording}>

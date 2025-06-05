@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import axios from "axios";
 
-const useMediaRecorder = ({ myStream, roomId }) => {
+const useMediaRecorder = ({ myStream, roomId, isCreator }) => {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const [recording, setRecording] = useState(false);
@@ -53,6 +53,7 @@ const useMediaRecorder = ({ myStream, roomId }) => {
     const formData = new FormData();
     formData.append("audio", file);
     formData.append("roomId", roomId);
+    formData.append("isCreator", isCreator);
 
     try {
       const res = await axios.post(
@@ -60,11 +61,9 @@ const useMediaRecorder = ({ myStream, roomId }) => {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      // alert("업로드 완료:\n" + JSON.stringify(res.data, null, 2));
       console.log("업로드 완료:\n" + JSON.stringify(res.data, null, 2));
     } catch (error) {
       console.error("업로드 처리 실패:", error);
-      // alert("업로드 실패:\n" + error.message);
     }
   };
 
