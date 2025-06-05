@@ -41,10 +41,12 @@ const CalendarPage = () => {
   const fetchMeetingsForMonth = async (year, month) => {
     if (!teamId) return;
     try {
-      const res = await axios.get(`/api/meetinglists/task/${teamId}/by-month?year=${year}&month=${month}`);
+      const res = await axios.get(
+        `/api/meetinglists/task/${teamId}/by-month?year=${year}&month=${month}`
+      );
       const meetings = res.data.meetings;
       const grouped = meetings.reduce((acc, meeting) => {
-        const dateKey = meeting.date;
+        const dateKey = new Date(meeting.date).toLocaleDateString("sv-SE");
         if (!acc[dateKey]) acc[dateKey] = [];
         acc[dateKey].push(meeting);
         return acc;
@@ -80,7 +82,7 @@ const CalendarPage = () => {
         <Calendar
           onActiveStartDateChange={handleActiveStartDateChange}
           tileContent={({ date }) => {
-            const formattedDate = date.toISOString().split("T")[0];
+            const formattedDate = date.toLocaleDateString("sv-SE");
             const meetings = meetingsByDate[formattedDate];
             if (!meetings) return null;
             return (
@@ -93,8 +95,9 @@ const CalendarPage = () => {
                       navigate(`/meeting/${m.meeting_id}?teamId=${teamId}`)
                     }
                   >
-                    <span className="calendar-tile-meeting-title">{m.title}</span>
-                    <span className="calendar-tile-meeting-duration">{m.startTime}</span>
+                    <span className="calendar-tile-meeting-title">
+                      {m.title}
+                    </span>
                   </div>
                 ))}
               </div>
