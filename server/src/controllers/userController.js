@@ -189,9 +189,10 @@ exports.checkNicknameDuplicate = async (req, res) => {
 exports.registerUser = async (req, res) => {
   const { name, email, password, nickname } = req.body;
 
-  if (!req.session.isEmailVerified) {
-    return res.status(403).json({ message: "이메일 인증이 필요합니다" });
-  }
+  // if (!req.session.isEmailVerified) {
+  //   return res.status(403).json({ message: "이메일 인증이 필요합니다" });
+  // }
+  
   try {
     // 비밀번호 해시
     const hashedPassword = await bcrypt.hash(password, 10);

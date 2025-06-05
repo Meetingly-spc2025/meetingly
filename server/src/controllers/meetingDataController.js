@@ -1,4 +1,4 @@
-const db = require("../models/db_users");
+const db = require("../models/meetingly_db");
 const { v4: uuidv4 } = require("uuid");
 
 // [GET] 특정 회의 상세 정보 조회

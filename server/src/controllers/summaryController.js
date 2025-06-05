@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
-const db = require("../models/db_users");
+const db = require("../models/meetingly_db");
 
 const handleUploadRecord = async (req, res) => {
   const { roomId, isCreator } = req.body;
