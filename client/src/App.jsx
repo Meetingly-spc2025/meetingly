@@ -20,9 +20,11 @@ import TeamRedirect from "./components/Team/TeamRedirect";
 import MeetingListRedirect from "./pages/Task/MeetingListRedirect";
 import CalendarRedirect from "./pages/Task/CalendarRedirect";
 import "./App.css";
+import { UserProvider } from "./context/UserContext";
 
 function App() {
   return (
+    <UserProvider>
     <div className="app-container">
       <Navbar />
       <main className="app-main">
@@ -122,6 +124,7 @@ function App() {
         </Routes>
       </main>
     </div>
+    </UserProvider>
   );
 }
 

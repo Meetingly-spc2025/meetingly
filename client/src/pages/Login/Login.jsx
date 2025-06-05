@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/Login/Auth.css";
 import axios from "axios";
+import { useUser } from '../../context/UserContext';
 
 const Login = () => {
+  const { user, setUser } = useUser();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -55,12 +57,17 @@ const Login = () => {
 
       // JWT 토큰 응답
       const token = response.data.token;
+      const user = response.data.user;
+      console.log("받은 user 객체 확인: ", user);
 
       // 액세스 토큰을 localStorage 에 저장
       localStorage.setItem("token", token);
+      // Context 저장
+      setUser(user);
 
       // 로그인 성공 후 대시보드 이동
       navigate("/meetings");
+      console.log("받은 user: ", user)
     } catch (error) {
       console.error("로그인 오류:", error);
       setErrors({
