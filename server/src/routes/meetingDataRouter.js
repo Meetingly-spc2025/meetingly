@@ -27,4 +27,8 @@ router.get("/meetinglists/task/:teamId", authenticate, controller.getMeetingsByT
 router.get("/meetinglists/task/:teamId/by-date", controller.getMeetingsByDate);
 router.get("/meetinglists/task/:teamId/by-month", controller.getMeetingsByMonth);
 
+// chart.js
+router.get("/participation/:teamId", controller.getParticipationStats);
+router.get("/weekly/:teamId", controller.getWeeklyMeetingStats);
+
 module.exports = router;

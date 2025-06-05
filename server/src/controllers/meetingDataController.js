@@ -399,3 +399,77 @@ exports.getMeetingsByMonth = async (req, res) => {
     res.status(500).json({ error: "조회 실패" });
   }
 };
+
+// 팀 멤버 회의 참여 비율 조회
+// [GET] api/meetingData/participation/:teamId
+exports.getParticipationStats = async (req, res) => {
+  const { teamId } = req.params;
+
+  try {
+    // 1. 팀 멤버 전체 조회
+    const [members] = await db.query(
+      `SELECT u.user_id, u.name 
+       FROM team_members tm 
+       JOIN users u ON tm.user_id = u.user_id 
+       WHERE tm.team_id = ?`,
+      [teamId]
+    );
+
+    // 2. 참여자 정보 조회
+    const [participations] = await db.query(
+      `SELECT p.user_id, COUNT(*) AS count 
+       FROM participants p
+       JOIN meetings m ON p.meeting_id = m.meeting_id
+       WHERE m.team_id = ?
+       GROUP BY p.user_id`,
+      [teamId]
+    );
+
+    // 3. 참여수 매핑
+    const participationMap = {};
+    participations.forEach((p) => {
+      participationMap[p.user_id] = p.count;
+    });
+
+    const result = members.map((member) => ({
+      name: member.name,
+      count: participationMap[member.user_id] || 0,
+    }));
+
+    res.json(result);
+  } catch (err) {
+    console.error("참여율 조회 실패:", err);
+    res.status(500).json({ error: "데이터 조회 실패" });
+  }
+};
+
+// 주간 회의 횟수 조회
+// [GET] api/meetingData/weekly/:teamId
+exports.getWeeklyMeetingStats = async (req, res) => {
+  const { teamId } = req.params;
+
+  try {
+    const [rows] = await db.query(
+      `SELECT DAYOFWEEK(start_time) AS weekday, COUNT(*) AS count
+       FROM meetings
+       WHERE team_id = ? AND start_time >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+       GROUP BY DAYOFWEEK(start_time)`,
+      [teamId]
+    );
+
+    // MySQL의 DAYOFWEEK: 일(1)~토(7) => JS 기준으로 월(0)~일(6) 맞춤 변환
+    const counts = Array(7).fill(0); // 월~일
+    rows.forEach(({ weekday, count }) => {
+      const jsWeekday = (weekday + 5) % 7; // 일(1) → 6, 월(2) → 0 ...
+      counts[jsWeekday] = count;
+    });
+
+    res.json({
+      labels: ["월", "화", "수", "목", "금", "토", "일"],
+      data: counts,
+    });
+  } catch (err) {
+    console.error("주간 회의 통계 조회 오류:", err);
+    res.status(500).json({ error: "회의 통계 조회 실패" });
+  }
+};

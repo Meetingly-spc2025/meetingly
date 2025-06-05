@@ -4,8 +4,10 @@ import SummaryBlock from "../../components/Taskboard/SummaryBlock";
 import DiscussionList from "../../components/Taskboard/DiscusstionList";
 import KanbanBoard from "../../components/Kanban/KanbanBoard";
 import MeetingInfo from "../../components/Taskboard/MeetingInfo";
-import TeamTaskChart from "../../components/Taskboard/TeamTaskChart";
-import WordCloudChart from "../../components/Taskboard/WordCloudChart";
+import TeamTaskChart from "../../components/Chart/TeamTaskChart";
+import WordCloudChart from "../../components/Chart/WordCloudChart";
+import TeamParticipationChart from "../../components/Chart/TeamParticipationChart";
+import WeeklyMeetingChart from "../../components/Chart/WeeklyMeetingChart";
 import "../../styles/Task/MeetingDetail.css";
 import { useParams, useSearchParams } from "react-router-dom";
 
@@ -232,6 +234,8 @@ const MeetingDetail = () => {
                 <>
                   <TeamTaskChart tasks={kanbanTasks} teamMembers={teamMembers} />
                   <WordCloudChart text={fullTextContent} />
+                  <TeamParticipationChart teamId={teamId} />
+                  <WeeklyMeetingChart teamId={teamId} />
                 </>
               )}
               {section.type === "info" && (
