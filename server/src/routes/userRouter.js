@@ -10,8 +10,10 @@ router.post("/login", controllers.loginUser);
 router.get("/jwtauth", authenticate, controllers.getUserInfo);
 // 실제 라우터 등록 - 이메일 중복 확인
 router.post("/check-email", controllers.checkEmailDuplicate);
-// 실제 라우터 등록 - 이메일 인증
-router.post("/verify-email", controllers.sendVerificationCode)
+// 실제 라우터 등록 - 이메일 전송 기능 및 세션에 저장
+router.post("/verify-email", controllers.sendVerificationCode);
+// 실제 라우터 등록 - 이메일 인증번호 세션 저장
+router.post("/verify-code", controllers.verifyAuthCode)
 // 실제 라우터 등록 - 닉네임 중복 체크
 router.post("/check-nickname", controllers.checkNicknameDuplicate)
 // 실제 라우터 등록 - 회원가입
