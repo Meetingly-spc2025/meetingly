@@ -154,6 +154,7 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
     myStreamRef.current?.getTracks().forEach((track) => track.stop());
     socket.disconnect();
     socket.close();
+    localStorage.removeItem("meeting_id");
   }, [socket]);
 
   return {

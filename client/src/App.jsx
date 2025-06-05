@@ -23,9 +23,11 @@ import CalendarRedirect from "./pages/Task/CalendarRedirect";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
+import { UserProvider } from "./context/UserContext";
 
 function App() {
   return (
+    <UserProvider>
     <div className="app-container">
       <Navbar />
       <ToastContainer position="top-right" autoClose={3000} />
@@ -47,7 +49,7 @@ function App() {
             }
           />
           <Route
-            path="/meetinglists/task/:id"
+            path="/meetingData/meetinglists/task/:id"
             element={
               <SidebarLayout>
                 <MeetingList />
@@ -124,6 +126,7 @@ function App() {
         </Routes>
       </main>
     </div>
+    </UserProvider>
   );
 }
 

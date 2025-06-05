@@ -1,42 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import "../../styles/Task/DiscussionList.css";
 
-const DiscussionList = ({
-  discussionContent,
-  isCreator,
-  onEdit
-}) => {
-  if (!discussionContent) {
-    return (
-      <div className="discussion-section">
-        <h3>주요 논의 사항</h3>
-        <p>논의 내용이 없습니다.</p>
-      </div>
-    );
-  }
+const DiscussionList = ({ discussionContent, isCreator, onEdit }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(discussionContent);
 
-  // 내용이 여러 줄이면 나눠서 리스트로 출력, 단일 문단이면 그대로 출력
   const lines = discussionContent.split("\n").filter((line) => line.trim() !== "");
+
+  const handleSave = () => {
+    onEdit({ content: editedContent });
+    setIsEditing(false);
+  };
 
   return (
     <div className="discussion-section">
       <div className="discussion-header">
         <h3 className="discussion-title">주요 논의 사항</h3>
-        {isCreator && (
+        {isCreator && !isEditing && (
           <div className="discussion-buttons">
-            <button onClick={onEdit}>수정</button>
+            <button onClick={() => setIsEditing(true)}>수정</button>
+          </div>
+        )}
+        {isCreator && isEditing && (
+          <div className="discussion-buttons">
+            <button onClick={handleSave}>저장</button>
+            <button onClick={() => setIsEditing(false)}>취소</button>
           </div>
         )}
       </div>
 
-      {lines.length > 1 ? (
+      {isEditing ? (
+        <textarea
+          value={editedContent}
+          onChange={(e) => setEditedContent(e.target.value)}
+          style={{ width: "100%", height: "100px" }}
+        />
+      ) : lines.length > 1 ? (
         <ul style={{ listStyle: "none", paddingLeft: 0, margin: 0 }}>
           {lines.map((line, idx) => (
             <li key={idx}>{line}</li>
           ))}
         </ul>
       ) : (
-        <p>{discussionContent}</p>
+        <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{discussionContent}</pre>
       )}
     </div>
   );

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 //전체적인 코드 흐름:: connect이벤트 -> join_room 이후 welcome, user_joined 이벤트로 offer/answer 교환
 //                -> ICE candidate 교환
@@ -138,11 +139,13 @@ const useSocket = ({
 
     socket.on("member_start_recording", () => {
       console.log("녹음 시작 감지");
+      toast.info("회의 녹음을 시작합니다.");
       startRecording();
     });
 
     socket.on("member_stop_recording", () => {
       console.log("녹음 종료 감지");
+      toast.success("녹음이 완료되었습니다!");
       stopRecording();
       setRecordingDone(true);
     });

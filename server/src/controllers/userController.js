@@ -13,18 +13,16 @@ exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
   // MySQL 이메일로 사용자 장보 조회하는 쿼리 수행
   try {
-    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [
-      email,
-    ]);
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
     const user = rows[0];
 
     if (!user) {
-      console.log("이메일 없을때 뜨는 디버그. 사용자 없습니다.");
+      // console.log("이메일 없을때 뜨는 디버그. 사용자 없습니다.");
       return res.status(401).json({ message: "존재하지 않는 이메일입니다." });
     }
 
-    console.log("DB 상 비밀번호: ", user.password);
-    console.log("입력된 비밀번호: ", password);
+    // console.log("DB 상 비밀번호: ", user.password);
+    // console.log("입력된 비밀번호: ", password);
 
     // 클라이언트가 입력한 평문비밀번호 password (req.body) 와 DB에 저장된 암호화된 해시 비밀번호 user.password 비교
     const isMatch = await bcrypt.compare(password, user.password);
@@ -38,14 +36,25 @@ exports.loginUser = async (req, res) => {
         id: user.user_id,
         email: user.email,
         name: user.name,
-        role: user.role,
         nickname: user.nickname,
         teamId: user.team_id,
       },
       JWT_SECRET,
       { expiresIn: "2h" },
     );
-    res.status(200).json({ message: "로그인 성공", token });
+    res.status(200).json({
+      message: "로그인 성공",
+      token,
+      user: {
+        id: user.user_id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        nickname: user.nickname,
+        teamId: user.team_id,
+      },
+    });
+    console.log("user: ", user);
   } catch (error) {
     console.error("로그인 실패:", error);
     res.status(500).json({ message: "서버 에러" });
@@ -98,29 +107,26 @@ exports.checkEmailDuplicate = async (req, res) => {
   console.log("클라이언트가 보낸 이메일은: ", email);
 
   try {
-    const [rows] = await db.query("SELECT email FROM users WHERE email = ?", [
-      email,
-    ]);
+    const [rows] = await db.query(
+      "SELECT email FROM users WHERE email = ? AND is_deleted = false",
+      [email],
+    );
     res.json({ exists: rows.length > 0 });
   } catch (error) {
     res.status(500).json({ error });
   }
 };
 
-// 인증번호 이메일 전송
+// 이메일 인증번호 전송 컨트롤러 함수
 exports.sendVerificationCode = async (req, res) => {
-  console.log(
-    "구글 메일 env 설정 맞는지: EMAIL_USER: ",
-    process.env.EMAIL_USER,
-  );
-  console.log(
-    "구글 메일 env 설정 맞는지: EMAIL_PASS: ",
-    process.env.EMAIL_PASS,
-  );
+  console.log("구글 메일 env 설정 맞는지: EMAIL_USER: ", process.env.EMAIL_USER);
+  console.log("구글 메일 env 설정 맞는지: EMAIL_PASS: ", process.env.EMAIL_PASS);
   const { email } = req.body;
-
-  // 6자리 인증번호
   const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // 세션에 저장 (25.06.05 추가)
+  req.session.verificationCode = code;
+  req.session.verificationEmail = email;
 
   // 메일 전송 세팅
   const transporter = nodemailer.createTransport({
@@ -130,7 +136,6 @@ exports.sendVerificationCode = async (req, res) => {
       pass: process.env.EMAIL_PASS,
     },
   });
-  console.log("메일 전송 세팅값 디버깅: ", transporter);
 
   // 실제 메일 전송 시 이메일 옵션 설정
   try {
@@ -140,13 +145,30 @@ exports.sendVerificationCode = async (req, res) => {
       subject: "회원가입 인증번호",
       text: `인증번호는 [${code}] 입니다.`,
     };
+
     console.log("이메일 옵션 설정 디버깅", mailOptions);
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: "이메일 전송 완료", code });
-    console.log("이메일 전송, 서버 응답 성공: ", code);
+
+    res.status(200).json({ message: "이메일 전송 완료" });
   } catch (error) {
     console.log("이메일 전송 실패: ", error);
     res.status(500).json({ message: "이메일 전송 실패" });
+  }
+};
+
+// 이메일 인증번호 검증용 API 추가
+exports.verifyAuthCode = (req, res) => {
+  const { code } = req.body;
+
+  if (!req.session.verificationCode) {
+    return res.status(400).json({ message: "인증번호 세션 없음" });
+  }
+
+  if (req.session.verificationCode === code) {
+    req.session.verificationCode = null;
+    return res.status(200).json({ message: "인증 성공" });
+  } else {
+    return res.status(400).json({ message: "인증번호가 일치하지 않습니다." });
   }
 };
 
@@ -154,9 +176,7 @@ exports.sendVerificationCode = async (req, res) => {
 exports.checkNicknameDuplicate = async (req, res) => {
   try {
     const { nickname } = req.body;
-    const [rows] = await db.query("SELECT * FROM users WHERE nickname =?", [
-      nickname,
-    ]);
+    const [rows] = await db.query("SELECT * FROM users WHERE nickname =?", [nickname]);
     res.json({ exists: rows.length > 0 });
     console.log("닉네임 중복 여부 서버에서 체크 성공 후 응답");
   } catch (error) {
@@ -169,6 +189,9 @@ exports.checkNicknameDuplicate = async (req, res) => {
 exports.registerUser = async (req, res) => {
   const { name, email, password, nickname } = req.body;
 
+  if (!req.session.isEmailVerified) {
+    return res.status(403).json({ message: "이메일 인증이 필요합니다" });
+  }
   try {
     // 비밀번호 해시
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -179,6 +202,12 @@ exports.registerUser = async (req, res) => {
       "INSERT INTO users (user_id, name, email, password, nickname) VALUES (?,?,?,?,?)",
       [user_id, name, email, hashedPassword, nickname],
     );
+
+    // 인증 완료 후 세션 정보 초기화
+    req.session.isEmailVerified = false;
+    req.session.verificationCode = null;
+    req.session.verificationEmail = null;
+
     res.status(201).json({ message: "회원가입 성공" });
     console.log("회원가입 성공");
   } catch (error) {

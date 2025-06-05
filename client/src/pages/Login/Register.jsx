@@ -70,16 +70,20 @@ const Register = () => {
     return newErrors;
   };
 
-  // 이메일 인증번호 전송 함수
+  // 이메일 인증번호 전송 기능 활성화 함수
   const sendEmailVerification = async () => {
     setIsVerificationLoading(true);
     try {
-      const response = await axios.post("/api/users/verify-email", {
-        email: formData.email,
-      });
-
+      await axios.post(
+        "/api/users/verify-email",
+        {
+          email: formData.email,
+        },
+        {
+          withCredentials: true,
+        },
+      );
       setIsVerificationSent(true);
-      setServerCode(response.data.code);
       alert("인증번호가 이메일로 전송되었습니다.");
     } catch (error) {
       console.log("이메일 인증 전송 실패: ", error);
@@ -90,14 +94,33 @@ const Register = () => {
   };
 
   // 이메일 인증번호 확인 함수
-  const verifyCode = () => {
-    if (verificationCode === serverCode) {
+
+  // 서버에 인증번호 보내는 함수 ( 세션에 저장된 코드랑 비교할거임)
+  const verifyCode = async () => {
+    try {
+      const response = await axios.post(
+        "/api/users/verify-code",
+        {
+          code: verificationCode,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+      alert(response.data.message);
       setIsEmailConfirmed(true);
-      alert("이메일 인증이 완료");
-    } else {
-      alert("이메일 인증 불가");
+    } catch (error) {
+      alert(error.response.data.message || "인증 실패");
     }
   };
+  // const verifyCode =() => {
+  //   if (verificationCode === serverCode) {
+  //     setIsEmailConfirmed(true);
+  //     alert("이메일 인증이 완료")
+  //   } else {
+  //     alert("이메일 인증 불가")
+  //   }
+  // }
 
   // 회원가입 시 유효성 검사 함수 목록
   // 회원가입 시 이름 유효성 검사 (마우스)
@@ -162,7 +185,9 @@ const Register = () => {
     }
 
     try {
-      await axios.post("/api/users/register", formData);
+      await axios.post("/api/users/register", formData, {
+        withCredentials: true,
+      });
       alert("회원가입 성공! 로그인 창으로 이동합니다.");
       navigate("/login");
     } catch (error) {
@@ -244,20 +269,14 @@ const Register = () => {
                 onChange={handleChange}
                 placeholder="이메일 주소를 입력하세요"
                 disabled={isEmailConfirmed}
-                className={`email-input ${
-                  isEmailConfirmed ? "email-confirmed" : ""
-                }`}
+                className={`email-input ${isEmailConfirmed ? "email-confirmed" : ""}`}
               />
 
               <button
                 type="button"
-                onClick={
-                  isEmailVerified ? sendEmailVerification : checkEmailDuplicate
-                }
+                onClick={isEmailVerified ? sendEmailVerification : checkEmailDuplicate}
                 disabled={isVerificationSent || isEmailConfirmed}
-                className={`email-button ${
-                  isEmailConfirmed ? "email-confirmed" : ""
-                }`}
+                className={`email-button ${isEmailConfirmed ? "email-confirmed" : ""}`}
               >
                 {isEmailConfirmed
                   ? "인증 완료"
@@ -269,9 +288,7 @@ const Register = () => {
               </button>
             </div>
 
-            {errors.email && (
-              <div className="error-message">{errors.email}</div>
-            )}
+            {errors.email && <div className="error-message">{errors.email}</div>}
 
             {isVerificationSent && !isEmailConfirmed && (
               <div className="form-group" style={{ marginTop: "10px" }}>
@@ -304,9 +321,7 @@ const Register = () => {
               className={errors.password ? "input-error" : ""}
               placeholder="비밀번호를 입력하세요"
             />
-            {errors.password && (
-              <div className="error-message">{errors.password}</div>
-            )}
+            {errors.password && <div className="error-message">{errors.password}</div>}
           </div>
 
           <div className="form-group">
@@ -332,9 +347,7 @@ const Register = () => {
               <div className="success-message">사용 가능한 닉네임입니다.</div>
             )}
 
-            {errors.nickname && (
-              <div className="error-message">{errors.nickname}</div>
-            )}
+            {errors.nickname && <div className="error-message">{errors.nickname}</div>}
           </div>
 
           <button type="submit" className="auth-button">

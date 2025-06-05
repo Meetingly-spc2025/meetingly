@@ -50,11 +50,7 @@ const Controls = ({
           <BsCameraVideoFill style={{ fontSize: "1.5rem" }} />
         )}
       </button>
-      {/* {!recording ? (
-        <button onClick={startRecording}><MdFiberManualRecord style={{ fontSize: "1.5rem", color: "red" }} /></button>
-      ) : (
-        <button onClick={stopRecording}><MdStop style={{ fontSize: "1.5rem", color: "black" }} /></button>
-      )} */}
+
       {isCreator &&
         !recordingDone &&
         (!recording ? (

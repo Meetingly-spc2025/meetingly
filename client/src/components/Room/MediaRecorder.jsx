@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-const useMediaRecorder = ({ myStream, roomId }) => {
+const useMediaRecorder = ({ myStream, roomId, isCreator }) => {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const [recording, setRecording] = useState(false);
@@ -56,6 +56,7 @@ const useMediaRecorder = ({ myStream, roomId }) => {
     const formData = new FormData();
     formData.append("audio", file);
     formData.append("roomId", roomId);
+    formData.append("isCreator", isCreator);
 
     try {
       const res = await axios.post(
@@ -63,7 +64,6 @@ const useMediaRecorder = ({ myStream, roomId }) => {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } },
       );
-
       console.log("업로드 완료:\n" + JSON.stringify(res.data, null, 2));
       toast.success("AI 회의록 녹음이 완료되었습니다.");
     } catch (error) {
