@@ -34,7 +34,9 @@ const SummaryBlock = ({ content, isCreator, onEdit }) => {
           style={{ width: "100%", height: "100px" }}
         />
       ) : (
-        <p>{content}</p>
+        <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
+          {content}
+        </pre>
       )}
     </div>
   );

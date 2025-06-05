@@ -4,6 +4,8 @@ import SummaryBlock from "../../components/Taskboard/SummaryBlock";
 import DiscussionList from "../../components/Taskboard/DiscusstionList";
 import KanbanBoard from "../../components/Kanban/KanbanBoard";
 import MeetingInfo from "../../components/Taskboard/MeetingInfo";
+import TeamTaskChart from "../../components/Taskboard/TeamTaskChart";
+import WordCloudChart from "../../components/Taskboard/WordCloudChart";
 import "../../styles/Task/MeetingDetail.css";
 import { useParams, useSearchParams } from "react-router-dom";
 
@@ -13,6 +15,7 @@ const MeetingDetail = () => {
   const teamId = searchParams.get("teamId");
 
   const [sections, setSections] = useState([
+    { type: "chart", collapsed: false },
     { type: "info", collapsed: false },
     { type: "discussion", collapsed: false },
     { type: "summary", collapsed: false },
@@ -53,13 +56,13 @@ const MeetingDetail = () => {
     meetingInfo?.creator_id?.trim().toLowerCase() === userInfo.userId?.trim().toLowerCase();
 
   useEffect(() => {
-  
-      console.log("creator_id:", meetingInfo);
-      console.log("currentUserId:", userInfo);
-      console.log(
-        "비교 결과 (소문자, trim):",
-        isCreator
-      );
+
+    console.log("creator_id:", meetingInfo);
+    console.log("currentUserId:", userInfo);
+    console.log(
+      "비교 결과 (소문자, trim):",
+      isCreator
+    );
 
   }, [meetingInfo, userInfo.userId, isCreator]);
 
@@ -121,86 +124,86 @@ const MeetingDetail = () => {
   };
 
   // 회의 삭제
-const handleDeleteMeeting = async () => {
-  try {
-    await axios.delete(`/api/meetingData/meetingDetail/meeting/${meetingId}`);
-    alert("회의가 삭제되었습니다!");
-    // 예: 전체 목록 페이지로 리디렉션
-    window.location.href = "/meetings";
-  } catch (err) {
-    console.error("회의 삭제 오류:", err);
-    alert("삭제 실패!");
-  }
-};
+  const handleDeleteMeeting = async () => {
+    try {
+      await axios.delete(`/api/meetingData/meetingDetail/meeting/${meetingId}`);
+      alert("회의가 삭제되었습니다!");
+      // 예: 전체 목록 페이지로 리디렉션
+      window.location.href = "/meetings";
+    } catch (err) {
+      console.error("회의 삭제 오류:", err);
+      alert("삭제 실패!");
+    }
+  };
 
-// 회의 제목 수정
-const handleEditMeeting = async (newTitle) => {
-  try {
-    const res = await axios.patch(`/api/meetingData/meetingDetail/meeting/${meetingId}`, {
-      meetingName: newTitle,
-    });
-    alert("회의 제목이 수정되었습니다.");
-    // 변경 후 다시 불러오기
-    const updated = await axios.get(`/api/meetingData/meetingDetail/${meetingId}?teamId=${teamId}`);
-    setMeetingInfo(updated.data.meeting);
-  } catch (err) {
-    console.error("회의 수정 실패:", err);
-  }
-};
+  // 회의 제목 수정
+  const handleEditMeeting = async (newTitle) => {
+    try {
+      const res = await axios.patch(`/api/meetingData/meetingDetail/meeting/${meetingId}`, {
+        meetingName: newTitle,
+      });
+      alert("회의 제목이 수정되었습니다.");
+      // 변경 후 다시 불러오기
+      const updated = await axios.get(`/api/meetingData/meetingDetail/${meetingId}?teamId=${teamId}`);
+      setMeetingInfo(updated.data.meeting);
+    } catch (err) {
+      console.error("회의 수정 실패:", err);
+    }
+  };
 
-// 논의 수정
-const handleEditDiscussion = async (newContent) => {
-  const discussionSummary = summaries.find((s) => s.status === "discussion");
-  if (!discussionSummary) return alert("논의 summary가 없습니다.");
+  // 논의 수정
+  const handleEditDiscussion = async (newContent) => {
+    const discussionSummary = summaries.find((s) => s.status === "discussion");
+    if (!discussionSummary) return alert("논의 summary가 없습니다.");
 
-  try {
-    await axios.put(`/api/meetingData/meetingDetail/summary/${discussionSummary.summary_id}`, {
-      content: newContent,
-    });
-    alert("논의 내용이 수정되었습니다!");
+    try {
+      await axios.put(`/api/meetingData/meetingDetail/summary/${discussionSummary.summary_id}`, {
+        content: newContent,
+      });
+      alert("논의 내용이 수정되었습니다!");
 
-    // 상태 즉시 반영
-    setSummaries((prev) =>
-      prev.map((s) =>
-        s.summary_id === discussionSummary.summary_id
-          ? { ...s, content: newContent }
-          : s
-      )
-    );
-  } catch (err) {
-    console.error("논의 수정 오류:", err);
-    alert("수정 실패!");
-  }
-};
+      // 상태 즉시 반영
+      setSummaries((prev) =>
+        prev.map((s) =>
+          s.summary_id === discussionSummary.summary_id
+            ? { ...s, content: newContent }
+            : s
+        )
+      );
+    } catch (err) {
+      console.error("논의 수정 오류:", err);
+      alert("수정 실패!");
+    }
+  };
 
 
-// 요약 수정
-const keypointSummary = summaries.find((s) => s.status === "keypoint");
+  // 요약 수정
+  const keypointSummary = summaries.find((s) => s.status === "keypoint");
 
-const handleEditSummary = async (newContent) => {
-  if (!keypointSummary) {
-    alert("요약 데이터가 없습니다.");
-    return;
-  }
+  const handleEditSummary = async (newContent) => {
+    if (!keypointSummary) {
+      alert("요약 데이터가 없습니다.");
+      return;
+    }
 
-  try {
-    const res = await axios.put(`/api/meetingData/meetingDetail/summary/${keypointSummary.summary_id}`, {
-      content: newContent,
-    });
-    alert("요약 내용이 수정되었습니다!");
+    try {
+      const res = await axios.put(`/api/meetingData/meetingDetail/summary/${keypointSummary.summary_id}`, {
+        content: newContent,
+      });
+      alert("요약 내용이 수정되었습니다!");
 
-    // 상태 업데이트 (즉시 반영)
-    setSummaries((prev) =>
-      prev.map((s) =>
-        s.summary_id === keypointSummary.summary_id
-          ? { ...s, content: newContent }
-          : s
-      )
-    );
-  } catch (err) {
-    console.error("요약 수정 실패:", err);
-  }
-};
+      // 상태 업데이트 (즉시 반영)
+      setSummaries((prev) =>
+        prev.map((s) =>
+          s.summary_id === keypointSummary.summary_id
+            ? { ...s, content: newContent }
+            : s
+        )
+      );
+    } catch (err) {
+      console.error("요약 수정 실패:", err);
+    }
+  };
 
 
   if (!meetingInfo) return <div>로딩 중...</div>;
@@ -220,6 +223,12 @@ const handleEditSummary = async (newContent) => {
 
           {!section.collapsed && (
             <>
+              {section.type === "chart" && (
+                <>
+                  <TeamTaskChart tasks={kanbanTasks} teamMembers={teamMembers} />
+                  <WordCloudChart text={fullTextContent} />
+                </>
+              )}
               {section.type === "info" && (
                 <MeetingInfo
                   meetingName={meetingInfo.title}
@@ -239,7 +248,7 @@ const handleEditSummary = async (newContent) => {
                   summaryId={actionSummaryId}
                   teamId={meetingInfo.team_id}
                   teamMembers={teamMembers}
-                />
+                  onTasksUpdate={setKanbanTasks} />
               )}
               {section.type === "summary" && (
                 <SummaryBlock

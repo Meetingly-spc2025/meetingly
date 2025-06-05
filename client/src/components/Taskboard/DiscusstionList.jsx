@@ -42,7 +42,7 @@ const DiscussionList = ({ discussionContent, isCreator, onEdit }) => {
           ))}
         </ul>
       ) : (
-        <p>{discussionContent}</p>
+        <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{discussionContent}</pre>
       )}
     </div>
   );

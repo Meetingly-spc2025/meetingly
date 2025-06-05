@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const db = require("../models/db_users");
 
 const handleUploadRecord = async (req, res) => {
-  const { roomId } = req.body;
+  const { roomId, isCreator } = req.body;
   const file = req.file;
 
   console.log("summaryController 에서 받은 roomID:", roomId);
@@ -20,6 +20,10 @@ const handleUploadRecord = async (req, res) => {
   const savePath = path.join(roomDir, file.originalname);
   fs.renameSync(file.path, savePath);
   console.log("저장된 파일 경로:", savePath);
+
+  if (isCreator !== "true"){
+    return res.status(204).end();
+  }
 
   try {
     const aiRes = await axios.post(

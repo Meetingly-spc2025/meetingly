@@ -7,7 +7,7 @@ import "../../styles/Task/KanbanBoard.css";
 
 const STATUSES = ["todo", "doing", "done"];
 
-export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, teamMembers }) {
+export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, teamMembers, onTasksUpdate }) {
   const [tasks, setTasks] = useState(initialTasks || []);
   const [modal, setModal] = useState({ open: false, task: null });
 
@@ -45,15 +45,19 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
 
   const handleSave = async (task) => {
     const newTask = { ...task, summary_id: summaryId, team_id: teamId };
-
+  
     try {
       if (task.task_id) {
         await axios.put(`/api/meetingData/tasks/${task.task_id}`, newTask);
-        setTasks(tasks.map((t) => (t.task_id === task.task_id ? newTask : t)));
+        const updatedTasks = tasks.map((t) => (t.task_id === task.task_id ? newTask : t));
+        setTasks(updatedTasks);
+        if (onTasksUpdate) onTasksUpdate(updatedTasks); 
       } else {
         const res = await axios.post("/api/meetingData/tasks", newTask);
-        const { task_id } = res.data;
-        setTasks([...tasks, { ...newTask, task_id }]);
+        const createdTask = { ...newTask, task_id: res.data.task_id };
+        const updatedTasks = [...tasks, createdTask];
+        setTasks(updatedTasks);
+        if (onTasksUpdate) onTasksUpdate(updatedTasks); 
       }
       setModal({ open: false, task: null });
     } catch (err) {
@@ -87,6 +91,7 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
           onClose={() => setModal({ open: false, task: null })}
           onSave={handleSave}
           teamMembers={teamMembers}
+          onTasksUpdate={(updatedTasks) => setKanbanTasks(updatedTasks)} 
         />
       )}
     </main>

@@ -7,10 +7,12 @@ exports.getMeetingDetail = async (req, res) => {
   const { meetingId } = req.params;
   try {
     const [meetingResult] = await db.query(`
-      SELECT
+       SELECT
         m.meeting_id,
         m.title,
         m.creator_id,
+        m.start_time,
+        m.end_time,
         DATE_FORMAT(m.start_time, '%Y. %m. %d') AS date,
         TIME_FORMAT(TIMEDIFF(m.end_time, m.start_time), '%H:%i:%s') AS totalDuration,
         u.name AS host,
