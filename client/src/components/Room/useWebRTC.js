@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useMemo } from "react";
 
 const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
   const myStreamRef = useRef(null);
@@ -9,6 +9,25 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
   const [muted, setMuted] = useState(false);
   const [cameraOff, setCameraOff] = useState(false);
+
+  const VITE_STUN_URL = import.meta.env.VITE_STUN_URL;
+  const VITE_TURN_URL = import.meta.env.VITE_TURN_URL;
+  const VITE_TURN_USERNAME = import.meta.env.VITE_TURN_USERNAME;
+  const VITE_TURN_CREDENTIAL = import.meta.env.VITE_TURN_CREDENTIAL;
+
+  const iceServers = useMemo(() => [
+    { urls: VITE_STUN_URL },
+    {
+      urls: VITE_TURN_URL,
+      username: VITE_TURN_USERNAME,
+      credential: VITE_TURN_CREDENTIAL,
+    },
+  ], [
+    VITE_STUN_URL,
+    VITE_TURN_URL,
+    VITE_TURN_USERNAME,
+    VITE_TURN_CREDENTIAL,
+  ]);
 
   // 코드흐름:: 내 스트림, 상대 스트림 관리 -> 각 PeerConnection 이벤트 -> 비디오 슬롯에 stream/nickname 배정
 
@@ -94,10 +113,7 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
   // WebRTC 연결 생성 및 관리
   const createPeerConnection = useCallback(
     (userId, nick) => {
-      const pc = new RTCPeerConnection({
-        // 구글에서 제공하는 STUN서버를 사용 중
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-      });
+      const pc = new RTCPeerConnection({ iceServers, iceTransportPolicy: "all" });
 
       nicknamesRef.current[userId] = nick;
       peerConnections.current[userId] = pc;
@@ -123,7 +139,7 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
 
       return pc;
     },
-    [assignStreamToSlot, socket, socketId],
+    [assignStreamToSlot, socket, socketId, iceServers]
   );
 
   // 마이크 및 카메라 켜기/끄기/변경

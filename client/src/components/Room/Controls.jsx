@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   BsFillMicFill,
   BsFillMicMuteFill,
@@ -24,15 +24,36 @@ const Controls = ({
   setRecording,
   recordingDone,
 }) => {
+  const [canStopRecording, setCanStopRecording] = useState(false);
+  const timerRef = useRef(null);
+
   const handleStartRecording = () => {
     socket.emit("start_recording", roomId);
     setRecording(true);
+    setCanStopRecording(false);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setCanStopRecording(true), 60 * 1000);
   };
 
   const handleStopRecording = () => {
     socket.emit("stop_recording", roomId);
     setRecording(false);
+    setCanStopRecording(false);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
   };
+
+  useEffect(() => {
+    if (!recording) {
+      setCanStopRecording(false);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    }
+  }, [recording]);
 
   return (
     <div id="controls">
@@ -58,7 +79,14 @@ const Controls = ({
             <MdFiberManualRecord style={{ fontSize: "1.5rem", color: "red" }} />
           </button>
         ) : (
-          <button onClick={handleStopRecording}>
+          <button 
+            onClick={handleStopRecording}
+            disabled={!canStopRecording}
+            style={{
+              opacity: canStopRecording ? 1 : 0.5,
+              cursor: canStopRecording ? "pointer" : "not-allowed",
+            }}
+          >
             <MdStop style={{ fontSize: "1.5rem", color: "black" }} />
           </button>
         ))}

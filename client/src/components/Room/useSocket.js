@@ -145,7 +145,6 @@ const useSocket = ({
 
     socket.on("member_stop_recording", () => {
       console.log("녹음 종료 감지");
-      toast.success("녹음이 완료되었습니다!");
       stopRecording();
       setRecordingDone(true);
     });
