@@ -1,0 +1,20 @@
+.calendar-tile-task-card {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 12px;
+  margin: 1px 0;
+}
+
+
+.calendar-task-title {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+

@@ -77,7 +77,7 @@ const handleUploadRecord = async (req, res) => {
       `;
       for (let taskContent of taskArray) {
         const taskId = generateUUID();
-        await db.execute(taskQuery, [taskId, taskContent, currentTimestamp, actionSummaryId]);
+        await db.execute(taskQuery, [taskId, taskContent, currentTimestamp, currentTimestamp, actionSummaryId]);
       }
       console.log("tasks 테이블 저장 완료");
     }

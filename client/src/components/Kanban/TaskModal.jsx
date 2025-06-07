@@ -1,40 +1,57 @@
 import { useState, useEffect } from "react";
+import "../../styles/Task/TaskModal.css";
 
 // 할 일 추가/수정 모달 컴포넌트
-export default function TaskModal({ task, onClose, onSave, teamMembers }) {
-  // 모달 내부 상태: 내용, 담당자, 상태
+export default function TaskModal({ task, onClose, onSave, teamMembers = [], origin, userId }) {
   const [content, setContent] = useState("");
   const [assigneeId, setAssigneeId] = useState("");
   const [status, setStatus] = useState("todo");
-  const [createdAt, setCreatedAt] = useState("");     // 시작 날짜
-  const [finishedAt, setFinishedAt] = useState("");   // 종료 날짜
+  const [createdAt, setCreatedAt] = useState("");
+  const [finishedAt, setFinishedAt] = useState("");
 
-  // 수정 모드일 경우, 기존 task 데이터를 초기화
   useEffect(() => {
     if (task) {
-      setContent(task.content);
-      setAssigneeId(task.assignee_id || "");
-      setStatus(task.status);
-      setCreatedAt(task.created_at?.slice(0, 10) || "");   // yyyy-mm-dd
-      setFinishedAt(task.finished_at?.slice(0, 10) || "");
-    }
-  }, [task]);
+      const today = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
 
-  // 저장 버튼 클릭 시 호출되는 함수
+      setContent(task.content);
+      setAssigneeId(task.assignee_id || userId || "");
+      setStatus(task.status);
+      setCreatedAt(task.created_at?.slice(0, 10) || today);
+      setFinishedAt(task.finished_at?.slice(0, 10) || today);
+    } else {
+      // 새 할 일 추가 시에도 기본값 설정
+      const today = new Date().toISOString().slice(0, 10);
+      setAssigneeId(userId || "");
+      setCreatedAt(today);
+      setFinishedAt(today);
+    }
+  }, [task, userId, teamMembers]);
+
   const handleSubmit = () => {
+    if (!content.trim()) {
+      alert("할 일 내용을 입력해주세요.");
+      return;
+    }
+
+    if (createdAt && finishedAt && new Date(finishedAt) < new Date(createdAt)) {
+      alert("종료일은 시작일 이후여야 합니다.");
+      return;
+    }
+
     const newTask = {
-      task_id: task?.task_id,  // 수정일 경우 id 포함, 추가일 경우 undefined
+      task_id: task?.task_id,
       content,
-      assignee_id: assigneeId || null, // 담당자가 없으면 null 처리
+      assignee_id: assigneeId || null,
       status,
       created_at: createdAt,
       finished_at: finishedAt,
     };
-    onSave(newTask); // 부모 컴포넌트로 저장 요청
+
+    onSave(newTask);
   };
 
+
   return (
-    // 모달 배경
     <div className="taskmodal-overlay">
       <div className="taskmodal-container">
         <h3>{task ? "할 일 수정" : "할 일 추가"}</h3>
@@ -52,12 +69,14 @@ export default function TaskModal({ task, onClose, onSave, teamMembers }) {
           onChange={(e) => setAssigneeId(e.target.value)}
         >
           <option value="">담당자 선택</option>
-          {teamMembers.map((member) => (
-            <option key={member.user_id} value={member.user_id}>
-              {member.nickname} ({member.name})
-            </option>
-          ))}
+          {Array.isArray(teamMembers) &&
+            teamMembers.map((member) => (
+              <option key={member.user_id} value={member.user_id}>
+                {member.nickname} ({member.name})
+              </option>
+            ))}
         </select>
+
 
         <select
           className="taskmodal-select"
@@ -76,6 +95,7 @@ export default function TaskModal({ task, onClose, onSave, teamMembers }) {
           value={createdAt}
           onChange={(e) => setCreatedAt(e.target.value)}
         />
+        <br />
         <label>종료일</label>
         <input
           type="date"
@@ -83,6 +103,16 @@ export default function TaskModal({ task, onClose, onSave, teamMembers }) {
           value={finishedAt}
           onChange={(e) => setFinishedAt(e.target.value)}
         />
+        {origin === "calendar" && task?.meeting_id && task?.team_id && (
+          <button
+            className="taskmodal-goto-detail"
+            onClick={() =>
+              window.location.href = `/meeting/${task.meeting_id}?teamId=${task.team_id}`
+            }
+          >
+            📎 회의 상세페이지로 이동
+          </button>
+        )}
 
         <div className="taskmodal-buttons">
           <button onClick={handleSubmit}>저장</button>
@@ -90,5 +120,6 @@ export default function TaskModal({ task, onClose, onSave, teamMembers }) {
         </div>
       </div>
     </div>
+
   );
 }

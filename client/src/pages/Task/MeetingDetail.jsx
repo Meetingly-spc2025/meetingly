@@ -32,6 +32,8 @@ const MeetingDetail = () => {
   const [userInfo, setUserInfo] = useState({});
   const token = localStorage.getItem("token");
 
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
   // 사용자 정보 불러오기
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -217,6 +219,35 @@ const MeetingDetail = () => {
   return (
     <div className="meeting-detail-page">
       <h2>회의 기록 상세</h2>
+      {isCreator && (
+        <>
+          <div className="delete-button-container">
+            <button onClick={() => setIsDeleteConfirmOpen(true)}>회의 삭제</button>
+          </div>
+          {isDeleteConfirmOpen && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <button
+                  className="modal-close"
+                  onClick={() => setIsDeleteConfirmOpen(false)}
+                >
+                  X
+                </button>
+                <p>정말로 이 회의를 삭제하시겠습니까?</p>
+                <div style={{ marginTop: "1rem", textAlign: "right" }}>
+                  <button
+                    onClick={handleDeleteMeeting}
+                    style={{ marginRight: "10px" }}
+                  >
+                    확인
+                  </button>
+                  <button onClick={() => setIsDeleteConfirmOpen(false)}>취소</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
       {sections.map((section, index) => (
         <div key={`${section.type}-${index}`} className="meeting-section-wrapper">
@@ -251,6 +282,7 @@ const MeetingDetail = () => {
                   teamId={meetingInfo.team_id}
                   teamMembers={teamMembers}
                   onTasksUpdate={setKanbanTasks}
+                  userId={userInfo.userId}
                 />
                 </>
               )}

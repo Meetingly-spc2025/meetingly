@@ -7,7 +7,7 @@ import "../../styles/Task/KanbanBoard.css";
 
 const STATUSES = ["todo", "doing", "done"];
 
-export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, teamMembers, onTasksUpdate }) {
+export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, teamMembers, onTasksUpdate, userId }) {
   const [tasks, setTasks] = useState(initialTasks || []);
   const [modal, setModal] = useState({ open: false, task: null });
 
@@ -101,6 +101,7 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
           onClose={() => setModal({ open: false, task: null })}
           onSave={handleSave}
           teamMembers={teamMembers}
+          userId={userId}
           onTasksUpdate={(updatedTasks) => setKanbanTasks(updatedTasks)} 
         />
       )}

@@ -26,6 +26,8 @@ router.get("/tasks/team/:team_id/members", controller.getTeamMembers);
 router.get("/meetinglists/task/:teamId", authenticate, controller.getMeetingsByTeam);
 router.get("/meetinglists/task/:teamId/by-date", controller.getMeetingsByDate);
 router.get("/meetinglists/task/:teamId/by-month", controller.getMeetingsByMonth);
+router.get("/tasks/by-user/:userId/by-month", controller.getUserTasksByMonth);
+router.get("/meetings/from-summary/:summaryId", controller.getMeetingInfoBySummaryId);
 
 // chart.js
 router.get("/participation/:teamId", controller.getParticipationStats);

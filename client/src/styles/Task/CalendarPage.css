@@ -1,3 +1,7 @@
+.react-calendar__tile.task-highlight {
+  border-radius: 6px;
+}
+
 .calendar-tile-meetings {
   width: 100%;
   display: flex;
@@ -45,7 +49,7 @@
   font-size: 0.5rem;
 }
 
-/* CalendarCard (달력 밖에서 모달로 뜨는 경우) */
+/* CalendarCard (�щ젰 諛뽰뿉�� 紐⑤떖濡� �⑤뒗 寃쎌슦) */
 .calendarcard-modal-wrapper {
   position: absolute;
   top: 50%;
@@ -80,7 +84,7 @@
   font-size: 0.7rem;
 }
 
-/* CalendarPage 컨테이너 */
+/* CalendarPage 而⑦뀒�대꼫 */
 .calendarpage-container {
   max-width: 750px;
   margin: 60px auto;
@@ -100,7 +104,7 @@
 
 .calendar-wrapper {
   margin: 0 auto;
-  position: relative; /* 모달 위치용 */
+  position: relative; /* 紐⑤떖 �꾩튂�� */
 }
 
 .selected-date {
@@ -109,7 +113,7 @@
   color: #444;
 }
 
-/* 캘린더 기본 스타일 수정 */
+/* 罹섎┛�� 湲곕낯 �ㅽ��� �섏젙 */
 .react-calendar {
   width: 100% !important;
   max-width: 100%;
@@ -117,7 +121,7 @@
   border: none;
 }
 
-/* 요일 헤더 */
+/* �붿씪 �ㅻ뜑 */
 .react-calendar__month-view__weekdays {
   display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
@@ -127,14 +131,14 @@
   font-size: 1rem;
 }
 
-/* 날짜 셀 그리드 */
+/* �좎쭨 �� 洹몃━�� */
 .react-calendar__month-view__days {
   display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
   grid-gap: 5px;
 }
 
-/* 날짜 박스 크기 & 중앙 정렬 */
+/* �좎쭨 諛뺤뒪 �ш린 & 以묒븰 �뺣젹 */
 .react-calendar__tile {
   display: flex;
   flex-direction: column;

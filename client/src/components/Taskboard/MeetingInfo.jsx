@@ -19,21 +19,14 @@ const MeetingInfo = ({
   fullText,
   isCreator,
   onEdit,
-  onDelete,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); 
-  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false); 
   const [isEditing, setIsEditing] = useState(false);
   const [editedMeetingName, setEditedMeetingName] = useState(meetingName);
 
   const handleSave = () => {
     if (onEdit) onEdit(editedMeetingName);
     setIsEditing(false);
-  };
-
-  const handleDeleteConfirm = () => {
-    if (onDelete) onDelete();
-    setIsDeleteConfirmOpen(false);
   };
 
   return (
@@ -50,7 +43,6 @@ const MeetingInfo = ({
             ) : (
               <>
                 <button onClick={() => setIsEditing(true)}>수정</button>
-                <button onClick={() => setIsDeleteConfirmOpen(true)}>삭제</button>
               </>
             )}
           </div>
@@ -112,17 +104,7 @@ const MeetingInfo = ({
         </Modal>
       )}
 
-      {isDeleteConfirmOpen && (
-        <Modal onClose={() => setIsDeleteConfirmOpen(false)}>
-          <p>정말로 이 회의를 삭제하시겠습니까?</p>
-          <div style={{ marginTop: "1rem", textAlign: "right" }}>
-            <button onClick={handleDeleteConfirm} style={{ marginRight: "10px" }}>
-              확인
-            </button>
-            <button onClick={() => setIsDeleteConfirmOpen(false)}>취소</button>
-          </div>
-        </Modal>
-      )}
+
     </div>
   );
 };
