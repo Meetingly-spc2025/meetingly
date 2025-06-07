@@ -1,8 +1,7 @@
-// CalendarPage.jsx
 import { useState, useEffect } from "react"
 import Calendar from "react-calendar"
 import "react-calendar/dist/Calendar.css"
-import "../../styles/Task/CalendarPage.css"
+import "../../styles/Task/CalendarPage.css";
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import CalendarTaskCard from "../../components/Taskboard/CalendarTaskCard.jsx"
@@ -21,20 +20,19 @@ const CalendarPage = () => {
   const [teamMembers, setTeamMembers] = useState([])
 
   const openTaskModal = (task) => {
-    const matchedAssignee = teamMembers.find(member => member.user_id === task.assignee_id);
+    const matchedAssignee = teamMembers.find((member) => member.user_id === task.assignee_id)
 
     // assignee_id가 없으면 userId를 기본값으로 설정
-    const defaultAssigneeId = task.assignee_id || userId;
+    const defaultAssigneeId = task.assignee_id || userId
 
     setSelectedTask({
       ...task,
       assignee_id: matchedAssignee?.user_id || defaultAssigneeId,
-      assignee: matchedAssignee || teamMembers.find(m => m.user_id === defaultAssigneeId) || null,
-    });
+      assignee: matchedAssignee || teamMembers.find((m) => m.user_id === defaultAssigneeId) || null,
+    })
 
-    setIsTaskModalOpen(true);
-  };
-
+    setIsTaskModalOpen(true)
+  }
 
   const closeTaskModal = () => {
     setSelectedTask(null)
@@ -109,17 +107,17 @@ const CalendarPage = () => {
       const res = await axios.get(`/api/meetingData/tasks/by-user/${userId}/by-month?year=${year}&month=${month}`)
       const tasks = res.data.tasks
 
-      const tasksWithAssignees = tasks.map(task => {
-        const fallbackAssigneeId = task.assignee_id || userId;
-        const assignee = teamMembers.find(member => member.user_id === fallbackAssigneeId);
+      const tasksWithAssignees = tasks.map((task) => {
+        const fallbackAssigneeId = task.assignee_id || userId
+        const assignee = teamMembers.find((member) => member.user_id === fallbackAssigneeId)
         return {
           ...task,
           assignee_id: fallbackAssigneeId,
           assignee,
           meeting_id: task.meeting_id,
-          team_id: teamId
-        };
-      });
+          team_id: teamId,
+        }
+      })
 
       const grouped = {}
       tasksWithAssignees.forEach((task) => {
@@ -159,7 +157,10 @@ const CalendarPage = () => {
     <div className="calendarpage-container">
       <h2 className="calendarpage-title">Meetingly Calendar</h2>
       <div className="calendar-toggle-buttons">
-        <button className={`toggle-btn ${!showingTasksOnly ? "active" : ""}`} onClick={() => setShowingTasksOnly(false)}>
+        <button
+          className={`toggle-btn ${!showingTasksOnly ? "active" : ""}`}
+          onClick={() => setShowingTasksOnly(false)}
+        >
           📅 팀 회의
         </button>
         <button className={`toggle-btn ${showingTasksOnly ? "active" : ""}`} onClick={() => setShowingTasksOnly(true)}>
@@ -175,7 +176,7 @@ const CalendarPage = () => {
           }}
           tileContent={({ date }) => {
             const formattedDate = date.toLocaleDateString("sv-SE")
-            
+
             if (showingTasksOnly) {
               const tasks = tasksByDate[formattedDate]
               if (!tasks) return null
@@ -197,6 +198,16 @@ const CalendarPage = () => {
                     const isContinuation = !isStartDate && !isEndDate
                     const isTruncated = !isStartDate && formattedDate !== taskEnd
 
+                    // 태스크의 총 일수 계산
+                    const startDateObj = new Date(taskStart)
+                    const endDateObj = new Date(taskEnd)
+                    const totalDays = Math.ceil((endDateObj - startDateObj) / (1000 * 60 * 60 * 24)) + 1
+
+                    // 현재 날짜가 태스크에서 몇 번째 날인지 계산
+                    const currentDateObj = new Date(formattedDate)
+                    const currentDateIndex = Math.ceil((currentDateObj - startDateObj) / (1000 * 60 * 60 * 24))
+
+
                     return (
                       <CalendarTaskCard
                         key={`${t.task_id}-${formattedDate}`}
@@ -205,6 +216,8 @@ const CalendarPage = () => {
                         isEndDate={isEndDate}
                         isContinuation={isContinuation}
                         isTruncated={isTruncated}
+                        currentDateIndex={currentDateIndex}
+                        totalDays={totalDays}
                         onClick={() => openTaskModal(t)}
                       />
                     )
