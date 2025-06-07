@@ -1,3 +1,4 @@
+const { finished } = require("combined-stream");
 const db = require("../models/meetingly_db");
 const { v4: uuidv4 } = require("uuid");
 
@@ -194,12 +195,27 @@ exports.getTasksByMeeting = async (req, res) => {
   }
 };
 
+// ISOString → MySQL용 DATETIME 포맷 변환 함수 
+function formatDateToMySQL(datetime) {
+  const d = new Date(datetime);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  const hh = String(d.getHours()).padStart(2, "0");
+  const min = String(d.getMinutes()).padStart(2, "0");
+  const ss = String(d.getSeconds()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+}
+
 // [POST] task 추가
 // /api/meetingData/tasks
 exports.createTask = async (req, res) => {
-  const { content, assignee_nickname, status, summary_id, team_id } = req.body;
+  const { content, assignee_nickname, status, summary_id, team_id, created_at, finished_at } = req.body;
   const task_id = uuidv4();
   let assignee_id = null;
+
+  const formattedCreatedAt = created_at ? formatDateToMySQL(created_at) : formatDateToMySQL(new Date());
+  const formattedFinishedAt = finished_at ? formatDateToMySQL(finished_at) : formatDateToMySQL(new Date());
 
   if (assignee_nickname) {
     const [userResult] = await db.query(
@@ -211,8 +227,8 @@ exports.createTask = async (req, res) => {
 
   try {
     await db.query(
-      "INSERT INTO tasks (task_id, content, assignee_id, status, summary_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
-      [task_id, content, assignee_id, status, summary_id]
+      "INSERT INTO tasks (task_id, content, assignee_id, status, summary_id, created_at, finished_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [task_id, content, assignee_id, status, summary_id, formattedCreatedAt, formattedFinishedAt]
     );
     res.status(201).json({ task_id });
   } catch (err) {
@@ -225,13 +241,15 @@ exports.createTask = async (req, res) => {
 // /api/meetingData/tasks/:task_id
 exports.updateTask = async (req, res) => {
   const { task_id } = req.params;
-  const { content, assignee_id, status } = req.body;
+  const { content, assignee_id, status, created_at, finished_at } = req.body;
   const finalAssigneeId = assignee_id === "" ? null : assignee_id;
+  const formattedCreatedAt = created_at ? formatDateToMySQL(created_at) : formatDateToMySQL(new Date());
+  const formattedFinishedAt = finished_at ? formatDateToMySQL(finished_at) : formatDateToMySQL(new Date());
 
   try {
     await db.query(
-      "UPDATE tasks SET content = ?, assignee_id = ?, status = ? WHERE task_id = ?",
-      [content, finalAssigneeId, status, task_id]
+      "UPDATE tasks SET content = ?, assignee_id = ?, status = ?, created_at = ?, finished_at = ? WHERE task_id = ?",
+      [content, finalAssigneeId, status, formattedCreatedAt, formattedFinishedAt, task_id]
     );
     res.sendStatus(200);
   } catch (err) {

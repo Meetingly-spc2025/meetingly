@@ -41,7 +41,7 @@ export default function TeamParticipationChart({ teamId }) {
   };
 
   return (
-    <div style={{ maxWidth: "500px", margin: "0 auto" }}>
+    <div style={{ maxWidth: "200px", margin: "0 auto" }}>
       <h3 style={{ textAlign: "center", marginBottom: "1rem" }}>📊 팀 멤버 회의 참여율</h3>
       <Doughnut data={chartData} />
     </div>

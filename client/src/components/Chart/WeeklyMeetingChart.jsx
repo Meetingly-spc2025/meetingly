@@ -55,7 +55,7 @@ export default function WeeklyMeetingChart({ teamId }) {
   if (!chartData) return <p>📊 데이터를 불러오는 중입니다...</p>;
 
   return (
-    <div style={{ maxWidth: "700px", margin: "0 auto", padding: "1rem" }}>
+    <div style={{ maxWidth: "600px", margin: "0 auto", padding: "1rem" }}>
       <h3>📈 주간 회의 통계 (Line Chart)</h3>
       <Line
         data={chartData}

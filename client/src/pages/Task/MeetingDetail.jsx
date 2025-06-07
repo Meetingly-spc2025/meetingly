@@ -17,7 +17,6 @@ const MeetingDetail = () => {
   const teamId = searchParams.get("teamId");
 
   const [sections, setSections] = useState([
-    { type: "chart", collapsed: false },
     { type: "info", collapsed: false },
     { type: "discussion", collapsed: false },
     { type: "summary", collapsed: false },
@@ -230,14 +229,6 @@ const MeetingDetail = () => {
 
           {!section.collapsed && (
             <>
-              {section.type === "chart" && (
-                <>
-                  <TeamTaskChart tasks={kanbanTasks} teamMembers={teamMembers} />
-                  <WordCloudChart text={fullTextContent} />
-                  <TeamParticipationChart teamId={teamId} />
-                  <WeeklyMeetingChart teamId={teamId} />
-                </>
-              )}
               {section.type === "info" && (
                 <MeetingInfo
                   meetingName={meetingInfo.title}
@@ -252,6 +243,8 @@ const MeetingDetail = () => {
                 />
               )}
               {section.type === "kanban" && (
+                <>
+                <TeamTaskChart tasks={kanbanTasks} teamMembers={teamMembers} />
                 <KanbanBoard
                   tasks={kanbanTasks}
                   summaryId={actionSummaryId}
@@ -259,13 +252,17 @@ const MeetingDetail = () => {
                   teamMembers={teamMembers}
                   onTasksUpdate={setKanbanTasks}
                 />
+                </>
               )}
               {section.type === "summary" && (
+                <>
+                <WordCloudChart text={fullTextContent} />
                 <SummaryBlock
                   content={summaries.find((s) => s.status === "keypoint")?.content}
                   isCreator={isCreator}
                   onEdit={({ content }) => handleEditSummary(content)}
                 />
+                </>
               )}
               {section.type === "discussion" && (
                 <DiscussionList

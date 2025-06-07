@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import LoadingScreen from "../../components/LoadingScreen";
 import "../../styles/Team/TeamManagement.css";
+import TeamParticipationChart from "../../components/Chart/TeamParticipationChart";
+import WeeklyMeetingChart from "../../components/Chart/WeeklyMeetingChart";
 
 const TeamManagementPage = () => {
   const [members, setMembers] = useState([]);
@@ -132,6 +134,12 @@ const TeamManagementPage = () => {
           </div>
         </div>
 
+        <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem" }}>
+          <TeamParticipationChart teamId={teamId} />
+          <WeeklyMeetingChart teamId={teamId} />
+        </div>
+
+
         {isAdmin && (
           <div className="admin-controls">
             <div className="edit-team-name">
@@ -181,9 +189,8 @@ const TeamManagementPage = () => {
           {members.map((member) => (
             <div
               key={member.user_id}
-              className={`member-card ${
-                member.role === "admin" ? "admin-member" : ""
-              }`}
+              className={`member-card ${member.role === "admin" ? "admin-member" : ""
+                }`}
             >
               <div className="member-photo" />
               <div className="member-info">

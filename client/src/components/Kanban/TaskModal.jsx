@@ -6,6 +6,8 @@ export default function TaskModal({ task, onClose, onSave, teamMembers }) {
   const [content, setContent] = useState("");
   const [assigneeId, setAssigneeId] = useState("");
   const [status, setStatus] = useState("todo");
+  const [createdAt, setCreatedAt] = useState("");     // 시작 날짜
+  const [finishedAt, setFinishedAt] = useState("");   // 종료 날짜
 
   // 수정 모드일 경우, 기존 task 데이터를 초기화
   useEffect(() => {
@@ -13,6 +15,8 @@ export default function TaskModal({ task, onClose, onSave, teamMembers }) {
       setContent(task.content);
       setAssigneeId(task.assignee_id || "");
       setStatus(task.status);
+      setCreatedAt(task.created_at?.slice(0, 10) || "");   // yyyy-mm-dd
+      setFinishedAt(task.finished_at?.slice(0, 10) || "");
     }
   }, [task]);
 
@@ -23,6 +27,8 @@ export default function TaskModal({ task, onClose, onSave, teamMembers }) {
       content,
       assignee_id: assigneeId || null, // 담당자가 없으면 null 처리
       status,
+      created_at: createdAt,
+      finished_at: finishedAt,
     };
     onSave(newTask); // 부모 컴포넌트로 저장 요청
   };
@@ -62,6 +68,21 @@ export default function TaskModal({ task, onClose, onSave, teamMembers }) {
           <option value="doing">DOING</option>
           <option value="done">DONE</option>
         </select>
+
+        <label>시작일</label>
+        <input
+          type="date"
+          className="taskmodal-date"
+          value={createdAt}
+          onChange={(e) => setCreatedAt(e.target.value)}
+        />
+        <label>종료일</label>
+        <input
+          type="date"
+          className="taskmodal-date"
+          value={finishedAt}
+          onChange={(e) => setFinishedAt(e.target.value)}
+        />
 
         <div className="taskmodal-buttons">
           <button onClick={handleSubmit}>저장</button>
