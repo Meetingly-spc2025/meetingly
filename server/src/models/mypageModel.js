@@ -27,3 +27,10 @@ exports.leaveTeam = async ({ userId }) => {
 exports.leaveMeetingly = async ({ userId }) => {
   await db.query("UPDATE users SET is_deleted = true WHERE user_id=?", [userId]);
 };
+
+exports.updateProfile = async ({ userId, user_image }) => {
+  await db.query("UPDATE users SET user_image = ? WHERE user_id = ?", [
+    user_image,
+    userId,
+  ]);
+};
