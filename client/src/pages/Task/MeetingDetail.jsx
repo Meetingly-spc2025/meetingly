@@ -6,8 +6,6 @@ import KanbanBoard from "../../components/Kanban/KanbanBoard";
 import MeetingInfo from "../../components/Taskboard/MeetingInfo";
 import TeamTaskChart from "../../components/Chart/TeamTaskChart";
 import WordCloudChart from "../../components/Chart/WordCloudChart";
-import TeamParticipationChart from "../../components/Chart/TeamParticipationChart";
-import WeeklyMeetingChart from "../../components/Chart/WeeklyMeetingChart";
 import "../../styles/Task/MeetingDetail.css";
 import { useParams, useSearchParams } from "react-router-dom";
 
@@ -253,7 +251,7 @@ const MeetingDetail = () => {
         <div key={`${section.type}-${index}`} className="meeting-section-wrapper">
           <div className="section-header">
             <strong>{section.type.toUpperCase()}</strong>
-            <button className="toggle-btn" onClick={() => toggleSection(index)}>
+            <button className="toggle-btn" style={{ width: '24px', height: '24px', padding: '0', fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 'unset' }} onClick={() => toggleSection(index)}>
               {section.collapsed ? "+" : "-"}
             </button>
           </div>
@@ -275,25 +273,25 @@ const MeetingDetail = () => {
               )}
               {section.type === "kanban" && (
                 <>
-                <TeamTaskChart tasks={kanbanTasks} teamMembers={teamMembers} />
-                <KanbanBoard
-                  tasks={kanbanTasks}
-                  summaryId={actionSummaryId}
-                  teamId={meetingInfo.team_id}
-                  teamMembers={teamMembers}
-                  onTasksUpdate={setKanbanTasks}
-                  userId={userInfo.userId}
-                />
+                  <TeamTaskChart tasks={kanbanTasks} teamMembers={teamMembers} />
+                  <KanbanBoard
+                    tasks={kanbanTasks}
+                    summaryId={actionSummaryId}
+                    teamId={meetingInfo.team_id}
+                    teamMembers={teamMembers}
+                    onTasksUpdate={setKanbanTasks}
+                    userId={userInfo.userId}
+                  />
                 </>
               )}
               {section.type === "summary" && (
                 <>
-                <WordCloudChart text={fullTextContent} />
-                <SummaryBlock
-                  content={summaries.find((s) => s.status === "keypoint")?.content}
-                  isCreator={isCreator}
-                  onEdit={({ content }) => handleEditSummary(content)}
-                />
+                  <WordCloudChart text={fullTextContent} />
+                  <SummaryBlock
+                    content={summaries.find((s) => s.status === "keypoint")?.content}
+                    isCreator={isCreator}
+                    onEdit={({ content }) => handleEditSummary(content)}
+                  />
                 </>
               )}
               {section.type === "discussion" && (
