@@ -27,7 +27,7 @@ const Navbar = () => {
         <div className="nav-right">
           {user ? (
             <>
-              <span className="nav-welcome"> 안녕하세요{user.name}님, {user.email}</span>
+              <span className="nav-welcome"> 안녕하세요 {user.name}님, {user.email}</span>
               <button
                 className="nav-logout-button"
                 onClick={() => {
