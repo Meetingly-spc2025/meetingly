@@ -81,7 +81,7 @@ const Login = () => {
         {errors.general && <div className="auth-error">{errors.general}</div>}
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            {/* 이메일 html 시작 */}
+            {/* 이메일 시작 */}
             <label htmlFor="email">이메일</label>
             <input
               type="email"
@@ -96,9 +96,9 @@ const Login = () => {
               <div className="error-message">{errors.email}</div>
             )}
           </div>
-          {/* 이메일 html 끝 */}
+          {/* 이메일 끝 */}
 
-          {/* 비밀번호 html */}
+          {/* 비밀번호 */}
           <div className="form-group">
             <label htmlFor="password">비밀번호</label>
             <input
@@ -114,7 +114,7 @@ const Login = () => {
               <div className="error-message">{errors.password}</div>
             )}
           </div>
-          {/* 비밀번호 html */}
+          {/* 비밀번호 끝 */}
 
           <button type="submit" className="auth-button">
             로그인
