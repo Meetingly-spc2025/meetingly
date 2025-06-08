@@ -1,3 +1,4 @@
+const { finished } = require("combined-stream");
 const db = require("../models/meetingly_db");
 const { v4: uuidv4 } = require("uuid");
 
@@ -194,25 +195,31 @@ exports.getTasksByMeeting = async (req, res) => {
   }
 };
 
+// ISOString → MySQL용 DATETIME 포맷 변환 함수 
+function formatDateToMySQL(datetime) {
+  const d = new Date(datetime);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  const hh = String(d.getHours()).padStart(2, "0");
+  const min = String(d.getMinutes()).padStart(2, "0");
+  const ss = String(d.getSeconds()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+}
+
 // [POST] task 추가
 // /api/meetingData/tasks
 exports.createTask = async (req, res) => {
-  const { content, assignee_nickname, status, summary_id, team_id } = req.body;
+  const { content, assignee_id, status, summary_id, team_id, created_at, finished_at } = req.body;
   const task_id = uuidv4();
-  let assignee_id = null;
 
-  if (assignee_nickname) {
-    const [userResult] = await db.query(
-      "SELECT user_id FROM users WHERE nickname = ? AND team_id = ?",
-      [assignee_nickname, team_id]
-    );
-    assignee_id = userResult[0]?.user_id || null;
-  }
+  const formattedCreatedAt = created_at ? formatDateToMySQL(created_at) : formatDateToMySQL(new Date());
+  const formattedFinishedAt = finished_at ? formatDateToMySQL(finished_at) : formatDateToMySQL(new Date());
 
   try {
     await db.query(
-      "INSERT INTO tasks (task_id, content, assignee_id, status, summary_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
-      [task_id, content, assignee_id, status, summary_id]
+      "INSERT INTO tasks (task_id, content, assignee_id, status, summary_id, created_at, finished_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [task_id, content, assignee_id || null, status, summary_id, formattedCreatedAt, formattedFinishedAt]
     );
     res.status(201).json({ task_id });
   } catch (err) {
@@ -225,13 +232,15 @@ exports.createTask = async (req, res) => {
 // /api/meetingData/tasks/:task_id
 exports.updateTask = async (req, res) => {
   const { task_id } = req.params;
-  const { content, assignee_id, status } = req.body;
+  const { content, assignee_id, status, created_at, finished_at } = req.body;
   const finalAssigneeId = assignee_id === "" ? null : assignee_id;
+  const formattedCreatedAt = created_at ? formatDateToMySQL(created_at) : formatDateToMySQL(new Date());
+  const formattedFinishedAt = finished_at ? formatDateToMySQL(finished_at) : formatDateToMySQL(new Date());
 
   try {
     await db.query(
-      "UPDATE tasks SET content = ?, assignee_id = ?, status = ? WHERE task_id = ?",
-      [content, finalAssigneeId, status, task_id]
+      "UPDATE tasks SET content = ?, assignee_id = ?, status = ?, created_at = ?, finished_at = ? WHERE task_id = ?",
+      [content, finalAssigneeId, status, formattedCreatedAt, formattedFinishedAt, task_id]
     );
     res.sendStatus(200);
   } catch (err) {
@@ -397,5 +406,140 @@ exports.getMeetingsByMonth = async (req, res) => {
   } catch (err) {
     console.error("getMeetingsByMonth 에러:", err);
     res.status(500).json({ error: "조회 실패" });
+  }
+};
+
+// 사용자의 할 일을 월별로 조회
+// [GET] /api/meetingData/tasks/by-user/:userId/by-month?year=YYYY&month=MM
+exports.getUserTasksByMonth = async (req, res) => {
+  const { userId } = req.params;
+  const { year, month } = req.query;
+
+  if (!userId || !year || !month) {
+    return res.status(400).json({ error: "userId, year, month는 필수입니다." });
+  }
+
+  try {
+    const [tasks] = await db.query(
+      `SELECT 
+        t.task_id,
+        t.content,
+        t.status,
+        DATE_FORMAT(t.created_at, '%Y-%m-%d') AS created_at,
+        DATE_FORMAT(t.finished_at, '%Y-%m-%d') AS finished_at,
+        t.summary_id,
+        m.meeting_id
+      FROM tasks t
+      JOIN summaries s ON t.summary_id = s.summary_id
+      JOIN meetings m ON s.room_fullname = m.room_fullname
+      WHERE t.assignee_id = ?
+        AND YEAR(t.created_at) = ?
+        AND MONTH(t.created_at) = ?
+      ORDER BY t.created_at ASC`,
+      [userId, year, month]
+    );
+
+    res.json({ tasks });
+  } catch (err) {
+    console.error("getUserTasksByMonth 에러:", err);
+    res.status(500).json({ error: "할 일 조회 실패" });
+  }
+};
+
+// 팀 멤버 회의 참여 비율 조회
+// [GET] api/meetingData/participation/:teamId
+exports.getParticipationStats = async (req, res) => {
+  const { teamId } = req.params;
+
+  try {
+    // 1. 팀 멤버 전체 조회
+    const [members] = await db.query(
+      `SELECT u.user_id, u.name 
+       FROM team_members tm 
+       JOIN users u ON tm.user_id = u.user_id 
+       WHERE tm.team_id = ?`,
+      [teamId]
+    );
+
+    // 2. 참여자 정보 조회
+    const [participations] = await db.query(
+      `SELECT p.user_id, COUNT(*) AS count 
+       FROM participants p
+       JOIN meetings m ON p.meeting_id = m.meeting_id
+       WHERE m.team_id = ?
+       GROUP BY p.user_id`,
+      [teamId]
+    );
+
+    // 3. 참여수 매핑
+    const participationMap = {};
+    participations.forEach((p) => {
+      participationMap[p.user_id] = p.count;
+    });
+
+    const result = members.map((member) => ({
+      name: member.name,
+      count: participationMap[member.user_id] || 0,
+    }));
+
+    res.json(result);
+  } catch (err) {
+    console.error("참여율 조회 실패:", err);
+    res.status(500).json({ error: "데이터 조회 실패" });
+  }
+};
+
+// 주간 회의 횟수 조회
+// [GET] api/meetingData/weekly/:teamId
+exports.getWeeklyMeetingStats = async (req, res) => {
+  const { teamId } = req.params;
+
+  try {
+    const [rows] = await db.query(
+      `SELECT DAYOFWEEK(start_time) AS weekday, COUNT(*) AS count
+       FROM meetings
+       WHERE team_id = ? AND start_time >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+       GROUP BY DAYOFWEEK(start_time)`,
+      [teamId]
+    );
+
+    // MySQL의 DAYOFWEEK: 일(1)~토(7) => JS 기준으로 월(0)~일(6) 맞춤 변환
+    const counts = Array(7).fill(0); // 월~일
+    rows.forEach(({ weekday, count }) => {
+      const jsWeekday = (weekday + 5) % 7; // 일(1) → 6, 월(2) → 0 ...
+      counts[jsWeekday] = count;
+    });
+
+    res.json({
+      labels: ["월", "화", "수", "목", "금", "토", "일"],
+      data: counts,
+    });
+  } catch (err) {
+    console.error("주간 회의 통계 조회 오류:", err);
+    res.status(500).json({ error: "회의 통계 조회 실패" });
+  }
+};
+
+// summary_id로부터 meeting_id 조회
+exports.getMeetingInfoBySummaryId = async (req, res) => {
+  const { summaryId } = req.params;
+
+  try {
+    const [[result]] = await db.query(
+      `SELECT m.meeting_id, m.team_id
+       FROM summaries s
+       JOIN meetings m ON s.room_fullname = m.room_fullname
+       WHERE s.summary_id = ?`,
+      [summaryId]
+    );
+
+    if (!result) {
+      return res.status(404).json({ error: "해당 summary에 연결된 meeting 정보를 찾을 수 없습니다." });
+    }
+
+    res.status(200).json({ meetingId: result.meeting_id, teamId: result.team_id });
+  } catch (err) {
+    console.error("Meeting 정보 조회 실패:", err);
+    res.status(500).json({ error: "서버 오류로 meeting 정보를 조회할 수 없습니다." });
   }
 };

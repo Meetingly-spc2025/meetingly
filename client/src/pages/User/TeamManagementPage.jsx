@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import LoadingScreen from "../../components/LoadingScreen";
 import "../../styles/Team/TeamManagement.css";
+import TeamParticipationChart from "../../components/Chart/TeamParticipationChart";
+import WeeklyMeetingChart from "../../components/Chart/WeeklyMeetingChart";
 
 const TeamManagementPage = () => {
   const [members, setMembers] = useState([]);
@@ -125,6 +127,12 @@ const TeamManagementPage = () => {
             </button>
           </div>
         </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem" }}>
+          <TeamParticipationChart teamId={teamId} />
+          <WeeklyMeetingChart teamId={teamId} />
+        </div>
+
 
         {isAdmin && (
           <div className="admin-controls">

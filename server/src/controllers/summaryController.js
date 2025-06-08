@@ -98,17 +98,12 @@ const handleUploadRecord = async (req, res) => {
     if (taskArray.length > 0) {
       const actionSummaryId = summaries.find((s) => s.status === "action").summary_id;
       const taskQuery = `
-        INSERT INTO tasks (task_id, content, assignee_id, status, created_at, summary_id)
-        VALUES (?, ?, NULL, 'todo', ?, ?)
+        INSERT INTO tasks (task_id, content, assignee_id, status, created_at, finished_at, summary_id)
+        VALUES (?, ?, NULL, 'todo', ?, ?, ?)
       `;
       for (let taskContent of taskArray) {
         const taskId = generateUUID();
-        await db.execute(taskQuery, [
-          taskId,
-          taskContent,
-          currentTimestamp,
-          actionSummaryId,
-        ]);
+        await db.execute(taskQuery, [taskId, taskContent, currentTimestamp, currentTimestamp, actionSummaryId]);
       }
       console.log("tasks 테이블 저장 완료");
     }

@@ -4,6 +4,8 @@ export default function TaskCard({ task, index, onEdit, onDelete, teamMembers })
   const assignee = teamMembers?.find((m) => m.user_id === task.assignee_id);
   const assigneeName = assignee ? `${assignee.nickname} (${assignee.name})` : "없음";
 
+  const formatDate = (dateString) => dateString?.slice(0, 10) || "미정";
+
   return (
     <Draggable draggableId={String(task.task_id)} index={index}>
       {(provided, snapshot) => (
@@ -15,7 +17,10 @@ export default function TaskCard({ task, index, onEdit, onDelete, teamMembers })
           style={{ ...provided.draggableProps.style }}
         >
           <div className="taskcard-content">{task.content}</div>
-          <small className="taskcard-assignee">담당자: {assigneeName}</small>
+          <small className="taskcard-assignee">담당자: {assigneeName}</small><br/>
+          <small className="taskcard-dates">
+            기간: {formatDate(task.created_at)} ~ {formatDate(task.finished_at)}
+          </small>
           <div className="taskcard-buttons">
             <button type="button" onClick={() => onEdit(task)}>✏️</button>
             <button type="button" onClick={() => onDelete(task.task_id)}>🗑</button>

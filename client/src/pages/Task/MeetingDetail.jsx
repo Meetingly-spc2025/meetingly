@@ -4,8 +4,8 @@ import SummaryBlock from "../../components/Taskboard/SummaryBlock";
 import DiscussionList from "../../components/Taskboard/DiscusstionList";
 import KanbanBoard from "../../components/Kanban/KanbanBoard";
 import MeetingInfo from "../../components/Taskboard/MeetingInfo";
-import TeamTaskChart from "../../components/Taskboard/TeamTaskChart";
-import WordCloudChart from "../../components/Taskboard/WordCloudChart";
+import TeamTaskChart from "../../components/Chart/TeamTaskChart";
+import WordCloudChart from "../../components/Chart/WordCloudChart";
 import "../../styles/Task/MeetingDetail.css";
 import { useParams, useSearchParams } from "react-router-dom";
 
@@ -15,7 +15,6 @@ const MeetingDetail = () => {
   const teamId = searchParams.get("teamId");
 
   const [sections, setSections] = useState([
-    { type: "chart", collapsed: false },
     { type: "info", collapsed: false },
     { type: "discussion", collapsed: false },
     { type: "summary", collapsed: false },
@@ -30,6 +29,8 @@ const MeetingDetail = () => {
   // 사용자 정보 (userId 등)
   const [userInfo, setUserInfo] = useState({});
   const token = localStorage.getItem("token");
+
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   // 사용자 정보 불러오기
   useEffect(() => {
@@ -216,24 +217,47 @@ const MeetingDetail = () => {
   return (
     <div className="meeting-detail-page">
       <h2>회의 기록 상세</h2>
+      {isCreator && (
+        <>
+          <div className="delete-button-container">
+            <button onClick={() => setIsDeleteConfirmOpen(true)}>회의 삭제</button>
+          </div>
+          {isDeleteConfirmOpen && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <button
+                  className="modal-close"
+                  onClick={() => setIsDeleteConfirmOpen(false)}
+                >
+                  X
+                </button>
+                <p>정말로 이 회의를 삭제하시겠습니까?</p>
+                <div style={{ marginTop: "1rem", textAlign: "right" }}>
+                  <button
+                    onClick={handleDeleteMeeting}
+                    style={{ marginRight: "10px" }}
+                  >
+                    확인
+                  </button>
+                  <button onClick={() => setIsDeleteConfirmOpen(false)}>취소</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
       {sections.map((section, index) => (
         <div key={`${section.type}-${index}`} className="meeting-section-wrapper">
           <div className="section-header">
             <strong>{section.type.toUpperCase()}</strong>
-            <button className="toggle-btn" onClick={() => toggleSection(index)}>
+            <button className="toggle-btn" style={{ width: '24px', height: '24px', padding: '0', fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 'unset' }} onClick={() => toggleSection(index)}>
               {section.collapsed ? "+" : "-"}
             </button>
           </div>
 
           {!section.collapsed && (
             <>
-              {section.type === "chart" && (
-                <>
-                  <TeamTaskChart tasks={kanbanTasks} teamMembers={teamMembers} />
-                  <WordCloudChart text={fullTextContent} />
-                </>
-              )}
               {section.type === "info" && (
                 <MeetingInfo
                   meetingName={meetingInfo.title}
@@ -248,20 +272,27 @@ const MeetingDetail = () => {
                 />
               )}
               {section.type === "kanban" && (
-                <KanbanBoard
-                  tasks={kanbanTasks}
-                  summaryId={actionSummaryId}
-                  teamId={meetingInfo.team_id}
-                  teamMembers={teamMembers}
-                  onTasksUpdate={setKanbanTasks}
-                />
+                <>
+                  <TeamTaskChart tasks={kanbanTasks} teamMembers={teamMembers} />
+                  <KanbanBoard
+                    tasks={kanbanTasks}
+                    summaryId={actionSummaryId}
+                    teamId={meetingInfo.team_id}
+                    teamMembers={teamMembers}
+                    onTasksUpdate={setKanbanTasks}
+                    userId={userInfo.userId}
+                  />
+                </>
               )}
               {section.type === "summary" && (
-                <SummaryBlock
-                  content={summaries.find((s) => s.status === "keypoint")?.content}
-                  isCreator={isCreator}
-                  onEdit={({ content }) => handleEditSummary(content)}
-                />
+                <>
+                  <WordCloudChart text={fullTextContent} />
+                  <SummaryBlock
+                    content={summaries.find((s) => s.status === "keypoint")?.content}
+                    isCreator={isCreator}
+                    onEdit={({ content }) => handleEditSummary(content)}
+                  />
+                </>
               )}
               {section.type === "discussion" && (
                 <DiscussionList
