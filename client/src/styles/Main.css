@@ -9,7 +9,6 @@
   box-sizing: border-box;
 }
 
-
 .main-section {
   height: 100vh;
   width: 100%;
@@ -136,18 +135,15 @@ img {
   font-size: 1.2rem;
   line-height: 1.6;
   white-space: pre-wrap;
-    color: #475569;
+  color: #475569;
 }
 
-
 .footer-wrapper {
-  height: 30vh; 
+  height: 30vh;
   scroll-snap-align: start;
   display: flex;
   justify-content: center;
-  align-items: flex-end; 
-  padding-bottom: 3.5rem; 
+  align-items: flex-end;
+  padding-bottom: 3.5rem;
   box-sizing: border-box;
 }
-
-

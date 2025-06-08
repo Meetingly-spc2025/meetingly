@@ -13,6 +13,7 @@ const TeamManagementPage = () => {
   const [userName, setUserName] = useState("");
   const [teamId, setTeamId] = useState("");
   const [userRole, setUserRole] = useState("");
+  const [userImage, setUserImage] = useState("");
   const [editedTeamName, setEditedTeamName] = useState("");
   const [isEditingTeamName, setIsEditingTeamName] = useState(false);
 
@@ -34,6 +35,7 @@ const TeamManagementPage = () => {
         setUserEmail(user.email);
         setUserName(user.name);
         setUserRole(user.role);
+        setUserImage(user.userImage);
       } catch (err) {
         console.error("유저 정보 불러오기 실패:", err);
       }
@@ -75,11 +77,7 @@ const TeamManagementPage = () => {
   };
 
   const handleDeleteTeam = () => {
-    if (
-      window.confirm(
-        "정말 팀을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
-      )
-    ) {
+    if (window.confirm("정말 팀을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
       alert("팀 삭제 처리");
       axios.delete(`/api/teams/delete/${teamId}`);
     }
@@ -91,11 +89,7 @@ const TeamManagementPage = () => {
     <div className="team-container">
       <div className="team-header">
         <div className="user-info">
-          <img
-            src="/profile-placeholder.png"
-            alt="프로필"
-            className="profile-img"
-          />
+          <img src={userImage} alt="프로필" className="profile-img" />
           <div>
             <p className="greeting">
               안녕하세요, <span className="highlight">{userName}</span> 님
@@ -144,18 +138,12 @@ const TeamManagementPage = () => {
               />
               <div className="button-group">
                 {!isEditingTeamName ? (
-                  <button
-                    className="edit-btn"
-                    onClick={() => setIsEditingTeamName(true)}
-                  >
+                  <button className="edit-btn" onClick={() => setIsEditingTeamName(true)}>
                     ✏️ 수정
                   </button>
                 ) : (
                   <>
-                    <button
-                      className="update-btn"
-                      onClick={handleUpdateTeamName}
-                    >
+                    <button className="update-btn" onClick={handleUpdateTeamName}>
                       ✅ 저장
                     </button>
                     <button
@@ -181,17 +169,13 @@ const TeamManagementPage = () => {
           {members.map((member) => (
             <div
               key={member.user_id}
-              className={`member-card ${
-                member.role === "admin" ? "admin-member" : ""
-              }`}
+              className={`member-card ${member.role === "admin" ? "admin-member" : ""}`}
             >
               <div className="member-photo" />
               <div className="member-info">
                 <h3>
                   {member.name}
-                  {member.role === "admin" && (
-                    <span className="admin-badge">Admin</span>
-                  )}
+                  {member.role === "admin" && <span className="admin-badge">Admin</span>}
                 </h3>
                 <p>{member.email}</p>
                 <p className="description">{member.nickname}</p>

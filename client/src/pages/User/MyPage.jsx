@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useId } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 5;
@@ -19,8 +19,10 @@ function MyPage() {
   const [isAvailable, setIsAvailable] = useState(null);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [teamName, setTeamName] = useState("");
+  const [profileImage, setProfileImage] = useState("");
+  const [showImageModal, setShowImageModal] = useState(false);
   const [userInfo, setUserInfo] = useState({
-    useId: "",
+    userId: "",
     name: "",
     email: "",
     teamId: "",
@@ -45,6 +47,7 @@ function MyPage() {
           teamId: user.teamId,
         });
         setNickname(user.nickname || "");
+        setProfileImage(user.userImage || "");
 
         const resTeam = await axios.get(`/api/mypage/team-data?teamId=${user.teamId}`);
         const teamData = resTeam.data.teamName || "";
@@ -146,14 +149,36 @@ function MyPage() {
     setShowWithdrawModal(false);
   };
 
+  const handleImageSave = async () => {
+    try {
+      await axios.put(
+        "/api/mypage/update-profile-image",
+        {
+          userId: userInfo.userId,
+          user_image: profileImage,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      alert("프로필 이미지가 변경되었습니다.");
+      setShowImageModal(false);
+    } catch (err) {
+      console.error("이미지 저장 실패:", err);
+      alert("프로필 이미지 저장 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <div className="my-page">
       <h1 className="page-title">마이페이지</h1>
 
       <div className="profile-section">
         <div className="profile-image-wrapper">
-          <img src="/default-profile.png" alt="프로필" className="profile-image" />
-          <button className="edit-button">사진 변경</button>
+          <img src={profileImage} alt="프로필" className="profile-image" />
+          <button className="edit-button" onClick={() => setShowImageModal(true)}>
+            사진 변경
+          </button>
         </div>
 
         <div className="form-group">
@@ -264,6 +289,36 @@ function MyPage() {
               </button>
               <button className="modal-button confirm" onClick={confirmWithdraw}>
                 탈퇴
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showImageModal && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <h3>프로필 사진 선택</h3>
+            <div className="image-option-list">
+              {imageOptions.map((img, idx) => (
+                <img
+                  key={idx}
+                  src={img}
+                  alt={`옵션 ${idx + 1}`}
+                  className={`profile-option ${profileImage === img ? "selected" : ""}`}
+                  onClick={() => setProfileImage(img)}
+                />
+              ))}
+            </div>
+            <div className="modal-buttons">
+              <button
+                className="modal-button cancel"
+                onClick={() => setShowImageModal(false)}
+              >
+                취소
+              </button>
+              <button className="modal-button confirm" onClick={handleImageSave}>
+                저장
               </button>
             </div>
           </div>

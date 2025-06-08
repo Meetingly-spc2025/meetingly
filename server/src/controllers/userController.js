@@ -38,6 +38,7 @@ exports.loginUser = async (req, res) => {
         name: user.name,
         nickname: user.nickname,
         teamId: user.team_id,
+        userImage: user.user_image,
       },
       JWT_SECRET,
       { expiresIn: "2h" },
@@ -52,6 +53,7 @@ exports.loginUser = async (req, res) => {
         role: user.role,
         nickname: user.nickname,
         teamId: user.team_id,
+        userImage: user.user_image,
       },
     });
     console.log("user: ", user);
@@ -70,7 +72,7 @@ exports.getUserInfo = async (req, res) => {
     const [rows] = await db.query(
       `
       SELECT 
-        u.user_id, u.name, u.email, u.team_id, u.nickname, tm.role
+        u.user_id, u.name, u.email, u.team_id, u.nickname, u.user_image, tm.role
       FROM users u
       LEFT JOIN team_members tm ON u.user_id = tm.user_id AND u.team_id = tm.team_id
       WHERE u.user_id = ?
@@ -92,6 +94,7 @@ exports.getUserInfo = async (req, res) => {
           role: user.role,
           nickname: user.nickname,
           teamId: user.team_id,
+          userImage: user.user_image,
         },
       });
     }
@@ -188,11 +191,19 @@ exports.checkNicknameDuplicate = async (req, res) => {
 // 회원가입 API
 exports.registerUser = async (req, res) => {
   const { name, email, password, nickname } = req.body;
+  const imageOptions = [
+    "/images/profile1.png",
+    "/images/profile2.png",
+    "/images/profile3.png",
+    "/images/profile4.png",
+    "/images/profile5.png",
+  ];
+  const randomImage = imageOptions[Math.floor(Math.random() * imageOptions.length)];
 
   // if (!req.session.isEmailVerified) {
   //   return res.status(403).json({ message: "이메일 인증이 필요합니다" });
   // }
-  
+
   try {
     // 비밀번호 해시
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -200,8 +211,8 @@ exports.registerUser = async (req, res) => {
 
     // 사용자 정보를 DB 저장
     await db.query(
-      "INSERT INTO users (user_id, name, email, password, nickname) VALUES (?,?,?,?,?)",
-      [user_id, name, email, hashedPassword, nickname],
+      "INSERT INTO users (user_id, name, email, password, nickname, user_image) VALUES (?,?,?,?,?,?)",
+      [user_id, name, email, hashedPassword, nickname, randomImage],
     );
 
     // 인증 완료 후 세션 정보 초기화
