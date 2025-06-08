@@ -7,7 +7,7 @@ import "../../styles/Task/KanbanBoard.css";
 
 const STATUSES = ["todo", "doing", "done"];
 
-export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, teamMembers, onTasksUpdate }) {
+export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, teamMembers, onTasksUpdate, userId }) {
   const [tasks, setTasks] = useState(initialTasks || []);
   const [modal, setModal] = useState({ open: false, task: null });
 
@@ -44,20 +44,30 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
   };
 
   const handleSave = async (task) => {
-    const newTask = { ...task, summary_id: summaryId, team_id: teamId };
+    // 날짜 문자열 (yyyy-mm-dd)만 받아온다고 가정하고 시간 붙이기
+    const createdAt = new Date(`${task.created_at}T09:00:00`);
+    const finishedAt = new Date(`${task.finished_at}T18:00:00`);
+  
+    const newTask = {
+      ...task,
+      summary_id: summaryId,
+      team_id: teamId,
+      created_at: createdAt.toISOString(),      // 또는 createdAt.toLocaleString("sv-SE")
+      finished_at: finishedAt.toISOString(),    // 또는 finishedAt.toLocaleString("sv-SE")
+    };
   
     try {
       if (task.task_id) {
         await axios.put(`/api/meetingData/tasks/${task.task_id}`, newTask);
         const updatedTasks = tasks.map((t) => (t.task_id === task.task_id ? newTask : t));
         setTasks(updatedTasks);
-        if (onTasksUpdate) onTasksUpdate(updatedTasks); 
+        if (onTasksUpdate) onTasksUpdate(updatedTasks);
       } else {
         const res = await axios.post("/api/meetingData/tasks", newTask);
         const createdTask = { ...newTask, task_id: res.data.task_id };
         const updatedTasks = [...tasks, createdTask];
         setTasks(updatedTasks);
-        if (onTasksUpdate) onTasksUpdate(updatedTasks); 
+        if (onTasksUpdate) onTasksUpdate(updatedTasks);
       }
       setModal({ open: false, task: null });
     } catch (err) {
@@ -91,6 +101,7 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
           onClose={() => setModal({ open: false, task: null })}
           onSave={handleSave}
           teamMembers={teamMembers}
+          userId={userId}
           onTasksUpdate={(updatedTasks) => setKanbanTasks(updatedTasks)} 
         />
       )}

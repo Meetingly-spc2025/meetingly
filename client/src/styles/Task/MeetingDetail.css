@@ -23,18 +23,14 @@
   margin-bottom: 0.5rem;
 }
 
-.toggle-btn {
-  background-color: #0F123F;
-  border: none;
-  border-radius: 6px;
-  padding: 4px 10px;
-  font-size: 0.8rem;
-  color: #ffffff;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+.toggle-btn:hover {
+  background-color: #e2e8f0 !important;
+  color: #2d3748 !important;
 }
 
-.toggle-btn:hover {
-  background-color: #c6d7f8;
-  color: #0F123F;
+.toggle-btn.active {
+  background-color: #dbeafe !important;
+  color: #1e40af !important;
+  font-weight: 500 !important;
+  border-color: #93c5fd !important;
 }

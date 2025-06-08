@@ -1,3 +1,7 @@
+.react-calendar__tile.task-highlight {
+  border-radius: 6px;
+}
+
 .calendar-tile-meetings {
   width: 100%;
   display: flex;
@@ -23,7 +27,8 @@
   gap: 2px;
   background-color: lavender;
 }
-.calendar-tile-meeting-card:hover{
+
+.calendar-tile-meeting-card:hover {
   background-color: #cce4ff;
 }
 
@@ -45,7 +50,7 @@
   font-size: 0.5rem;
 }
 
-/* CalendarCard (달력 밖에서 모달로 뜨는 경우) */
+/* CalendarCard (달력 박스에서 모달로 뜨는 경우) */
 .calendarcard-modal-wrapper {
   position: absolute;
   top: 50%;
@@ -62,7 +67,7 @@
   padding: 6px 8px;
   font-size: 0.8rem;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
 }
 
@@ -100,7 +105,7 @@
 
 .calendar-wrapper {
   margin: 0 auto;
-  position: relative; /* 모달 위치용 */
+  position: relative;
 }
 
 .selected-date {
@@ -160,4 +165,57 @@
 
 .react-calendar__month-view__days__day--weekend {
   color: #d00000;
+}
+
+/* 태스크 카드들이 연결되어 보이도록 추가 스타일 */
+.calendar-tile-tasks {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  margin-top: 4px;
+}
+
+/* 토글 버튼 스타일 - 가독성 개선 */
+.calendar-toggle-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.toggle-btn {
+  padding: 12px 24px;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  background-color: #ffffff;
+  color: #333333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 120px;
+  text-align: center;
+}
+
+.toggle-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #007bff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-btn.active {
+  background-color: #007bff;
+  color: #ffffff;
+  border-color: #007bff;
+  box-shadow: 0 3px 6px rgba(0, 123, 255, 0.3);
+}
+
+.toggle-btn.active:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+  box-shadow: 0 4px 8px rgba(0, 86, 179, 0.4);
 }
