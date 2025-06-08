@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../styles/Main.css";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import webrtcImg from "../assets/webrtc.png";
 import meetingListImg from "../assets/meeting-list.png";
 import kanbanImg from "../assets/kanban-board.png";
+import FileUploadModal from "../components/File/FileUploadModal";
 
 const sections = [
   {
@@ -15,7 +16,8 @@ const sections = [
   {
     id: 2,
     title: "화상회의 & 팀 관리",
-    description: "1:1 및 소규모 다자간 WebRTC 화상회의와 실시간 음성 녹음, 팀 생성/초대, 멤버 관리까지 한번에 지원",
+    description:
+      "1:1 및 소규모 다자간 WebRTC 화상회의와 실시간 음성 녹음, 팀 생성/초대, 멤버 관리까지 한번에 지원",
     img: webrtcImg,
     backgroundColor: "#E0F0FC",
   },
@@ -39,6 +41,7 @@ const sections = [
 const Main = () => {
   const navigate = useNavigate();
   const imgRefs = useRef([]);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -53,26 +56,16 @@ const Main = () => {
       },
       {
         threshold: 0.2,
-      }
+      },
     );
 
-    // imgRefs.current.forEach((img) => {
-    //   if (img) observer.observe(img);
-    // });
-
-    // return () => {
-    //   imgRefs.current.forEach((img) => {
-    //     if (img) observer.unobserve(img);
-    //   });
-    // };
-
-        imgRefs.current.forEach((img) => img && observer.observe(img));
+    imgRefs.current.forEach((img) => img && observer.observe(img));
     return () => imgRefs.current.forEach((img) => img && observer.unobserve(img));
   }, []);
 
   return (
     <div className="main-scroll-container">
-        {sections.map((section, index) => {
+      {sections.map((section, index) => {
         if (section.isIntro) {
           return (
             <section
@@ -84,8 +77,15 @@ const Main = () => {
                 <h1 className="intro-title">Meetingly</h1>
                 <h3 className="intro-subtitle">효율적인 회의를 위한 나만의 비서</h3>
                 <p className="intro-content">
-                  실시간 화상회의와 AI 기반 회의록 자동 생성/요약/태스크 관리 기능을 통합한 스마트 회의 도우미
+                  실시간 화상회의와 AI 기반 회의록 자동 생성/요약/태스크 관리 기능을
+                  통합한 스마트 회의 도우미
                 </p>
+                <div style={{ textAlign: "center", paddingTop: "100px" }}>
+                  <button className="intro-button" onClick={() => setModalOpen(true)}>
+                    요약 체험하기
+                  </button>
+                  {modalOpen && <FileUploadModal onClose={() => setModalOpen(false)} />}
+                </div>
                 <button className="intro-button" onClick={() => navigate("/login")}>
                   시작하기
                 </button>
@@ -102,7 +102,9 @@ const Main = () => {
             className="main-section content-section"
             style={{ backgroundColor: section.backgroundColor }}
           >
-            <div className={`main-section-inner content-row ${isReversed ? "reverse" : ""}`}>
+            <div
+              className={`main-section-inner content-row ${isReversed ? "reverse" : ""}`}
+            >
               <div className="text-content">
                 <h2 className="section-title">{section.title}</h2>
                 <p className="section-description">
@@ -126,9 +128,9 @@ const Main = () => {
           </section>
         );
       })}
-  <section className="footer-wrapper">
-    <Footer />
-  </section>
+      <section className="footer-wrapper">
+        <Footer />
+      </section>
     </div>
   );
 };
