@@ -75,3 +75,16 @@ exports.leaveMeetingly = async (req, res) => {
     res.status(500).json({ error: "서버 오류" });
   }
 };
+
+// [PUT] /api/mypage/update-profile-image
+exports.updateProfileImage = async (req, res) => {
+  const { userId, user_image } = req.body;
+
+  try {
+    await mypageModel.updateProfile({ userId, user_image });
+    res.status(200).json({ message: "프로필 이미지 업데이트 성공" });
+  } catch (err) {
+    console.error("프로필 이미지 업데이트 실패:", err);
+    res.status(500).json({ message: "이미지 업데이트 실패" });
+  }
+};

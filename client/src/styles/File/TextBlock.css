@@ -1,0 +1,38 @@
+/* TextBlock.css */
+
+.text-block {
+  margin-bottom: 2rem;
+}
+
+.text-block h3 {
+  font-size: 1.2rem;
+  color: #0f123f;
+  margin-bottom: 0.5rem;
+}
+
+.text-block textarea {
+  width: 100%;
+  height: 200px;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: none;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.text-block button {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #0f123f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.text-block button:hover {
+  background-color: #ffa3a3;
+}

@@ -69,3 +69,26 @@
     justify-content: space-between;
   }
 }
+
+/* 프로필 */
+
+.nav-profile-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.75rem;
+  border: 2px solid #e0e0e0;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.nav-profile-image:hover {
+  border-color: #fe9210;
+}
+
+/* 모바일에서는 이미지도 숨기고 싶다면 */
+@media screen and (max-width: 768px) {
+  .nav-profile-image {
+    display: none;
+  }
+}

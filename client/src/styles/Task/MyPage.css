@@ -259,3 +259,23 @@
 .check-result.unavailable {
   color: red;
 }
+
+/* 프로필 변경 모달 */
+.image-option-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.profile-option {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.profile-option.selected {
+  border-color: #007bff;
+}

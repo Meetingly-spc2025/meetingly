@@ -1,16 +1,21 @@
 const { Server } = require("socket.io");
 const meetingModel = require("../models/meetingModel");
+const dotenv = require("dotenv");
 
 //백엔드 signaling을 담당하는 파일
 //코드흐름:: join_room, offer, answer, icecandidate, disconnect 이벤트 중계 -> 방/유저/닉네임 상태 관리
 
+dotenv.config({ path: "../.env" });
+
 const rooms = {};
 const nickInfo = {};
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : [];
 
 function initSocket(server) {
   const io = new Server(server, {
     cors: {
-      origin: "*",
+      origin: allowedOrigins,
       methods: ["GET", "POST"],
       credentials: true,
     },

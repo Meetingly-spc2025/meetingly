@@ -8,5 +8,6 @@ router.get("/team-data", controller.getTeamInfo);
 router.put("/update-nickname", controller.updateNickname);
 router.post("/leave-team", controller.leaveTeam);
 router.post("/leave-meetingly", controller.leaveMeetingly);
+router.put("/update-profile-image", controller.updateProfileImage);
 
 module.exports = router;
