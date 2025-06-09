@@ -6,6 +6,9 @@ import webrtcImg from "../assets/webrtc.png";
 import meetingListImg from "../assets/meeting-list.png";
 import kanbanImg from "../assets/kanban-board.png";
 import FileUploadModal from "../components/File/FileUploadModal";
+import { useUser } from "../context/UserContext";
+
+
 
 const sections = [
   {
@@ -42,6 +45,7 @@ const Main = () => {
   const navigate = useNavigate();
   const imgRefs = useRef([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const { user } = useUser();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -86,7 +90,8 @@ const Main = () => {
                   </button>
                   {modalOpen && <FileUploadModal onClose={() => setModalOpen(false)} />}
                 </div>
-                <button className="intro-button" onClick={() => navigate("/login")}>
+                <button className="intro-button" onClick={() => 
+                  navigate(user ? "/team" : "/login")}>
                   시작하기
                 </button>
               </div>
