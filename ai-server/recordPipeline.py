@@ -49,9 +49,14 @@ def transcribe_audio(path):
 # 3. 3문단 요약 (전체 텍스트 병합 및 요약)
 def summarize_full_text(full_text):
     prompt = f"""
-다음 {full_text}의 내용은 회의록입니다. 회의 내용을 총 3문단으로 너무 길지 않도록 요약해 주세요. 
-- 한 문단마다 두 번씩 줄 바꿈을 해주고, 각각의 문단 순서대로 "첫째", "둘째", "셋째"로 문단을 시작해주세요.
-- 요약의 내용은 감정을 뺀 정보 위주로 해주세요.
+    회의 내용 : {full_text} \n\n
+
+다음 텍스트는 회의 내용입니다. 총 3문단으로 요약하되, 각 문단은 아래와 같이 작성해주세요:
+- 문단 앞에 각각 "첫째", "둘째", "셋째"로 시작해주세요.
+- 줄바꿈은 문단마다 2번 삽입해주세요
+- 각 문장은 4줄 이내로, 공적인 업무 문서처럼 작성해주세요.
+- 요약의 내용은 감정을 제거하고 정보 위주로 해주세요.
+- 문장 간 흐름이 자연스럽도록 정리해주세요.
 - 대부분 비즈니스 용어, 일에 대한 내용이 대부분임을 참고해서 요약해주세요.
 \n\n
 """
@@ -62,7 +67,7 @@ def summarize_full_text(full_text):
             response = client.chat.completions.create(
                 model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": "당신은 회의록 전문 요약가입니다."},
+                    {"role": "system", "content": "당신은 기업 회의 분석 전문가이며, 요약, 논의 사항, 할 일, 키워드 등을 정확하게 추출해야 합니다."},
                     {"role": "user", "content": prompt}
                 ]
             )
@@ -85,7 +90,7 @@ def summarize_full_text(full_text):
             response = client.chat.completions.create(
                 model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": "당신은 회의록 전문 요약가입니다."},
+                    {"role": "system", "content": "당신은 기업 회의 분석 전문가이며, 요약, 논의 사항, 할 일, 키워드 등을 정확하게 추출해야 합니다."},
                     {"role": "user", "content": f"다음 내용을 한 문단마다 두 번씩 줄 바꿈을 해주고, 총 3문단으로 너무 길지 않도록 요약해 주세요. 요약의 내용은 감정을 뺀 정보 위주로 해주세요. :\n\n{combined}"}
                 ]
             )
@@ -108,8 +113,8 @@ def summarize_chunk(chunk, index):
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "당신은 회의록 전문 요약가입니다."},
-                {"role": "user", "content": f"[부분 {index+1}] 아래 내용을 요약해 주세요:\n\n{chunk}"}
+                {"role": "system", "content": "당신은 기업 회의 분석 전문가이며, 요약, 논의 사항, 할 일, 키워드 등을 정확하게 추출해야 합니다."},
+                {"role": "user", "content": f"[부분 {index+1}] 이전 내용과 흐름이 이어지도록 요약해 주세요:\n\n{chunk}"}
             ]
         )
         return response.choices[0].message.content.strip()
@@ -136,7 +141,7 @@ def summaries_discussion(summary):
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "당신은 회의에 대한 주요 논의 사항을 정리하는 도우미입니다."},
+                {"role": "system", "content": "당신은 기업 회의 분석 전문가이며, 요약, 논의 사항, 할 일, 키워드 등을 정확하게 추출해야 합니다."},
                 {"role": "user", "content": prompt}
             ]
         )
@@ -157,13 +162,13 @@ def extract_tasks(summary):
     위의 회의 3문단 요약을 기반으로 회의 종료 후, 해야 할 작업 목록을 항목별로 정리해 주세요.
     - 각 항목은 한 문장으로 간결하게 작성.
     - 출력은 JSON 배열 형식으로 해주세요.
-    - 만약 추출할 할 일이 없다면 "false"를 반환해주세요.
+    - 반드시 조건을 확인하고, 할 일이 없으면 정확히 'false'만 반환하세요. 다른 출력은 하지 마세요.
 """
     try:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "당신은 회의에 대한 할 일 추출 도우미입니다."},
+                {"role": "system", "content": "당신은 기업 회의 분석 전문가이며, 요약, 논의 사항, 할 일, 키워드 등을 정확하게 추출해야 합니다."},
                 {"role": "user", "content": prompt}
             ]
         )
@@ -182,12 +187,15 @@ def select_keyword(summary):
     요약된 내용을 기준으로 많이 언급되고 주요한 단어(키워드)를 20개 정도 골라서 JSON 형식으로 출력해주세요. 
     - JSON은 "중요 단어" : "중요도" 의 형식을 따르도록 출력해주세요.
     - 중요도는 1부터 10까지의 숫자 int형으로, 중요한 값일수록 더 큰 값으로 출력하도록 해주세요. 
+    
+    \n아래와 같은 형식으로 출력하세요:
+    \n{{ "고객 요구사항": 9,\n "기획 회의": 8 }}
     """
     try:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "당신은 회의 내용에 대한 주요 단어를 선별하는 도우미입니다."},
+                {"role": "system", "content": "당신은 기업 회의 분석 전문가이며, 요약, 논의 사항, 할 일, 키워드 등을 정확하게 추출해야 합니다."},
                 {"role": "user", "content": prompt}
             ]
         )
