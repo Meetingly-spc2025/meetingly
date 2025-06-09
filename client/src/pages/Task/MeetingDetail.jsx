@@ -113,6 +113,11 @@ const MeetingDetail = () => {
   const fulltextSummary = summaries.find((s) => s.status === "fulltext");
   const fullTextContent = fulltextSummary?.content || "전체 회의 내용이 없습니다.";
 
+  // keypoints 찾기
+  const keywordsSummary = summaries.find((s) => s.status === "keywords");
+  const keywordsContent = keywordsSummary?.content || "키포인트 추출 내용이 없습니다.";
+  console.log(keywordsContent);
+
   // 섹션 접고/펼치기
   const toggleSection = (index) => {
     setSections((prev) =>
@@ -286,7 +291,7 @@ const MeetingDetail = () => {
               )}
               {section.type === "summary" && (
                 <>
-                  <WordCloudChart text={fullTextContent} />
+                  <WordCloudChart keywords={keywordsContent} />
                   <SummaryBlock
                     content={summaries.find((s) => s.status === "keypoint")?.content}
                     isCreator={isCreator}

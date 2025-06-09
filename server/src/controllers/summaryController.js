@@ -64,6 +64,12 @@ const handleUploadRecord = async (req, res) => {
         content: discussion,
         created_at: currentTimestamp,
       },
+      {
+        summary_id: generateUUID(),
+        status: "keywords",
+        content: keywords,
+        created_at: currentTimestamp,
+      },
     ];
 
     const summaryQuery = `
