@@ -135,7 +135,7 @@ function MyPage() {
         },
       );
       console.log("팀 탈퇴 완료");
-      setUserInfo.teamId(null);
+      setUserInfo({ teamId: null });
       alert("팀 탈퇴가 완료되었습니다.");
       navigate("/team");
     } catch (err) {
