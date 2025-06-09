@@ -3,6 +3,7 @@ const meetingModel = require("../models/meetingModel");
 const rooms = {};
 const nickInfo = {};
 
+
 function initSocket(io) {
   io.on("connection", (socket) => {
     //새로운 유저가 방에 입장할 때, 기존 유저 리스트/닉네임 등 정보 관리 및 이벤트 전송
@@ -106,9 +107,7 @@ function initSocket(io) {
       for (const roomName of roomsJoined) {
         if (!rooms[roomName]) continue;
 
-        rooms[roomName].users = rooms[roomName].users.filter(
-          (id) => id !== socket.id,
-        );
+        rooms[roomName].users = rooms[roomName].users.filter((id) => id !== socket.id);
         socket.to(roomName).emit("left_room", socket.id);
         io.to(roomName).emit(
           "notice",
@@ -137,7 +136,6 @@ function initSocket(io) {
     socket.on("disconnect", (e) => {
       console.log("소켓 연결 끊어짐::", e);
     });
-
   });
 }
 

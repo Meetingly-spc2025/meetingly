@@ -106,6 +106,7 @@ def process_audio():
 
     # 5. 임시파일 삭제
     try:
+        shutil.rmtree(room_audio_dir)
         shutil.rmtree(converted_dir)
         os.remove(merged_path)
     except Exception as e:
