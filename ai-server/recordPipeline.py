@@ -50,9 +50,9 @@ def transcribe_audio(path):
 def summarize_full_text(full_text):
     prompt = f"""
 다음 {full_text}의 내용은 회의록입니다. 회의 내용을 총 3문단으로 너무 길지 않도록 요약해 주세요. 
-- 한 문단마다 두 번씩 줄 바꿈을 해주고, 요약의 내용은 감정을 뺀 정보 위주로 해주세요. 
+- 한 문단마다 두 번씩 줄 바꿈을 해주고, 각각의 문단 순서대로 "첫째", "둘째", "셋째"로 문단을 시작해주세요.
+- 요약의 내용은 감정을 뺀 정보 위주로 해주세요.
 - 대부분 비즈니스 용어, 일에 대한 내용이 대부분임을 참고해서 요약해주세요.
-
 \n\n
 """
 
@@ -60,7 +60,7 @@ def summarize_full_text(full_text):
         print("텍스트가 짧아, 바로 3문단 요약 실행")
         try:
             response = client.chat.completions.create(
-                model="gpt-4",
+                model="gpt-4o",
                 messages=[
                     {"role": "system", "content": "당신은 회의록 전문 요약가입니다."},
                     {"role": "user", "content": prompt}
@@ -174,15 +174,41 @@ def extract_tasks(summary):
         print(f"할 일 추출 실패: {e}")
     return "false"
 
+# 주요 키워드 출력
+def select_keyword(summary):
+    prompt = f"""
+    요약된 내용 : {summary} \n\n
+
+    요약된 내용을 기준으로 많이 언급되고 주요한 단어(키워드)를 20개 정도 골라서 JSON 형식으로 출력해주세요. 
+    - JSON은 "중요 단어" : "중요도" 의 형식을 따르도록 출력해주세요.
+    - 중요도는 1부터 10까지의 숫자 int형으로, 중요한 값일수록 더 큰 값으로 출력하도록 해주세요. 
+    """
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "당신은 회의 내용에 대한 주요 단어를 선별하는 도우미입니다."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        return response.choices[0].message.content.strip()
+    except BadRequestError as e:
+        print(f"할 일 추출 실패 (토큰 초과): {e}")
+    except Exception as e:
+        print(f"할 일 추출 실패: {e}")
+    return "false"
+
+
+
 # 8. 임시 파일 정리
-def cleanup_segments(room_id: str):
+def cleanup_segments(room_id):
     segment_dir = os.path.join(SEGMENT_BASE_DIR, room_id)
     if os.path.exists(segment_dir):
         shutil.rmtree(segment_dir)
         print(f"임시 오디오 조각 삭제 완료: {segment_dir}")
 
 # 파이프라인 실행 함수
-def run_pipeline(audio_path: str, room_id: str):
+def run_pipeline(audio_path, room_id):
     print("오디오 분할 시작...")
     segment_dir = split_audio(audio_path, room_id)
 
@@ -202,6 +228,9 @@ def run_pipeline(audio_path: str, room_id: str):
     print("할 일 목록 추출 중...")
     tasks = extract_tasks(summary)
 
+    print("주요 단어 추출 중...")
+    keywords = select_keyword(summary)
+
     cleanup_segments(room_id)
 
     return {
@@ -209,5 +238,6 @@ def run_pipeline(audio_path: str, room_id: str):
         "summary": summary,
         "tasks": tasks,
         "discussion": discussion,
-        "roomId": room_id
+        "roomId": room_id,
+        "keywords": keywords
     }

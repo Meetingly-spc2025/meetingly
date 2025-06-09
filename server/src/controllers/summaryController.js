@@ -33,7 +33,9 @@ const handleUploadRecord = async (req, res) => {
       { headers: { "Content-Type": "application/json" } },
     );
 
-    const { transcript, summary, tasks, discussion } = aiRes.data;
+    // 주요 키워드 keywords로 추가 !!
+    const { transcript, summary, tasks, discussion, keywords } = aiRes.data;
+    console.log("주요 단어:: ", keywords);
     const currentTimestamp = new Date().toISOString().slice(0, 19).replace("T", " ");
     const generateUUID = () => uuidv4();
 
@@ -123,7 +125,6 @@ const handleUploadRecord = async (req, res) => {
       roomId,
       message: "AI 회의록 요약이 완료되었습니다.",
     });
-
   } catch (error) {
     console.error(
       "AI 서버 or DB 저장 오류:",
