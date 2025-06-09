@@ -103,12 +103,19 @@ const handleUploadRecord = async (req, res) => {
       `;
       for (let taskContent of taskArray) {
         const taskId = generateUUID();
-        await db.execute(taskQuery, [taskId, taskContent, currentTimestamp, currentTimestamp, actionSummaryId]);
+        await db.execute(taskQuery, [
+          taskId,
+          taskContent,
+          currentTimestamp,
+          currentTimestamp,
+          actionSummaryId,
+        ]);
       }
       console.log("tasks 테이블 저장 완료");
     }
 
     res.json({ message: "녹음 업로드 및 DB 저장 완료", aiResult: aiRes.data });
+    await deleteRoomUploadFolder(roomId);
   } catch (error) {
     console.error(
       "AI 서버 or DB 저장 오류:",
@@ -118,9 +125,11 @@ const handleUploadRecord = async (req, res) => {
       error: "서버 오류",
       details: error.response ? error.response.data : error.message,
     });
+    await deleteRoomUploadFolder(roomId);
   }
 };
 
+// 파일 업로드 요약
 const handleUploadAudio = async (req, res) => {
   const file = req.file;
   if (!file) return res.status(400).json({ error: "파일이 없습니다." });
@@ -142,22 +151,17 @@ const handleUploadAudio = async (req, res) => {
         headers: { "Content-Type": "application/json" },
       },
     );
-
     console.log("ai:: ", aiRes.data);
 
-    // 파일 삭제
-    // await fs.promises.unlink(savePath);
-    // console.log("업로드된 파일 삭제 완료");
-
-    // 응답 반환
     res.json({ message: "파일 업로드 완료", result: aiRes.data });
+    await fs.promises.rm(savePath);
   } catch (error) {
     console.error("오류 발생:", error);
 
     // 실패해도 파일 삭제
     try {
       if (fs.existsSync(savePath)) {
-        await fs.promises.unlink(savePath);
+        await fs.promises.rm(savePath);
         console.log("에러 후 파일 삭제됨");
       }
     } catch (unlinkErr) {
@@ -165,6 +169,20 @@ const handleUploadAudio = async (req, res) => {
     }
 
     res.status(500).json({ message: "파일 처리 실패", error: error.message });
+    await deleteRoomUploadFolder(roomId);
+  }
+};
+
+// uploads/{roomId} 삭제 함수
+const deleteRoomUploadFolder = async (roomId) => {
+  const roomDir = path.join(__dirname, "..", "uploads", roomId);
+  if (fs.existsSync(roomDir)) {
+    try {
+      await fs.promises.rm(roomDir, { recursive: true, force: true });
+      console.log(`uploads/${roomId} 폴더 삭제 완료`);
+    } catch (err) {
+      console.error(`uploads/${roomId} 삭제 실패:`, err.message);
+    }
   }
 };
 

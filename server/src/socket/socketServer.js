@@ -10,7 +10,9 @@ dotenv.config({ path: "../.env" });
 const rooms = {};
 const nickInfo = {};
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : [];
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",")
+  : [];
 
 function initSocket(server) {
   const io = new Server(server, {
@@ -123,9 +125,7 @@ function initSocket(server) {
       for (const roomName of roomsJoined) {
         if (!rooms[roomName]) continue;
 
-        rooms[roomName].users = rooms[roomName].users.filter(
-          (id) => id !== socket.id,
-        );
+        rooms[roomName].users = rooms[roomName].users.filter((id) => id !== socket.id);
         socket.to(roomName).emit("left_room", socket.id);
         io.to(roomName).emit(
           "notice",
@@ -154,7 +154,6 @@ function initSocket(server) {
     socket.on("disconnect", (e) => {
       console.log("소켓 연결 끊어짐::", e);
     });
-
   });
 }
 

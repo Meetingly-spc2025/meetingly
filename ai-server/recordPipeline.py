@@ -48,7 +48,7 @@ def transcribe_audio(path):
     
 # 3. 3문단 요약 (전체 텍스트 병합 및 요약)
 def summarize_full_text(full_text):
-    prompt = """
+    prompt = f"""
 다음 {full_text}의 내용은 회의록입니다. 회의 내용을 총 3문단으로 너무 길지 않도록 요약해 주세요. 
 - 한 문단마다 두 번씩 줄 바꿈을 해주고, 요약의 내용은 감정을 뺀 정보 위주로 해주세요. 
 - 대부분 비즈니스 용어, 일에 대한 내용이 대부분임을 참고해서 요약해주세요.
@@ -83,7 +83,7 @@ def summarize_full_text(full_text):
 
         try:
             response = client.chat.completions.create(
-                model="gpt-4",
+                model="gpt-4o",
                 messages=[
                     {"role": "system", "content": "당신은 회의록 전문 요약가입니다."},
                     {"role": "user", "content": f"다음 내용을 한 문단마다 두 번씩 줄 바꿈을 해주고, 총 3문단으로 너무 길지 않도록 요약해 주세요. 요약의 내용은 감정을 뺀 정보 위주로 해주세요. :\n\n{combined}"}
@@ -125,9 +125,9 @@ def summarize_chunk(chunk, index):
 def summaries_discussion(summary):
     prompt = f"""
     회의 3문단 요약:
-    {summary}
+    {summary} \n\n
 
-    다음의 요약된 회의 내용을 기반으로 회의에서 나온 주요 논의 주제에 대해서 20글자 이내로 간결하게 정리해주세요.
+    위의 회의 3문단 요약을 기반으로 회의에서 나온 주요 논의 주제에 대해서 20글자 이내로 간결하게 정리해주세요.
     - 논의 주제가 여러가지라면 하나의 논의 주제마다 \n\n 을 넣어서 구분해주세요.
     - 추출할 사항이 없다면, '주요 논의 사항이 존재하지 않습니다.'를 출력해주세요.
 
@@ -154,7 +154,7 @@ def extract_tasks(summary):
     회의 3문단 요약:
     {summary}
 
-    다음 요약된 회의 내용을 기반으로 회의 종료 후, 해야 할 작업 목록을 항목별로 정리해 주세요.
+    위의 회의 3문단 요약을 기반으로 회의 종료 후, 해야 할 작업 목록을 항목별로 정리해 주세요.
     - 각 항목은 한 문장으로 간결하게 작성.
     - 출력은 JSON 배열 형식으로 해주세요.
     - 만약 추출할 할 일이 없다면 "false"를 반환해주세요.
