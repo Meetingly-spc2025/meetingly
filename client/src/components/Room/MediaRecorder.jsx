@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { toast } from "react-toastify";
 import axios from "axios";
 
 const useMediaRecorder = ({ myStream, roomId, isCreator }) => {
@@ -53,7 +52,6 @@ const useMediaRecorder = ({ myStream, roomId, isCreator }) => {
   const port = import.meta.env.VITE_SERVER_PORT;
 
   const uploadAudio = async (file, roomId) => {
-    const toastId = toast.loading("AI 회의록 요약 중...");
     const formData = new FormData();
     formData.append("audio", file);
     formData.append("roomId", roomId);
@@ -66,27 +64,12 @@ const useMediaRecorder = ({ myStream, roomId, isCreator }) => {
         { headers: { "Content-Type": "multipart/form-data" } },
       );
       console.log("업로드 완료:\n" + JSON.stringify(res.data, null, 2));
-      // toast.success("AI 회의록 녹음이 완료되었습니다.");
-      toast.update(toastId, {
-        render: "AI 회의록 요약이 완료되었습니다.",
-        type: "success",
-        isLoading: false,
-        autoClose: 2000,
-        closeOnClick: true,
-      });
     } catch (error) {
-      toast.update(toastId, {
-        render: error.response?.data?.error || "서버 오류가 발생했습니다.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-        closeOnClick: true,
-      });
-      // if (error.response?.data?.error) {
-      //   toast.error(error.response.data.error);
-      // } else {
-      //   toast.error("서버 오류가 발생했습니다.");
-      // }
+      if (error.response?.data?.error) {
+        console.error(error.response.data.error);
+      } else {
+        console.error("서버 오류가 발생했습니다.");
+      }
     }
   };
 

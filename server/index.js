@@ -8,6 +8,7 @@ const session = require("express-session");
 const cookieParse = require("cookie-parser");
 
 // .env 적용된 상태에서 라우터 실행
+const { initIO } = require("./src/socket/ioInstance");
 const initSocket = require("./src/socket/socketServer");
 
 // Route
@@ -83,7 +84,8 @@ app.use("/api/saveSummary", summaryRouter);
 
 // httpServer 생성 + socket 서버 초기화
 const httpServer = http.createServer(app);
-initSocket(httpServer);
+const io = initIO(httpServer);
+initSocket(io);
 
 const PORT = process.env.SERVER_PORT;
 console.log("process.env.SERVER_PORT:", process.env.SERVER_PORT);

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 
 //전체적인 코드 흐름:: connect이벤트 -> join_room 이후 welcome, user_joined 이벤트로 offer/answer 교환
@@ -22,6 +22,8 @@ const useSocket = ({
   stopRecording,
   setRecordingDone,
 }) => {
+  const toastIdRef = useRef(null);
+  
   useEffect(() => {
     if (!roomName) {
       alert("방 정보가 없습니다.");
@@ -145,8 +147,28 @@ const useSocket = ({
 
     socket.on("member_stop_recording", () => {
       console.log("녹음 종료 감지");
+      if (!toastIdRef.current) {
+        toastIdRef.current = toast.loading("AI 회의록 요약 중...");
+      }
       stopRecording();
       setRecordingDone(true);
+    });
+
+    socket.on("summary_done", ({ roomId, message }) => {
+      if (toastIdRef.current) {
+        toast.update(toastIdRef.current, {
+          render: message || "AI 회의록 요약이 완료되었습니다.",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+          closeOnClick: true,
+        });
+        toastIdRef.current = null;
+      } else {
+        toast.success(message || "AI 회의록 요약이 완료되었습니다.", {
+          autoClose: 3000,
+        });
+      }
     });
 
     return () => {
@@ -163,6 +185,7 @@ const useSocket = ({
       socket.off("message");
       socket.off("member_start_recording");
       socket.off("member_stop_recording");
+      socket.off("summary_done");
     };
   }, [
     socket,
