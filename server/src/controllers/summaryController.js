@@ -3,6 +3,7 @@ const path = require("path");
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
 const db = require("../models/meetingly_db");
+const { getIO } = require("../socket/ioInstance");
 
 const handleUploadRecord = async (req, res) => {
   const { roomId, isCreator } = req.body;
@@ -115,7 +116,14 @@ const handleUploadRecord = async (req, res) => {
     }
 
     res.json({ message: "녹음 업로드 및 DB 저장 완료", aiResult: aiRes.data });
+
     await deleteRoomUploadFolder(roomId);
+    const io = getIO();
+    io.to(roomId).emit("summary_done", {
+      roomId,
+      message: "AI 회의록 요약이 완료되었습니다.",
+    });
+
   } catch (error) {
     console.error(
       "AI 서버 or DB 저장 오류:",
