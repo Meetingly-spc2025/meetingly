@@ -16,26 +16,55 @@ const TeamEmpty = () => {
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem("token");
+        console.log("토큰 존재 여부:", !!token);
+
+        if (!token) {
+          console.log("토큰이 없습니다. 로그인이 필요합니다.");
+          navigate("/login");
+          return;
+        }
+
+        console.log("API 호출 시작");
         const res = await axios.get("/api/users/jwtauth", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+
+        console.log("API 응답 받음");
         const data = res.data;
-        console.log("팀 가입 확인 용:: ", data.user.teamId);
-        if (data.user.teamId) {
-          alert("팀에 이미 가입되어 있습니다.");
-          navigate(`/team/:${data.user.teamId}`);
+        console.log("전체 응답 데이터:", data);
+
+        if (!data || !data.user) {
+          console.log("사용자 데이터가 없습니다.");
+          navigate("/login");
+          return;
         }
+
+        console.log("팀 가입 확인 용:: ", data.user.teamId);
+
+        if (data.user && data.user.teamId) {
+          console.log("팀이 존재함, 리다이렉트 시도");
+          alert("팀에 이미 가입되어 있습니다.");
+          navigate(`/team/${data.user.teamId}`);
+          return;
+        }
+
         setUser(data.user);
         console.log("user :: ", data.user);
       } catch (err) {
         console.error("유저 정보 불러오기 실패:", err);
+        console.error("에러 상세:", err.response?.data);
+
+        if (err.response?.status === 401) {
+          console.log("인증 에러 발생, 로그인 페이지로 이동");
+          navigate("/login");
+        }
       }
     };
 
     fetchUser();
-  }, []);
+  }, [navigate]);
 
   const handleInviteSubmit = async (link) => {
     const teamUrl = link.split("/").pop();
