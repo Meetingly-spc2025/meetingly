@@ -44,17 +44,8 @@ const MeetingList = () => {
 
     <div className="meetinglist-wrapper">
       <div className="meetinglist-main-content">
-        <header className="meetinglist-header">
-          <div className="meetinglist-profile">
-            <img src="/profile.png" alt="profile" />
-            <div>
-              <div className="meetinglist-greeting">
-                안녕하세요, <span className="highlight">홍길동</span> 님
-              </div>
-              <div className="meetinglist-email">meetingly@gmail.com</div>
-            </div>
-          </div>
-
+        <section className="meetinglist-section">
+          <h2>전체 회의 목록</h2>
           <div className="meetinglist-controls">
             <input
               type="text"
@@ -71,11 +62,6 @@ const MeetingList = () => {
               <option value="me">내가 생성한 회의</option>
             </select>
           </div>
-
-        </header>
-
-        <section className="meetinglist-section">
-          <h2>전체 회의 목록</h2>
           <div className="meetinglist-cards">
             {meetings.length === 0 ? (
               <div className="no-meetings">

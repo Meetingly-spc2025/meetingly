@@ -50,7 +50,6 @@
   font-size: 0.5rem;
 }
 
-/* CalendarCard (달력 박스에서 모달로 뜨는 경우) */
 .calendarcard-modal-wrapper {
   position: absolute;
   top: 50%;
@@ -85,9 +84,9 @@
   font-size: 0.7rem;
 }
 
-/* CalendarPage 컨테이너 */
 .calendarpage-container {
-  max-width: 750px;
+  width: 90%;
+  max-width: 1200px;
   margin: 60px auto;
   padding: 40px;
   border-radius: 16px;
@@ -104,6 +103,8 @@
 }
 
 .calendar-wrapper {
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   position: relative;
 }
@@ -114,15 +115,13 @@
   color: #444;
 }
 
-/* 캘린더 기본 스타일 수정 */
 .react-calendar {
   width: 100% !important;
   max-width: 100%;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   border: none;
 }
 
-/* 요일 헤더 */
 .react-calendar__month-view__weekdays {
   display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
@@ -132,42 +131,65 @@
   font-size: 1rem;
 }
 
-/* 날짜 셀 그리드 */
 .react-calendar__month-view__days {
   display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
-  grid-gap: 5px;
+  grid-gap: 8px !important;
 }
 
-/* 날짜 박스 크기 & 중앙 정렬 */
 .react-calendar__tile {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 8px 0 !important;
-  border-radius: 10px;
-  transition: background 0.2s;
+  padding: 6px 2px !important;
+  margin: 0 !important;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  min-height: 100px;
+  box-sizing: border-box;
+  transition: none !important;
   position: relative;
 }
 
+.react-calendar__tile--now {
+  background-color: transparent !important;
+}
+
+.react-calendar__tile--now abbr {
+  background-color: #ffb3b3;
+  border-radius: 50%;
+  padding: 4px 8px;
+  display: inline-block;
+  font-weight: bold;
+  color: #333;
+}
+
 .react-calendar__tile--active {
-  background-color: #cce4ff !important;
-  color: #003366 !important;
+  border: 2px solid #007bff !important;
+  border-radius: 8px;
+  background-color: transparent !important;
+  color: #007bff !important;
   font-weight: bold;
 }
 
-.react-calendar__tile--now {
-  background: #5ca6fa;
-  font-weight: bold;
-  border: 1px solid #aaa;
+.react-calendar__tile:hover {
+  background-color: transparent !important;
+  transform: none !important;
+}
+
+.react-calendar__tile abbr {
+  padding: 4px 8px;
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: normal;
+  color: #333;
 }
 
 .react-calendar__month-view__days__day--weekend {
   color: #d00000;
 }
 
-/* 태스크 카드들이 연결되어 보이도록 추가 스타일 */
 .calendar-tile-tasks {
   width: 100%;
   display: flex;
@@ -177,7 +199,6 @@
   margin-top: 4px;
 }
 
-/* 토글 버튼 스타일 - 가독성 개선 */
 .calendar-toggle-buttons {
   display: flex;
   justify-content: center;
