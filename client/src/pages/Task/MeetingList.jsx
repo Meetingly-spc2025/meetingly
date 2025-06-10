@@ -1,51 +1,52 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import "../../styles/Task/MeetingList.css";
-import MeetingCard from "../../components/Taskboard/MeetingCard";
+"use client"
+
+import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import axios from "axios"
+import "../../styles/Task/MeetingList.css"
+import MeetingCard from "../../components/Taskboard/MeetingCard"
 
 const MeetingList = () => {
-  const { id: teamId } = useParams();
-  const [meetings, setMeetings] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [search, setSearch] = useState("");
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  const [filterOption, setFilterOption] = useState("desc");
+  const { id: teamId } = useParams()
+  const [meetings, setMeetings] = useState([])
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [search, setSearch] = useState("")
+  const navigate = useNavigate()
+  const token = localStorage.getItem("token")
+  const [filterOption, setFilterOption] = useState("desc")
 
   // 회의 목록 불러오기
   const fetchMeetings = async () => {
     try {
-      console.log("팀 ID (from URL):", teamId);
+      console.log("팀 ID (from URL):", teamId)
       const res = await axios.get(`/api/meetingData/meetinglists/task/${teamId}`, {
         headers: { Authorization: `Bearer ${token}` },
         params: {
           page,
           sort: filterOption,
           search,
-          createdByMe: filterOption === "me" ? "me" : ""
-        }
-      });
-      const data = res.data;
-      setMeetings(data.meetings);
-      setTotalPages(Math.ceil(data.totalDataCount / 6));
+          createdByMe: filterOption === "me" ? "me" : "",
+        },
+      })
+      const data = res.data
+      setMeetings(data.meetings)
+      setTotalPages(Math.ceil(data.totalDataCount / 6))
     } catch (err) {
-      console.error("회의 목록 데이터 불러오기 오류:", err);
+      console.error("회의 목록 데이터 불러오기 오류:", err)
     }
-  };
+  }
 
   // teamId, page, sort, search 바뀔 때마다 호출
   useEffect(() => {
-    if (teamId) fetchMeetings();
-  }, [page, teamId, filterOption, search]);
+    if (teamId) fetchMeetings()
+  }, [page, teamId, filterOption, search])
 
   return (
-
     <div className="meetinglist-wrapper">
       <div className="meetinglist-main-content">
         <section className="meetinglist-section">
-          <h2>전체 회의 목록</h2>
+          <h2 className="page-title">전체 회의 목록</h2>
           <div className="meetinglist-controls">
             <input
               type="text"
@@ -53,10 +54,7 @@ const MeetingList = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <select
-              value={filterOption}
-              onChange={(e) => setFilterOption(e.target.value)}
-            >
+            <select value={filterOption} onChange={(e) => setFilterOption(e.target.value)}>
               <option value="desc">최신순</option>
               <option value="asc">과거순</option>
               <option value="me">내가 생성한 회의</option>
@@ -66,10 +64,7 @@ const MeetingList = () => {
             {meetings.length === 0 ? (
               <div className="no-meetings">
                 <p>😅 회의가 없습니다. 새로운 회의를 생성해보세요!</p>
-                <button
-                  className="create-meeting-btn"
-                  onClick={() => navigate("/meeting/start")}
-                >
+                <button className="btn btn-primary btn-lg" onClick={() => navigate("/meeting/start")}>
                   ➕ 회의 생성
                 </button>
               </div>
@@ -78,9 +73,7 @@ const MeetingList = () => {
                 <MeetingCard
                   key={meeting.meeting_id}
                   meeting={meeting}
-                  onClick={() =>
-                    navigate(`/meeting/${meeting.meeting_id}?teamId=${teamId}`)
-                  }
+                  onClick={() => navigate(`/meeting/${meeting.meeting_id}?teamId=${teamId}`)}
                 />
               ))
             )}
@@ -88,17 +81,14 @@ const MeetingList = () => {
 
           {meetings.length > 0 && (
             <div className="meetinglist-pagination">
-              <span
-                onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                className={page === 1 ? "disabled" : ""}
-              >
+              <span onClick={() => setPage((prev) => Math.max(prev - 1, 1))} className={page === 1 ? "disabled" : ""}>
                 ‹
               </span>
 
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
                 <button
                   key={num}
-                  className={num === page ? "active" : ""}
+                  className={`btn btn-sm ${num === page ? "btn-primary" : "btn-ghost"}`}
                   onClick={() => setPage(num)}
                 >
                   {num}
@@ -116,7 +106,7 @@ const MeetingList = () => {
         </section>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default MeetingList;
+export default MeetingList

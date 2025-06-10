@@ -1,11 +1,14 @@
+/* 로그인/회원가입 페이지 통합 스타일 */
 .auth-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--primary-50) 0%, var(--secondary-50) 50%, var(--primary-100) 100%);
-  padding: var(--space-8) var(--space-4);
+  background: linear-gradient(135deg, var(--primary-50) 0%, var(--secondary-50) 100%);
+  padding: 1.5rem;
   position: relative;
+  padding-top: var(--header-height); /* 헤더 높이만큼 상단 패딩 추가 */
+  box-sizing: border-box; /* 패딩이 전체 높이에 포함되도록 설정 */
 }
 
 .auth-container::before {
@@ -21,88 +24,98 @@
 }
 
 .auth-card {
-  background: white;
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-2xl);
-  border: 1px solid var(--gray-200);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 1.5rem; /* 패딩을 2rem에서 1.5rem으로 줄여 공간 절약 */
   width: 100%;
-  max-width: 480px;
-  padding: var(--space-10);
+  max-width: 450px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
   z-index: 1;
-  backdrop-filter: blur(10px);
-}
-
-.auth-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary-600) 0%, var(--secondary-600) 100%);
-  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
 }
 
 .auth-title {
-  font-size: var(--text-4xl);
-  font-weight: 700;
   text-align: center;
-  margin-bottom: var(--space-8);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem; /* 마진을 1.5rem에서 1rem으로 줄여 공간 절약 */
   background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+.auth-error {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  color: white;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 500;
+}
+
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: 0.75rem; /* 간격을 1rem에서 0.75rem으로 줄여 공간 절약 */
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 0.4rem;
 }
 
 .form-group label {
-  font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--gray-700);
+  color: #374151;
+  font-size: 0.9rem;
 }
 
+/* 통일된 인풋 스타일 */
 .form-group input,
+.form-group textarea,
+.form-group select {
+  height: 48px; /* 통일된 높이 */
+  padding: 0 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
 .form-group textarea {
-  padding: var(--space-4);
-  border: 2px solid var(--gray-200);
-  border-radius: var(--radius-lg);
-  font-size: var(--text-base);
-  transition: all var(--transition-fast);
-  background: var(--gray-50);
+  height: auto;
+  min-height: 48px;
+  padding: 0.75rem 1rem;
+  resize: vertical;
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
   outline: none;
   border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   background: white;
-  box-shadow: 0 0 0 3px var(--primary-100);
+  transform: translateY(-1px);
 }
 
 .input-error {
-  border-color: var(--error-500) !important;
-  background: var(--error-50) !important;
-}
-
-.input-error:focus {
-  box-shadow: 0 0 0 3px var(--error-100) !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
 }
 
 .error-message {
-  color: var(--error-600);
-  font-size: var(--text-sm);
+  color: #ef4444;
+  font-size: 0.875rem;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -110,8 +123,8 @@
 }
 
 .success-message {
-  color: var(--success-600);
-  font-size: var(--text-sm);
+  color: var(--primary-600);
+  font-size: 0.875rem;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -119,55 +132,112 @@
 }
 
 .welcome-message {
-  color: var(--success-600);
-  font-size: var(--text-sm);
+  color: var(--primary-600);
+  font-size: 0.875rem;
   font-weight: 500;
-  background: var(--success-50);
+  background: var(--primary-50);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
-  border: 1px solid var(--success-200);
+  border: 1px solid var(--primary-200);
 }
 
-.auth-button {
-  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
-  color: white;
+/* 통일된 버튼 스타일 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 48px; /* 통일된 높이 */
+  padding: 0 1.5rem;
   border: none;
-  border-radius: var(--radius-lg);
-  padding: var(--space-4) var(--space-6);
-  font-size: var(--text-base);
+  border-radius: 12px;
+  font-size: 1rem;
   font-weight: 600;
+  text-decoration: none;
   cursor: pointer;
-  transition: all var(--transition-fast);
-  margin-top: var(--space-4);
-  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  white-space: nowrap;
+  margin-top: 0.25rem; /* 마진을 0.5rem에서 0.25rem으로 줄여 공간 절약 */
 }
 
-.auth-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-800) 100%);
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
-.auth-button:disabled {
+.btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
 
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+  color: white;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, var(--secondary-600) 0%, var(--secondary-700) 100%);
+  color: white;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
+  color: white;
+}
+
+/* btn-sm은 특정 경우에만 사용하고, 기본 버튼 높이는 48px로 유지 */
+.btn-sm {
+  height: 40px;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+}
+
+.btn-lg {
+  height: 56px;
+  padding: 0 2rem;
+  font-size: 1.125rem;
+}
+
+.btn-full {
+  width: 100%;
+}
+
 .auth-links {
+  text-align: center;
+  margin-top: 1rem; /* 마진을 1.5rem에서 1rem으로 줄여 공간 절약 */
+  padding-top: 1rem; /* 패딩을 1.5rem에서 1rem으로 줄여 공간 절약 */
+  border-top: 1px solid #e5e7eb;
   display: flex;
   justify-content: center;
   gap: var(--space-6);
-  margin-top: var(--space-6);
   flex-wrap: wrap;
 }
 
 .auth-link {
   color: var(--primary-600);
-  font-size: var(--text-sm);
-  font-weight: 500;
   text-decoration: none;
-  transition: all var(--transition-fast);
+  font-weight: 600;
+  transition: color 0.3s ease;
   padding: var(--space-2);
   border-radius: var(--radius-md);
 }
@@ -178,22 +248,16 @@
   text-decoration: none;
 }
 
-.auth-error {
-  background: var(--error-50);
-  color: var(--error-700);
-  padding: var(--space-4);
-  border-radius: var(--radius-lg);
-  margin-bottom: var(--space-6);
-  text-align: center;
-  border: 1px solid var(--error-200);
-  font-weight: 500;
+.auth-links p {
+  color: #6b7280;
+  margin: 0;
 }
 
 /* Input with Button */
 .input-with-button {
   display: flex;
-  gap: var(--space-3);
-  align-items: flex-end;
+  gap: 0.75rem; /* 간격을 0.75rem으로 유지 */
+  align-items: stretch;
 }
 
 .input-with-button input {
@@ -201,7 +265,8 @@
 }
 
 .input-with-button button {
-  padding: var(--space-3) var(--space-4);
+  height: 48px; /* 인풋과 같은 높이로 통일 */
+  padding: 0 var(--space-4);
   background: var(--secondary-600);
   color: white;
   border: none;
@@ -212,6 +277,7 @@
   transition: all var(--transition-fast);
   white-space: nowrap;
   box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
 }
 
 .input-with-button button:hover:not(:disabled) {
@@ -228,9 +294,8 @@
 
 /* Email Verification */
 .email-input.email-confirmed {
-  background: var(--success-50) !important;
-  border-color: var(--success-300) !important;
-  color: var(--success-800);
+  background: linear-gradient(135deg, var(--success-50) 0%, var(--success-100) 100%);
+  border-color: var(--success-500);
 }
 
 .email-button.email-confirmed {
@@ -291,18 +356,19 @@
   }
 }
 
-/* Responsive Design */
+/* 반응형 디자인 */
 @media (max-width: 640px) {
   .auth-container {
-    padding: var(--space-4);
+    padding: 1rem;
+    padding-top: calc(var(--header-height) + 1rem); /* 모바일에서도 헤더 높이 고려 */
   }
 
   .auth-card {
-    padding: var(--space-8);
+    padding: 1.5rem;
   }
 
   .auth-title {
-    font-size: var(--text-3xl);
+    font-size: 1.5rem;
   }
 
   .input-with-button {
@@ -310,8 +376,8 @@
     align-items: stretch;
   }
 
-  .input-with-button button {
-    margin-top: var(--space-2);
+  .input-with-button input {
+    margin-bottom: 0.5rem;
   }
 
   .auth-links {
@@ -339,12 +405,14 @@
 
 /* Focus States */
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
   transform: translateY(-1px);
 }
 
 /* Hover Effects */
 .form-group input:hover:not(:focus),
-.form-group textarea:hover:not(:focus) {
+.form-group textarea:hover:not(:focus),
+.form-group select:hover:not(:focus) {
   border-color: var(--gray-300);
 }

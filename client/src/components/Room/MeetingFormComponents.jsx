@@ -1,5 +1,4 @@
-import React from "react";
-import { BsCopy } from "react-icons/bs";
+"use client"
 
 export const RoomForm = ({
   roomTitle,
@@ -7,65 +6,84 @@ export const RoomForm = ({
   roomSubject,
   setRoomSubject,
   roomDate,
+  setRoomDate,
   inviteLink,
   showInviteLink,
   showEnterRoomBtn,
   onCreateRoom,
   onCopyLink,
   onEnterRoom,
-}) => (
-  <form onSubmit={onCreateRoom}>
-    <label htmlFor="roomTitle">회의 제목</label>
-    <input
-      type="text"
-      id="roomTitle"
-      placeholder="회의 제목을 입력하세요."
-      required
-      value={roomTitle}
-      onChange={(event) => setRoomTitle(event.target.value)}
-    />
-
-    <label htmlFor="roomSubject">회의 주제</label>
-    <input
-      type="text"
-      id="roomSubject"
-      placeholder="회의 주제를 입력하세요."
-      required
-      value={roomSubject}
-      onChange={(event) => setRoomSubject(event.target.value)}
-    />
-
-    <label htmlFor="roomDate">회의 날짜</label>
-    <input type="date" id="roomDate" value={roomDate} readOnly />
-
-    {showInviteLink && (
-      <div id="invite-link-container">
-        <label htmlFor="invite-link">초대 링크</label>
-        <div className="flex">
-          <input type="text" id="invite-link" readOnly value={inviteLink} />
-          <button type="button" onClick={onCopyLink}><BsCopy /></button>
+  isMeetingCreated, // New prop to control button visibility
+}) => {
+  return (
+    <>
+      <form className="room-form" onSubmit={onCreateRoom}>
+        <div className="form-group">
+          <label htmlFor="roomTitle">회의 제목</label>
+          <input
+            type="text"
+            id="roomTitle"
+            value={roomTitle}
+            onChange={(e) => setRoomTitle(e.target.value)}
+            placeholder="회의 제목을 입력하세요"
+            required
+          />
         </div>
+
+        <div className="form-group">
+          <label htmlFor="roomSubject">회의 주제</label>
+          <input
+            type="text"
+            id="roomSubject"
+            value={roomSubject}
+            onChange={(e) => setRoomSubject(e.target.value)}
+            placeholder="회의 주제를 입력하세요"
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="roomDate">회의 날짜</label>
+          <input type="date" id="roomDate" value={roomDate} onChange={(e) => setRoomDate(e.target.value)} required />
+        </div>
+
+        {!isMeetingCreated && ( // Conditionally render the button based on isMeetingCreated
+          <button type="submit" className="btn btn-primary btn-full">
+            회의 생성하기
+          </button>
+        )}
+      </form>
+
+      {showInviteLink && (
+        <div className="invite-section">
+          <h3>초대 링크</h3>
+          <div className="invite-link-display">
+            <input type="text" value={inviteLink} readOnly />
+            <button className="copy-button" onClick={onCopyLink}>
+              복사
+            </button>
+          </div>
+          {showEnterRoomBtn && (
+            <button className="enter-room-btn" onClick={onEnterRoom}>
+              회의실 입장하기
+            </button>
+          )}
+        </div>
+      )}
+    </>
+  )
+}
+
+export const JoinByLink = ({ onJoin, joinLinkRef }) => {
+  return (
+    <div className="join-section">
+      <h3>초대 링크로 입장하기</h3>
+      <div className="join-link-container">
+        <input type="text" ref={joinLinkRef} className="join-link-input" placeholder="초대 링크를 붙여넣으세요" />
+        <button className="join-btn" onClick={onJoin}>
+          입장하기
+        </button>
       </div>
-    )}
-
-    {!showInviteLink && <button type="submit">회의 생성 +</button>}
-    {showEnterRoomBtn && (
-      <button type="button" onClick={onEnterRoom}>회의 입장 →</button>
-    )}
-  </form>
-);
-
-export const JoinByLink = ({ onJoin, joinLinkRef }) => (
-  <div id="link-join-section" style={{ marginTop: "3em" }}>
-    <h2>초대 링크로 참여</h2>
-    <div className="flex">
-      <input
-        type="text"
-        id="input-invite-link"
-        placeholder="초대 링크를 입력하세요"
-        ref={joinLinkRef}
-      />
-      <button type="button" onClick={onJoin}>참여하기 →</button>
     </div>
-  </div>
-);
+  )
+}

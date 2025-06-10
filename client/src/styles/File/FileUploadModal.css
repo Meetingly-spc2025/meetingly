@@ -1,61 +1,101 @@
-/* FileUploadModal.css */
-
+/* 파일 업로드 모달 스타일 */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
+  inset: 0; /* top, left, right, bottom을 0으로 설정하여 전체 화면을 덮음 */
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* 상단에 정렬 */
   justify-content: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  z-index: 9999 !important; /* 높은 z-index로 다른 요소 위에 표시 */
+  padding: 120px var(--space-4) 0 var(--space-4); /* 상단 여백 추가 */
   box-sizing: border-box;
 }
 
+.modal {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 1;
+  animation: modalSlideIn 0.3s ease-out;
+  max-height: calc(100vh - 240px); /* 상단 여백 고려하여 최대 높이 조정 */
+  overflow-y: auto; /* 모달 내용이 길어질 경우 스크롤 가능하도록 */
+}
+
 .modal h2 {
-  font-size: 1.8rem;
-  color: #0f123f;
-  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .modal input[type="file"] {
-  display: block;
-  margin-top: 1rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  box-sizing: border-box;
 }
 
 .modal button {
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  background-color: #0f123f;
+  height: 48px;
+  padding: 0 2rem;
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
 }
 
 .modal button:hover {
-  background-color: #3e46b4;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 .modal button:disabled {
-  background-color: #aaa;
+  background: var(--gray-400);
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .result-section {
   margin-top: 2rem;
-  text-align: left;
+  padding-top: 2rem;
+  border-top: 1px solid var(--gray-200);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .modal {
+    padding: 2rem;
+    margin: 1rem;
+  }
 }

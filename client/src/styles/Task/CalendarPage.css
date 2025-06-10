@@ -1,242 +1,315 @@
-.react-calendar__tile.task-highlight {
-  border-radius: 6px;
-}
-
-.calendar-tile-meetings {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  margin-top: 4px;
-}
-
-.calendar-tile-meeting-card {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  border-radius: 4px;
-  padding: 2px 4px;
-  font-size: 0.6rem;
-  cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  background-color: lavender;
-}
-
-.calendar-tile-meeting-card:hover {
-  background-color: #cce4ff;
-}
-
-.calendar-tile-meeting-title,
-.calendar-tile-meeting-members {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
-.calendar-tile-meeting-title {
-  font-weight: 600;
-  color: #333;
-}
-
-.calendar-tile-meeting-members {
-  color: #555;
-  font-size: 0.5rem;
-}
-
-.calendarcard-modal-wrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 999;
-  width: 120px;
-}
-
-.calendarcard-card {
-  background-color: #f9fafb;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 6px 8px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-}
-
-.calendarcard-card:hover {
-  transform: scale(1.05);
-}
-
-.calendarcard-title {
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-
-.calendarcard-info {
-  color: #666;
-  font-size: 0.7rem;
-}
-
 .calendarpage-container {
-  width: 90%;
-  max-width: 1200px;
-  margin: 60px auto;
-  padding: 40px;
-  border-radius: 16px;
-  background-color: #ffffff;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-  font-family: "Segoe UI", sans-serif;
-  text-align: center;
-}
-
-.calendarpage-title {
-  font-size: 2rem;
-  margin-bottom: 25px;
-  color: #333;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  padding: var(--space-8);
 }
 
 .calendar-wrapper {
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  position: relative;
-}
-
-.selected-date {
-  margin-top: 25px;
-  font-size: 1.1rem;
-  color: #444;
-}
-
-.react-calendar {
-  width: 100% !important;
-  max-width: 100%;
-  font-size: 1.3rem;
-  border: none;
-}
-
-.react-calendar__month-view__weekdays {
-  display: grid !important;
-  grid-template-columns: repeat(7, 1fr) !important;
-  font-weight: bold;
-  color: #666;
-  text-transform: uppercase;
-  font-size: 1rem;
-}
-
-.react-calendar__month-view__days {
-  display: grid !important;
-  grid-template-columns: repeat(7, 1fr) !important;
-  grid-gap: 8px !important;
-}
-
-.react-calendar__tile {
+  max-width: 1000px;
+  margin: 0 auto var(--space-8) auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: center;
-  padding: 6px 2px !important;
-  margin: 0 !important;
-  border-radius: 8px;
-  border: 2px solid transparent;
-  min-height: 100px;
-  box-sizing: border-box;
-  transition: none !important;
-  position: relative;
+  gap: var(--space-6);
 }
 
-.react-calendar__tile--now {
-  background-color: transparent !important;
-}
-
-.react-calendar__tile--now abbr {
-  background-color: #ffb3b3;
-  border-radius: 50%;
-  padding: 4px 8px;
-  display: inline-block;
-  font-weight: bold;
-  color: #333;
-}
-
-.react-calendar__tile--active {
-  border: 2px solid #007bff !important;
-  border-radius: 8px;
-  background-color: transparent !important;
-  color: #007bff !important;
-  font-weight: bold;
-}
-
-.react-calendar__tile:hover {
-  background-color: transparent !important;
-  transform: none !important;
-}
-
-.react-calendar__tile abbr {
-  padding: 4px 8px;
-  display: inline-block;
-  font-size: 1rem;
-  font-weight: normal;
-  color: #333;
-}
-
-.react-calendar__month-view__days__day--weekend {
-  color: #d00000;
-}
-
-.calendar-tile-tasks {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0;
-  margin-top: 4px;
+.calendarpage-title {
+  font-size: var(--text-3xl); /* 회의 목록 제목과 동일하게 변경 */
+  font-weight: 700; /* 회의 목록 제목과 동일하게 변경 */
+  line-height: 1.1; /* 회의 목록 제목에 없으므로 제거 */
+  letter-spacing: -0.02em; /* 회의 목록 제목에 없으므로 제거 */
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  margin: 0 0 var(--space-8) 0; /* 회의 목록 제목과 동일하게 변경 */
+  text-shadow: none; /* 회의 목록 제목에 없으므로 제거 */
 }
 
 .calendar-toggle-buttons {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  margin-bottom: 25px;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin: 0;
 }
 
-.toggle-btn {
-  padding: 12px 24px;
-  border: 2px solid #e0e0e0;
-  border-radius: 25px;
-  background-color: #ffffff;
-  color: #333333;
-  cursor: pointer;
-  transition: all 0.3s ease;
+.calendar-toggle-btn {
+  padding: var(--space-3) var(--space-6);
+  border: 2px solid var(--gray-200);
+  background: white;
+  color: var(--gray-700);
+  border-radius: var(--radius-lg);
   font-weight: 600;
-  font-size: 14px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  min-width: 120px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: var(--text-base);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 140px;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+
+.calendar-toggle-btn:hover {
+  border-color: var(--primary-300);
+  background: var(--primary-50);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.calendar-toggle-btn.active {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  color: white;
+  border-color: var(--primary-500);
+  box-shadow: var(--shadow-lg);
+}
+
+.calendar-toggle-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-100);
+}
+
+/* React Calendar 스타일 커스터마이징 */
+.react-calendar {
+  width: 100%;
+  background: transparent;
+  border: none;
+  font-family: var(--font-family-sans);
+}
+
+.react-calendar__navigation {
+  display: flex;
+  height: 60px;
+  margin-bottom: var(--space-4);
+}
+
+.react-calendar__navigation button {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: var(--text-base);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin: 0 var(--space-1);
+}
+
+.react-calendar__navigation button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.react-calendar__navigation button:disabled {
+  background: var(--gray-300);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.react-calendar__month-view__weekdays {
   text-align: center;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--gray-600);
+  margin-bottom: var(--space-2);
 }
 
-.toggle-btn:hover {
-  background-color: #f8f9fa;
-  border-color: #007bff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+.react-calendar__month-view__weekdays__weekday {
+  padding: var(--space-2);
 }
 
-.toggle-btn.active {
-  background-color: #007bff;
-  color: #ffffff;
-  border-color: #007bff;
-  box-shadow: 0 3px 6px rgba(0, 123, 255, 0.3);
+.react-calendar__month-view__days {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-1);
 }
 
-.toggle-btn.active:hover {
-  background-color: #0056b3;
-  border-color: #0056b3;
-  box-shadow: 0 4px 8px rgba(0, 86, 179, 0.4);
+.react-calendar__month-view__days {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0 !important; /* 날짜 간격 제거 */
+}
+
+.react-calendar__tile {
+  background: white;
+  border: 2px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.react-calendar__tile:hover {
+  border-color: var(--primary-300);
+  background: var(--primary-50);
+  transform: none;
+  box-shadow: none;
+}
+
+/* 모든 날짜 숫자에 일관된 크기 적용 */
+.react-calendar__tile abbr {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px; /* '20일'과 같은 긴 날짜도 줄바꿈 없이 표시되도록 너비 증가 */
+  height: 28px;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+/* 오늘 날짜 텍스트에만 핑크색 원형 하이라이트 */
+.react-calendar__tile--now {
+  background: transparent !important;
+  border: 2px solid transparent;
+}
+.react-calendar__tile--now abbr {
+  background-color: #ffc0cb;
+  border-radius: 9999px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* 선택한 날짜는 보더 색상 강조만 */
+.react-calendar__tile--active {
+  background: transparent !important;
+  color: var(--primary-600);
+  border: 2px solid #ff6f91;
+  border-radius: var(--radius-lg);
+  font-weight: bold;
+}
+
+.react-calendar__tile--neighboringMonth {
+  color: var(--gray-400);
+  background: var(--gray-50);
+}
+
+.task-highlight {
+  background: linear-gradient(135deg, var(--success-100) 0%, var(--success-200) 100%);
+  border-color: var(--success-400);
+}
+
+/* 캘린더 타일 내용 */
+.calendar-tile-tasks,
+.calendar-tile-meetings {
+  width: 100%;
+  margin-top: var(--space-1);
+}
+
+.calendar-tile-meeting-card {
+  background: linear-gradient(135deg, var(--primary-400) 0%, var(--primary-500) 100%);
+  color: white;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-1);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.calendar-tile-meeting-card:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-sm);
+}
+
+.calendar-tile-meeting-title {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .calendarpage-container {
+    padding: var(--space-4);
+  }
+
+  .calendar-wrapper {
+    padding: var(--space-6);
+    gap: var(--space-4);
+  }
+
+  .calendarpage-title {
+    font-size: var(--text-2xl); /* 반응형에서도 일관성 유지 */
+  }
+
+  .calendar-toggle-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .calendar-toggle-btn {
+    width: 200px;
+    justify-content: center;
+    min-width: unset;
+  }
+
+  .react-calendar__tile {
+    min-height: 60px;
+    font-size: var(--text-sm);
+  }
+
+  .react-calendar__navigation button {
+    font-size: var(--text-sm);
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .calendarpage-container {
+    padding: var(--space-3);
+  }
+
+  .calendar-wrapper {
+    padding: var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .calendar-toggle-buttons {
+    gap: var(--space-2);
+  }
+
+  .calendar-toggle-btn {
+    width: 100%;
+    max-width: 280px;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+  }
+
+  .react-calendar__month-view__days {
+    gap: 2px;
+  }
+
+  .react-calendar__tile {
+    min-height: 50px;
+    padding: var(--space-1);
+    font-size: var(--text-xs);
+  }
+
+  .calendar-tile-meeting-card {
+    padding: 2px var(--space-1);
+    font-size: 10px;
+  }
 }

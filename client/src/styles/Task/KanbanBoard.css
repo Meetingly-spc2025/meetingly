@@ -1,173 +1,376 @@
-/* KanbanBoard */
+/* KanbanBoard 전용 버튼 스타일 */
+.kanban-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  outline: none;
+}
 
+.kanban-btn:focus {
+  outline: 2px solid rgba(59, 130, 246, 0.5);
+  outline-offset: 2px;
+}
+
+/* 칸반 버튼 크기 */
+.kanban-btn-sm {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  border-radius: 6px;
+}
+
+.kanban-btn-xs {
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  border-radius: 4px;
+  min-width: 28px;
+  height: 28px;
+}
+
+/* 칸반 버튼 색상 */
+.kanban-btn-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(14, 165, 233, 0.2);
+}
+
+.kanban-btn-primary:hover {
+  background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3);
+}
+
+.kanban-btn-secondary {
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.kanban-btn-secondary:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.kanban-btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+.kanban-btn-danger:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+.kanban-btn-ghost {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid transparent;
+}
+
+.kanban-btn-ghost:hover {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #e2e8f0;
+}
+
+/* 칸반보드 메인 컨테이너 */
+.kanban-container {
+  padding: 24px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* 칸반보드 헤더 */
 .kanban-header {
   display: flex;
   align-items: center;
-  gap: 10px; 
-  margin-bottom: 10px;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  padding: 20px 24px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
 }
 
 .kanban-header h1 {
-  margin: 0; 
-  font-size: 1.5rem;
+  margin: 0;
+  font-size: 1.875rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-
-.kanban-add-button {
-  background-color: #0F123F;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  margin-bottom: 10px;
-  transition: background-color 0.2s;
-}
-
-.kanban-add-button:hover {
-  background-color: #74b9ff;
-}
-
-
-/* TaskModal */
-.taskmodal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.3);
+/* 칸반보드 그리드 */
+.kanban-grid {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.taskmodal-container {
-  background: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  width: 320px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.taskmodal-container h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 1.1rem;
-  color: #2d3436;
-}
-
-.taskmodal-input,
-.taskmodal-select {
-  width: 100%;
-  margin-top: 8px;
+  gap: 24px;
+  overflow-x: auto;
   padding: 8px;
-  border: 1px solid #ccc;
+  min-height: 600px;
+}
+
+.kanban-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.kanban-grid::-webkit-scrollbar-track {
+  background: #f1f5f9;
   border-radius: 4px;
-  box-sizing: border-box;
 }
 
-.taskmodal-buttons {
-  margin-top: 15px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.taskmodal-buttons button {
-  background: #194C99;
-  color: white;
-  border: none;
-  padding: 6px 12px;
+.kanban-grid::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
   border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: background-color 0.2s;
 }
 
-.taskmodal-buttons button:hover {
-  background: #E0F0FC;
+.kanban-grid::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
-.taskmodal-buttons .taskmodal-cancel {
-  background: #194C99;
-}
-
-.taskmodal-buttons .taskmodal-cancel:hover {
-  background: #E0F0FC;
-}
-
-/* TaskCard */
-
-.taskcard-container {
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  padding: 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  transition: box-shadow 0.2s;
-}
-
-.taskcard-dragging {
-  background: #f0f0ff;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
-
-.taskcard-content {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.taskcard-assignee {
-  color: #666;
-  font-size: 0.8rem;
-}
-
-.taskcard-buttons {
-  margin-top: 8px;
-  display: flex;
-  gap: 6px;
-}
-
-.taskcard-buttons button {
-  background: #194C99;
-  color: white;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.75rem;
-  transition: background-color 0.2s;
-}
-
-.taskcard-buttons button:hover {
-  background: #194C99;
-}
-
-/* TaskColumn */
+/* TaskColumn 스타일 */
 .taskcolumn-container {
-  width: 250px;
-  min-height: 400px;
-  background: #E0F0FC;
-  border-radius: 8px;
-  padding: 10px;
+  width: 320px;
+  min-width: 320px;
+  min-height: 500px;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  transition: box-shadow 0.2s;
+  gap: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.taskcolumn-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #0ea5e9 0%, #38bdf8 100%);
 }
 
 .taskcolumn-container:hover {
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .taskcolumn-title {
   margin: 0;
-  margin-bottom: 8px;
-  font-size: 1rem;
-  color: #2d3436;
-  font-weight: bold;
+  margin-bottom: 16px;
+  font-size: 1.125rem;
+  color: #1e293b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.taskcolumn-title::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+}
+
+/* TaskCard 스타일 */
+.taskcard-container {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+  cursor: grab;
+  position: relative;
+  overflow: hidden;
+}
+
+.taskcard-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+}
+
+.taskcard-container:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-color: #cbd5e1;
+}
+
+.taskcard-dragging {
+  background: #f8fafc;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: rotate(2deg);
+  border-color: #0ea5e9;
+}
+
+.taskcard-content {
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1e293b;
+  line-height: 1.4;
+  font-size: 0.9rem;
+}
+
+.taskcard-assignee {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.taskcard-assignee::before {
+  content: "👤";
+  font-size: 0.7rem;
+}
+
+.taskcard-dates {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.taskcard-dates::before {
+  content: "📅";
+  font-size: 0.7rem;
+}
+
+.taskcard-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .kanban-container {
+    padding: 16px;
+  }
+
+  .kanban-header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .kanban-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .kanban-grid {
+    gap: 16px;
+  }
+
+  .taskcolumn-container {
+    width: 280px;
+    min-width: 280px;
+  }
+}
+
+@media (max-width: 640px) {
+  .taskcolumn-container {
+    width: 260px;
+    min-width: 260px;
+    padding: 16px;
+  }
+
+  .taskcard-container {
+    padding: 12px;
+  }
+}
+
+/* 로딩 애니메이션 */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.taskcard-loading {
+  background: linear-gradient(90deg, #f1f5f9 0px, #e2e8f0 40px, #f1f5f9 80px);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* 드래그 앤 드롭 상태 */
+.taskcolumn-container.drag-over {
+  background: #f8fafc;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+}
+
+/* 접근성 개선 */
+@media (prefers-reduced-motion: reduce) {
+  .taskcard-container,
+  .taskcolumn-container,
+  .kanban-btn {
+    transition: none;
+  }
+
+  .taskcard-loading {
+    animation: none;
+  }
+}
+
+/* 다크모드 지원 준비 */
+@media (prefers-color-scheme: dark) {
+  .kanban-container {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  }
+
+  .kanban-header,
+  .taskcolumn-container,
+  .taskcard-container {
+    background: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .taskcard-assignee,
+  .taskcard-dates {
+    color: #94a3b8;
+  }
 }

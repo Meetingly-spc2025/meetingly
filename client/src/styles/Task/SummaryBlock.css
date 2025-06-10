@@ -1,10 +1,192 @@
+.summary-block {
+  margin: 0;
+  padding: 0;
+}
+
 .summary-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+.summary-title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  margin: 0;
+  color: var(--gray-800);
+}
+
+.summary-buttons {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.summary-buttons .btn {
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.summary-buttons .btn-primary {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.summary-buttons .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.summary-buttons .btn-success {
+  background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.summary-buttons .btn-success:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.summary-buttons .btn-secondary {
+  background: var(--gray-200);
+  color: var(--gray-700);
+  border: 2px solid var(--gray-300);
+}
+
+.summary-buttons .btn-secondary:hover {
+  background: var(--gray-300);
+  border-color: var(--gray-400);
+}
+
+.summary-content {
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  line-height: 1.7;
+  font-size: var(--text-base);
+  color: var(--gray-800);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  min-height: 120px;
+  transition: all var(--transition-fast);
+}
+
+.summary-content:hover {
+  border-color: var(--primary-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.summary-content.empty {
+  color: var(--gray-500);
+  font-style: italic;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.summary-edit-mode {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid var(--primary-300);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.summary-edit-textarea {
+  width: 100%;
+  min-height: 200px;
+  background: white;
+  border: 2px solid var(--gray-300);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  color: var(--gray-800);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  resize: vertical;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+}
+
+.summary-edit-textarea::placeholder {
+  color: var(--gray-500);
+}
+
+.summary-edit-textarea:focus {
+  outline: none;
+  border-color: var(--primary-400);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.summary-edit-actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  margin-top: var(--space-4);
+}
+
+.summary-edit-btn {
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.summary-edit-btn.save {
+  background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.summary-edit-btn.save:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.summary-edit-btn.cancel {
+  background: var(--gray-200);
+  color: var(--gray-700);
+  border: 2px solid var(--gray-300);
+}
+
+.summary-edit-btn.cancel:hover {
+  background: var(--gray-300);
+  border-color: var(--gray-400);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .summary-header {
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: flex-start;
   }
-  
-  .summary-buttons button {
-    margin-left: 8px;
+
+  .summary-buttons {
+    width: 100%;
+    justify-content: center;
   }
+
+  .summary-edit-actions {
+    flex-direction: column;
+  }
+
+  .summary-edit-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

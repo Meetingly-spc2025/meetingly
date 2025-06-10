@@ -1,51 +1,31 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "../styles/ErrorPage.css";
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import "../styles/ErrorPage.css"
 
 const ErrorPage = ({ code = 404, message = "요청하신 페이지를 찾을 수 없습니다" }) => {
-  const navigate = useNavigate();
-  const [countdown, setCountdown] = useState(10);
+  const navigate = useNavigate()
+  const [countdown, setCountdown] = useState(10)
 
   // 자동 리디렉션 카운트다운
   useEffect(() => {
     if (countdown <= 0) {
-      navigate("/");
-      return;
+      navigate("/")
+      return
     }
 
     const timer = setTimeout(() => {
-      setCountdown(countdown - 1);
-    }, 1000);
+      setCountdown(countdown - 1)
+    }, 1000)
 
-    return () => clearTimeout(timer);
-  }, [countdown, navigate]);
+    return () => clearTimeout(timer)
+  }, [countdown, navigate])
 
   return (
     <div className="error-page">
       <div className="error-container">
         <div className="error-content">
-          {/* 에러 아이콘 */}
-          {/* <div className="error-icon">
-            <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
-              <circle
-                cx="60"
-                cy="60"
-                r="50"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="none"
-              />
-              <path
-                d="M40 40L80 80M80 40L40 80"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </div> */}
-
           {/* 에러 코드 */}
           <div className="error-code">{code}</div>
 
@@ -122,7 +102,7 @@ const ErrorPage = ({ code = 404, message = "요청하신 페이지를 찾을 수
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ErrorPage;
+export default ErrorPage

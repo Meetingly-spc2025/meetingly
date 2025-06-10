@@ -56,14 +56,13 @@ export default function WeeklyMeetingChart({ teamId }) {
 
   return (
     <div style={{ maxWidth: "600px", margin: "0 auto", padding: "1rem" }}>
-      <h3>📈 주간 회의 통계 (Line Chart)</h3>
       <Line
         data={chartData}
         options={{
           responsive: true,
           plugins: {
             legend: { position: "top" },
-            title: { display: true, text: "최근 7일간 요일별 회의 수" },
+            title: { display: false },
           },
           scales: {
             y: {
