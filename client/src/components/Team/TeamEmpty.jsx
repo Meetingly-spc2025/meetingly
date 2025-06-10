@@ -22,6 +22,11 @@ const TeamEmpty = () => {
           },
         });
         const data = res.data;
+        console.log("팀 가입 확인 용:: ", data.user.teamId);
+        if (data.user.teamId) {
+          alert("팀에 이미 가입되어 있습니다.");
+          navigate(`/team/:${data.user.teamId}`);
+        }
         setUser(data.user);
         console.log("user :: ", data.user);
       } catch (err) {

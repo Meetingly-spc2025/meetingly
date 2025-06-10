@@ -28,104 +28,96 @@ import { UserProvider } from "./context/UserContext";
 function App() {
   return (
     <UserProvider>
-    <div className="app-container">
-      <Navbar />
-      <ToastContainer position="top-right" autoClose={3000} />
-      <main className="app-main">
-        <Routes>
-          <Route path="/" element={<Main />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/room/:roomName" element={<MeetingRoom />} />
+      <div className="app-container">
+        <Navbar />
+        <ToastContainer position="top-right" autoClose={3000} />
+        <main className="app-main">
+          <Routes>
+            <Route path="/" element={<Main />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/room/:roomName" element={<MeetingRoom />} />
 
-          {/* 사이드 바 존재하는 페이지 */}
-          <Route
-            path="/meetings"
-            element={
-              <SidebarLayout>
-                <MeetingListRedirect />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/meetingData/meetinglists/task/:id"
-            element={
-              <SidebarLayout>
-                <MeetingList />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/team"
-            element={
-              <SidebarLayout>
-                <TeamRedirect />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/team/:id"
-            element={
-              <SidebarLayout>
-                <TeamManagement />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/team/join"
-            element={
-              <SidebarLayout>
-                <TeamEmpty />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/meeting/start"
-            element={
-              <SidebarLayout>
-                <CreateMeeting />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/meeting/:id"
-            element={
-              <SidebarLayout>
-                <MeetingDetail />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/mypage"
-            element={
-              <SidebarLayout>
-                <MyPage />
-              </SidebarLayout>
-            }
-          />
-          <Route
-            path="/calendarPage/:id"
-            element={
-              <SidebarLayout>
-                <CalendarPage />
-              </SidebarLayout>
-            }
-          />
-          <Route path="/calendarPage" element={<CalendarRedirect />} />
-          <Route
-            path="/audio"
-            element={
-              <SidebarLayout>
-                <AudioRecorder />
-              </SidebarLayout>
-            }
-          />
+            {/* 사이드 바 존재하는 페이지 */}
+            <Route
+              path="/meetings"
+              element={
+                <SidebarLayout>
+                  <MeetingListRedirect />
+                </SidebarLayout>
+              }
+            />
+            <Route
+              path="/meetingData/meetinglists/task/:id"
+              element={
+                <SidebarLayout>
+                  <MeetingList />
+                </SidebarLayout>
+              }
+            />
+            <Route
+              path="/team"
+              element={
+                <SidebarLayout>
+                  <TeamRedirect />
+                </SidebarLayout>
+              }
+            />
+            <Route
+              path="/team/:id"
+              element={
+                <SidebarLayout>
+                  <TeamManagement />
+                </SidebarLayout>
+              }
+            />
+            <Route
+              path="/meeting/start"
+              element={
+                <SidebarLayout>
+                  <CreateMeeting />
+                </SidebarLayout>
+              }
+            />
+            <Route
+              path="/meeting/:id"
+              element={
+                <SidebarLayout>
+                  <MeetingDetail />
+                </SidebarLayout>
+              }
+            />
+            <Route
+              path="/mypage"
+              element={
+                <SidebarLayout>
+                  <MyPage />
+                </SidebarLayout>
+              }
+            />
+            <Route
+              path="/calendarPage/:id"
+              element={
+                <SidebarLayout>
+                  <CalendarPage />
+                </SidebarLayout>
+              }
+            />
+            <Route path="/calendarPage" element={<CalendarRedirect />} />
+            <Route
+              path="/audio"
+              element={
+                <SidebarLayout>
+                  <AudioRecorder />
+                </SidebarLayout>
+              }
+            />
 
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
-      </main>
-    </div>
+            <Route path="*" element={<ErrorPage />} />
+          </Routes>
+        </main>
+      </div>
     </UserProvider>
   );
 }

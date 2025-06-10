@@ -136,7 +136,8 @@
 .react-calendar__month-view__days {
   display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
-  grid-gap: 5px;
+  /* grid-gap: 5px; */
+  grid-gap: 0px;
 }
 
 /* 날짜 박스 크기 & 중앙 정렬 */
