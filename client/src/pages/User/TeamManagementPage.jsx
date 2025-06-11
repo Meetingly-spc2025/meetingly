@@ -76,7 +76,6 @@ const TeamManagementPage = () => {
   const handleUpdateTeamName = () => {
     alert(`팀 이름 변경: ${editedTeamName}`)
     setTeamName(editedTeamName)
-    setIsEditingTeamName(false)
     axios.patch(`/api/teams/update/${teamId}`, { name: editedTeamName })
   }
 
@@ -92,24 +91,27 @@ const TeamManagementPage = () => {
   return (
     <div className="team-container">
       <div className="page-card-container">
-        <h1 className="page-title">팀 관리 대시보드</h1>
+        <h1 className="page-title">팀 관리</h1>
 
-        {/* 상단 정보 섹션 */}
-        <div className="top-info-section">
-          <div className="user-info-card">
+        <div className="team-header">
+          <div className="user-info">
             <img src={userImage || "/placeholder.svg"} alt="프로필" className="profile-img" />
-            <div className="user-details">
-              <h2>
+            <div>
+              <p className="greeting">
                 안녕하세요, <span className="highlight">{userName}</span> 님
-              </h2>
+              </p>
               <p className="email">{userEmail}</p>
             </div>
           </div>
+        </div>
 
-          <div className="team-info-card">
-            <h2>{teamName}</h2>
-            <p style={{ color: "#6b7280", margin: "0 0 1rem 0" }}>팀 멤버 {members.length}명</p>
-            <div className="team-url-section">
+        <div className="team-box">
+          <div className="team-box-header">
+            <div>
+              <h2>{teamName}</h2>
+              <span className="subtext">나의 팀 보기</span>
+            </div>
+            <div className="link-copy-wrapper">
               <input type="text" value={`${window.location.origin}/team/${teamUrl}`} className="team-url" disabled />
               <button
                 className="copy-btn"
@@ -118,37 +120,28 @@ const TeamManagementPage = () => {
                   alert("팀 링크가 복사되었습니다!")
                 }}
               >
-                👥 복사
+                👥 팀 링크 복사
               </button>
             </div>
           </div>
-        </div>
 
-        {/* 차트 섹션 */}
-        <div className="charts-section">
-          <h3>팀 활동 분석</h3>
-          <div className="charts-container">
-            <div className="chart-card">
-              <h4 className="chart-title">참여도</h4>
-              <div className="chart-container">
+          {/* 차트 섹션 - 카드 형태로 묶음 */}
+          <div className="charts-section">
+            <h3>팀 활동 분석</h3>
+            <div className="charts-container">
+              <div className="chart-card">
+                <h4 className="chart-title">팀원 참여도</h4>
                 <TeamParticipationChart teamId={teamId} />
               </div>
-            </div>
-            <div className="chart-card">
-              <h4 className="chart-title">회의 통계</h4>
-              <div className="chart-container">
+              <div className="chart-card">
+                <h4 className="chart-title">주간 회의 통계</h4>
                 <WeeklyMeetingChart teamId={teamId} />
               </div>
             </div>
           </div>
-        </div>
 
-        {/* 하단 섹션 - 관리자 컨트롤과 멤버 목록 */}
-        <div className="bottom-section">
-          {/* 관리자 컨트롤 */}
           {isAdmin && (
             <div className="admin-controls">
-              <h3>팀 관리</h3>
               <div className="edit-team-name">
                 <input
                   type="text"
@@ -156,7 +149,6 @@ const TeamManagementPage = () => {
                   onChange={(e) => setEditedTeamName(e.target.value)}
                   className="teamname-input"
                   disabled={!isEditingTeamName}
-                  placeholder="팀 이름"
                 />
                 <div className="button-group">
                   {!isEditingTeamName ? (
@@ -182,34 +174,39 @@ const TeamManagementPage = () => {
                 </div>
               </div>
               <button className="delete-btn" onClick={handleDeleteTeam}>
-                🗑️ 팀 삭제
+                팀 삭제
               </button>
             </div>
           )}
 
-          {/* 멤버 목록 */}
-          <div className="members-section">
-            <h3>팀 멤버 ({members.length}명)</h3>
-            <div className="member-list">
-              {members.map((member) => (
-                <div key={member.user_id} className={`member-card ${member.role === "admin" ? "admin-member" : ""}`}>
-                  <div className="member-photo" />
-                  <div className="member-info">
-                    <h4>
-                      {member.name}
-                      {member.role === "admin" && <span className="admin-badge">Admin</span>}
-                    </h4>
-                    <p>{member.email}</p>
-                    <p style={{ fontStyle: "italic", color: "#9ca3af" }}>{member.nickname}</p>
-                  </div>
-                  {isAdmin && member.role !== "admin" && (
-                    <button className="kick-btn" onClick={() => handleKickMember(member.user_id)}>
-                      강퇴
-                    </button>
-                  )}
+          <div className="member-list">
+            {members.map((member) => (
+              <div key={member.user_id} className={`member-card ${member.role === "admin" ? "admin-member" : ""}`}>
+                <div className="member-photo" />
+                <div className="member-info">
+                  <h3>
+                    {member.name}
+                    {member.role === "admin" && <span className="admin-badge">Admin</span>}
+                  </h3>
+                  <p>{member.email}</p>
+                  <p className="description">{member.nickname}</p>
                 </div>
-              ))}
-            </div>
+                {isAdmin && member.role !== "admin" && (
+                  <button className="kick-btn" onClick={() => handleKickMember(member.user_id)}>
+                    강퇴
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="pagination">
+            {[1].map((n) => (
+              <button key={n} className={`page-btn ${n === 1 ? "active" : ""}`}>
+                {n}
+              </button>
+            ))}
+            <span className="next-page">{`>`}</span>
           </div>
         </div>
       </div>

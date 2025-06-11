@@ -4,54 +4,20 @@
   padding: 2rem;
 }
 
-.page-card-container {
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 2rem;
-  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.team-container .page-title {
-  font-size: var(--text-3xl);
-  font-weight: 700;
-  color: var(--gray-900); /* This will be overridden by -webkit-text-fill-color */
-  margin-bottom: var(--space-8);
-  text-align: center;
-  background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-
-/* 상단 정보 섹션 - 가로 배치 */
-.top-info-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  align-items: stretch;
-}
-
-.user-info-card {
+.team-header {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
   background: white;
   border-radius: 20px;
   padding: 1.5rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   border: 1px solid #e5e7eb;
+}
+
+.user-info {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  height: 100%;
+  gap: 1rem;
 }
 
 .profile-img {
@@ -63,11 +29,11 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.user-details h2 {
-  font-size: 1.3rem;
-  font-weight: 700;
+.greeting {
+  font-size: 1.2rem;
+  font-weight: 600;
   color: #374151;
-  margin: 0 0 0.25rem 0;
+  margin: 0;
 }
 
 .highlight {
@@ -84,48 +50,60 @@
   font-size: 0.9rem;
 }
 
-.team-info-card {
+.team-box {
+  max-width: 1200px;
+  margin: 0 auto;
   background: white;
-  border-radius: 20px;
-  padding: 1.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 24px;
+  padding: 3rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   border: 1px solid #e5e7eb;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 
-.team-info-card h2 {
-  font-size: 1.5rem;
+.team-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.team-box-header h2 {
+  font-size: 2rem;
   font-weight: 700;
   color: #374151;
-  margin: 0 0 0.5rem 0;
+  margin: 0;
   background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.team-url-section {
+.subtext {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.link-copy-wrapper {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   align-items: center;
-  margin-top: 1rem;
 }
 
 .team-url {
-  flex: 1;
   padding: 0.75rem 1rem;
   border: 2px solid #e5e7eb;
   border-radius: 12px;
   background: #f9fafb;
   color: #6b7280;
   font-size: 0.9rem;
+  min-width: 300px;
 }
 
 .copy-btn {
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1rem;
   background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
   color: white;
   border: none;
@@ -142,13 +120,13 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
-/* 차트 섹션 - 가로 배치 */
+/* 차트 섹션 - 카드 형태로 묶음 */
 .charts-section {
   background: white;
-  border-radius: 20px;
-  padding: 2.5rem;
+  border-radius: 16px;
+  padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   border: 1px solid #e5e7eb;
 }
 
@@ -156,7 +134,7 @@
   font-size: 1.5rem;
   font-weight: 700;
   color: #374151;
-  margin: 0 0 2rem 0;
+  margin: 0 0 1.5rem 0;
   text-align: center;
   background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
   -webkit-background-clip: text;
@@ -165,73 +143,52 @@
 }
 
 .charts-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  height: 350px; /* Adjusted height */
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
 }
 
 .chart-card {
+  flex: 1;
   background: #f9fafb;
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 1.5rem;
   border: 1px solid #e5e7eb;
   transition: all 0.3s ease;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
 }
 
 .chart-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
-.chart-container {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* 하단 섹션 - 관리자 컨트롤과 멤버 목록 */
-.bottom-section {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 2rem;
+.chart-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 1rem 0;
+  text-align: center;
 }
 
 /* 관리자 컨트롤 */
 .admin-controls {
   background: white;
-  border-radius: 20px;
+  border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   border: 1px solid #e5e7eb;
-  height: fit-content;
-}
-
-.admin-controls h3 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #374151;
-  margin: 0 0 1.5rem 0;
-  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .edit-team-name {
   display: flex;
-  flex-direction: column;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .teamname-input {
+  flex: 1;
   padding: 0.75rem;
   border: 2px solid #e5e7eb;
   border-radius: 12px;
@@ -259,8 +216,7 @@
 .edit-btn,
 .update-btn,
 .cancel-btn {
-  flex: 1;
-  padding: 0.75rem;
+  padding: 0.5rem 1rem;
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -292,15 +248,15 @@
 }
 
 .delete-btn {
-  width: 100%;
   background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
   color: white;
   border: none;
-  padding: 0.75rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-top: 1rem;
 }
 
 .delete-btn:hover {
@@ -309,91 +265,49 @@
 }
 
 /* 멤버 목록 */
-.members-section {
-  background: white;
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-}
-
-.members-section h3 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #374151;
-  margin: 0 0 1.5rem 0;
-  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 .member-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
-  max-height: 400px;
-  overflow-y: auto;
-  padding-right: 0.5rem;
-}
-
-.member-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.member-list::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 3px;
-}
-
-.member-list::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
-}
-
-.member-list::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
 }
 
 .member-card {
-  background: #f9fafb;
-  border-radius: 12px;
-  padding: 1rem;
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid #e5e7eb;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .member-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   border-color: #0ea5e9;
 }
 
 .member-card.admin-member {
   border-left: 4px solid #0ea5e9;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
 }
 
 .member-photo {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: #e5e7eb;
   border: 2px solid #0ea5e9;
-  flex-shrink: 0;
 }
 
 .member-info {
   flex: 1;
-  min-width: 0;
 }
 
-.member-info h4 {
-  margin: 0 0 0.25rem 0;
-  font-size: 0.95rem;
+.member-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #374151;
   display: flex;
@@ -404,219 +318,133 @@
 .admin-badge {
   background: #0ea5e9;
   color: white;
-  padding: 0.125rem 0.375rem;
-  border-radius: 4px;
-  font-size: 0.625rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
   font-weight: 500;
 }
 
 .member-info p {
-  margin: 0.125rem 0;
+  margin: 0.25rem 0;
   color: #6b7280;
-  font-size: 0.8rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 0.9rem;
+}
+
+.description {
+  font-style: italic;
+  color: #9ca3af;
 }
 
 .kick-btn {
   background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
   color: white;
   border: none;
-  padding: 0.375rem 0.75rem;
-  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.75rem;
-  flex-shrink: 0;
 }
 
 .kick-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
 }
 
-/* New styles for non-admin controls */
-.member-controls {
-  background: white;
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  height: fit-content;
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
 }
 
-.member-controls h3 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #374151;
-  margin: 0 0 1.5rem 0;
-  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.leave-team-btn {
-  width: 100%;
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); /* Orange/Amber */
-  color: white;
+.page-btn {
+  width: 40px;
+  height: 40px;
   border: none;
-  padding: 0.75rem;
-  border-radius: 12px;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-}
-
-.leave-team-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-}
-
-/* New styles for recent activity section */
-.recent-activity-section {
-  background: white;
-  border-radius: 20px;
-  padding: 2.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   border: 1px solid #e5e7eb;
 }
 
-.recent-activity-section h3 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #374151;
-  margin: 0 0 2rem 0;
-  text-align: center;
-  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.activity-list {
-  max-height: 300px; /* Example height */
-  overflow-y: auto;
-  padding-right: 0.5rem; /* For scrollbar */
-}
-
-.activity-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.activity-list::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 3px;
-}
-
-.activity-list::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
-}
-
-.activity-list::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-.activity-item {
-  background: #f9fafb;
-  border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-  border: 1px solid #e5e7eb;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  transition: all 0.2s ease-in-out;
-}
-
-.activity-item:hover {
+.page-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #0ea5e9;
 }
 
-.activity-item p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #374151;
+.page-btn.active {
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  color: white;
+  border: none;
 }
 
-.activity-item strong {
+.next-page {
+  color: #6b7280;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.next-page:hover {
   color: #0ea5e9;
 }
 
-.activity-time {
-  font-size: 0.75rem;
-  color: #9ca3af;
-  flex-shrink: 0;
-}
-
-.no-activity {
-  text-align: center;
-  color: #6b7280;
-  font-style: italic;
-  padding: 2rem;
-}
-
 /* 반응형 디자인 */
-@media (max-width: 1200px) {
-  .top-info-section {
-    grid-template-columns: 1fr;
-  }
-
-  .bottom-section {
-    grid-template-columns: 1fr;
-  }
-
-  .charts-container {
-    grid-template-columns: 1fr;
-    height: auto; /* Allow height to adjust for single column */
-    gap: 2rem;
-  }
-
-  .chart-card {
-    height: 350px; /* Adjusted height for smaller screens */
-  }
-}
-
 @media (max-width: 768px) {
   .team-container {
     padding: 1rem;
   }
 
-  .user-info-card {
-    flex-direction: column;
-    text-align: center;
+  .team-box {
+    padding: 2rem;
   }
 
-  .team-url-section {
+  .team-box-header {
     flex-direction: column;
+    gap: 1rem;
   }
 
-  .member-list {
-    grid-template-columns: 1fr;
-    max-height: 300px;
+  .link-copy-wrapper {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .team-url {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .charts-container {
+    flex-direction: column;
   }
 
   .edit-team-name {
-    gap: 0.75rem;
-  }
-
-  .button-group {
     flex-direction: column;
   }
 
-  .chart-card {
-    height: 300px; /* Further adjusted height for very small screens */
+  .button-group {
+    justify-content: center;
   }
-  .recent-activity-section {
-    padding: 1.5rem;
-  }
-  .activity-list {
-    max-height: 250px;
-  }
+}
+
+.team-container .page-title {
+  text-align: center;
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  margin-bottom: var(--space-8);
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: var(--gray-900); /* fallback color */
 }
