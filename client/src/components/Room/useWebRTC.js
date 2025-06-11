@@ -167,9 +167,10 @@ const useWebRTC = ({ socket, socketId, nickname, videoRefs }) => {
   // 방 나가기 및 연결 종료
   const leaveRoom = useCallback(() => {
     Object.values(peerConnections.current).forEach((pc) => pc.close());
+    if (socket.connected) {
+      socket.disconnect();
+    }
     myStreamRef.current?.getTracks().forEach((track) => track.stop());
-    socket.disconnect();
-    socket.close();
     localStorage.removeItem("meeting_id");
   }, [socket]);
 

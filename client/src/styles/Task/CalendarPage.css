@@ -139,8 +139,9 @@
 
 .react-calendar__month-view__days {
   display: grid !important;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0 !important; /* 날짜 간격 제거 */
+/*   gap: 0 !important; 날짜 간격 제거 */
+  grid-template-columns: repeat(7, 1fr) !important;
+  grid-gap: 0px;
 }
 
 .react-calendar__tile {

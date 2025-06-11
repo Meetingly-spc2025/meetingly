@@ -40,8 +40,11 @@ const CreateMeeting = () => {
           navigate("/login")
           return
         }
-        setUser(response.data.user)
-        // showRoomForm 대신 직접 폼을 렌더링하도록 변경
+        if (!response.data.user.teamId) {
+          navigate("/team/join");
+        }
+        setUser(response.data.user);
+        setShowRoomForm(true);
       } catch (err) {
         alert("로그인이 필요합니다.", err)
         navigate("/login")
