@@ -39,6 +39,9 @@ const CreateMeeting = () => {
           navigate("/login");
           return;
         }
+        if (!response.data.user.teamId) {
+          navigate("/team/join");
+        }
         setUser(response.data.user);
         setShowRoomForm(true);
       } catch (err) {
