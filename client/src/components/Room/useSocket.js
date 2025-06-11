@@ -118,7 +118,6 @@ const useSocket = ({
     socket.on("room_full", () => {
       alert("최대 4명까지만 참여할 수 있습니다.");
       socket.disconnect();
-      socket.close();
       setSocketConnected(false);
       navigate("/", { replace: true });
     });

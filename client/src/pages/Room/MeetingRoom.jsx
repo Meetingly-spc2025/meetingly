@@ -250,8 +250,12 @@ const MeetingRoom = () => {
 
   // 방 나가기 버튼 클릭 시 모든 PeerConnection 종료 및 소켓 연결 해제, meeting_id 삭제, 홈으로 이동
   const handleLeaveRoom = () => {
+    if (recording) {
+      toast.warning("녹음이 완료 된 이후 퇴장해 주세요.");
+      return;
+    }
     leaveRoom();
-    setTimeout(() => navigate("/"), 100);
+    setTimeout(() => navigate("/meetings"), 100);
   };
 
   // 채팅 메세지 전송
