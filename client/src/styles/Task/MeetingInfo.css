@@ -1,120 +1,310 @@
 .meeting-detail-container {
-    margin: 20px auto;
-    max-width: 900px;
-    font-family: sans-serif;
-  }
-  
-  .meeting-info-title {
-    font-size: 1.2rem;
-    margin-bottom: 12px;
-    color: #333;
-  }
-  
-  .cards-wrapper {
-    display: flex;    
-    gap: 20px;
-  }
-  
-  .meeting-detail-card {
-    flex: 1;          
-    background: #ffffff;
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #eee;
-  }
-  
-  .meeting-info-item.row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 4px;
-    font-size: 0.9rem;
-  }
-  
-  .meeting-info-item .label {
-    font-weight: 600;
-    color: #555;
-    min-width: 120px;
-    flex-shrink: 0;
-  }
-  
-  .meeting-info-item span:not(.label) {
-    color: #333;
-    word-break: break-word;
-  }
-  
-  .view-content-button {
-    background: #4a90e2;
-    color: white;
-    border: none;
-    padding: 2px 6px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: background 0.2s;
-    margin-left: 2px;
-  }
-  
-  .view-content-button:hover {
-    background: #357ab8;
+  margin: 0;
+  max-width: 100%;
+  font-family: sans-serif;
+}
+
+.meeting-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.meeting-info-title {
+  font-size: var(--text-xl);
+  margin: 0;
+  color: var(--gray-800);
+  font-weight: 700;
+}
+
+.meeting-info-buttons {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.meeting-info-buttons .btn {
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.meeting-info-buttons .btn-primary {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.meeting-info-buttons .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.meeting-info-buttons .btn-success {
+  background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.meeting-info-buttons .btn-success:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.meeting-info-buttons .btn-secondary {
+  background: var(--gray-200);
+  color: var(--gray-700);
+  border: 2px solid var(--gray-300);
+}
+
+.meeting-info-buttons .btn-secondary:hover {
+  background: var(--gray-300);
+  border-color: var(--gray-400);
+}
+
+.meeting-info-buttons .btn-danger {
+  background: linear-gradient(135deg, var(--error-500) 0%, var(--error-600) 100%);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.meeting-info-buttons .btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.cards-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.meeting-detail-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  transition: all var(--transition-fast);
+}
+
+.meeting-detail-card:hover {
+  border-color: var(--primary-300);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* 컴팩트한 소제목 스타일 */
+.meeting-detail-card h3 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--gray-700);
+  margin: 0 0 var(--space-3) 0;
+  padding-bottom: var(--space-1);
+  border-bottom: 1px solid var(--gray-300);
+  position: relative;
+}
+
+.meeting-detail-card h3::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary-500), var(--primary-400));
+  border-radius: 1px;
+}
+
+.meeting-info-item.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  font-size: var(--text-base);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.meeting-info-item.row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.meeting-info-item .label {
+  font-weight: 600;
+  color: var(--gray-700);
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.meeting-info-item span:not(.label) {
+  color: var(--gray-800);
+  word-break: break-word;
+  text-align: right;
+  flex: 1;
+}
+
+.meeting-info-item input[type="text"] {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid var(--gray-300);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-base);
+  color: var(--gray-800);
+  flex: 1;
+  margin-left: var(--space-3);
+  transition: all var(--transition-fast);
+}
+
+.meeting-info-item input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary-400);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.view-content-button {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  color: white;
+  border: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.view-content-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* 모달 스타일 */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 9999 !important;
+  padding: 120px var(--space-4) 0 var(--space-4);
+  box-sizing: border-box;
+}
+
+.modal-content {
+  background: white;
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  width: 100%;
+  max-width: 600px;
+  max-height: calc(100vh - 240px);
+  overflow-y: auto;
+  position: relative;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-2xl);
+  border: 1px solid var(--gray-200);
+}
+
+.modal-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+}
+
+.modal-text {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  color: var(--gray-700);
+  font-size: var(--text-base);
+  margin-top: var(--space-6);
+}
+
+.modal-close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  background: var(--gray-100);
+  border: none;
+  border-radius: var(--radius-full);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--gray-600);
+  font-weight: 700;
+  font-size: var(--text-lg);
+}
+
+.modal-close:hover {
+  background: var(--error-100);
+  color: var(--error-600);
+  transform: scale(1.1);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .meeting-info-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  /* modal */
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
+  .meeting-info-buttons {
     width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    display: flex;
     justify-content: center;
-    align-items: center;
-    z-index: 999;
-    padding: 16px;
-    box-sizing: border-box;
   }
-  
-  .modal-content {
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
+
+  .cards-wrapper {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .meeting-info-item.row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .meeting-info-item .label {
+    min-width: unset;
+  }
+
+  .meeting-info-item span:not(.label) {
+    text-align: left;
+  }
+
+  .meeting-info-item input[type="text"] {
+    margin-left: 0;
     width: 100%;
-    max-width: 600px;
-    max-height: 90vh;         /* 90%까지 늘림 */
-    overflow-y: auto;
-    position: relative;
-    box-sizing: border-box;
-  
-    /* 줄바꿈/공백 유지 */
-    word-break: break-word;
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
   }
-  
-  .modal-text {
-    word-break: break-word;
-    overflow-wrap: break-word;
-    white-space: pre-wrap;
+
+  .modal-content {
+    padding: var(--space-6);
+    margin: var(--space-4);
   }
-  
-  .modal-close {
-    position: absolute;
-    top: 8px;
-    right: 12px;
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-  }
-  
-  .meeting-info-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  
-  .meeting-info-buttons button {
-    margin-left: 8px;
-  }
+}

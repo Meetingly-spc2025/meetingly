@@ -1,407 +1,252 @@
-.main-scroll-container {
-  height: 100vh;
-  width: 100%;
-  scroll-snap-type: y mandatory;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-  box-sizing: border-box;
-}
-
-.main-section {
-  min-height: 100vh;
-  width: 100%;
-  scroll-snap-align: start;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
-  padding: var(--space-8) var(--space-6);
-  position: relative;
-}
-
-.main-section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 70% 80%, rgba(14, 165, 233, 0.08) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-.main-section-inner {
-  position: relative;
-  z-index: 1;
+/* 공통 페이지 제목 스타일 */
+.page-title {
   text-align: center;
-  max-width: var(--container-max-width);
-  width: 100%;
-}
-
-.main-section img {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-2xl);
-}
-
-.main-section img.animate-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Intro Section */
-.main-intro-section {
-  background: linear-gradient(135deg, var(--primary-50) 0%, white 50%, var(--secondary-50) 100%);
-}
-
-.intro-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-6);
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.intro-title {
-  font-size: clamp(3rem, 8vw, 5rem);
-  font-weight: 800;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: var(--space-8);
   background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: var(--space-4);
-  line-height: 1.1;
+  line-height: 1.2;
   letter-spacing: -0.02em;
 }
 
-.intro-subtitle {
-  font-size: var(--text-2xl);
-  color: var(--primary-700);
+/* 공통 카드 컨테이너 스타일 */
+.page-card-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: var(--container-max-width);
+  margin: 0 auto var(--space-8);
+}
+
+/* 기존 스타일 유지 */
+.meetingly-main {
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-primary);
+}
+
+.meetingly-scroll-container {
+  height: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+.meetingly-section {
+  min-height: 100vh;
+  scroll-snap-align: start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.meetingly-section-inner {
+  max-width: var(--container-max-width);
+  width: 100%;
+  padding: var(--space-8);
+}
+
+.meetingly-intro-section {
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+}
+
+.meetingly-intro-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.meetingly-intro-title {
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: var(--space-8); /* 기존 var(--space-4)에서 var(--space-8)로 변경하여 아래 텍스트와의 간격 늘림 */
+  padding-bottom: var(--space-4); /* 하단 패딩 추가 */
+}
+
+.meetingly-intro-subtitle {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
   font-weight: 600;
-  margin-bottom: var(--space-4);
-  line-height: 1.3;
+  color: var(--gray-800);
+  margin-bottom: var(--space-6);
+  margin-top: var(--space-4); /* 상단 마진 추가 */
 }
 
-.intro-content p {
-  font-size: var(--text-lg);
+.meetingly-intro-description {
+  font-size: clamp(1rem, 2vw, 1.25rem);
   color: var(--gray-600);
-  line-height: 1.6;
+  max-width: 800px;
   margin-bottom: var(--space-8);
-  max-width: 600px;
 }
 
-.intro-buttons {
+.meetingly-intro-buttons {
   display: flex;
   gap: var(--space-4);
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: var(--space-8);
 }
 
-.intro-button {
-  padding: var(--space-4) var(--space-8);
-  font-size: var(--text-lg);
-  font-weight: 600;
-  border: none;
-  border-radius: var(--radius-xl);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-width: 180px;
-  justify-content: center;
+.meetingly-content-section {
+  background: var(--bg-primary);
 }
 
-.intro-button.primary {
-  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
-  color: white;
-  box-shadow: var(--shadow-lg);
-}
-
-.intro-button.primary:hover {
-  background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-800) 100%);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-2xl);
-}
-
-.intro-button.secondary {
-  background: white;
-  color: var(--primary-700);
-  border: 2px solid var(--primary-200);
-  box-shadow: var(--shadow-md);
-}
-
-.intro-button.secondary:hover {
-  background: var(--primary-50);
-  border-color: var(--primary-400);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
-/* Content Sections */
-.content-section {
-  background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
-}
-
-.content-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.meetingly-content-row {
+  display: flex;
   align-items: center;
   gap: var(--space-16);
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
-.content-row.reverse {
-  direction: rtl;
+.meetingly-content-row.reverse {
+  flex-direction: row-reverse;
 }
 
-.content-row.reverse > * {
-  direction: ltr;
+.meetingly-text-content {
+  flex: 1;
 }
 
-.text-content {
+.meetingly-image-content {
+  flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
+  justify-content: center;
+  align-items: center;
 }
 
-.section-title {
+.meetingly-section-title {
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 700;
-  color: var(--gray-900);
   line-height: 1.2;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-6);
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.section-description {
-  font-size: var(--text-lg);
-  line-height: 1.7;
-  color: var(--gray-600);
-  white-space: pre-wrap;
-}
-
-.image-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.section-image {
-  max-width: 100%;
-  height: auto;
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-2xl);
-  transition: all var(--transition-slow);
-}
-
-.section-image:hover {
-  transform: scale(1.02);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-/* Feature Cards */
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-8);
-  margin-top: var(--space-12);
-}
-
-.feature-card {
-  background: white;
-  padding: var(--space-8);
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--gray-200);
-  transition: all var(--transition-fast);
-  text-align: center;
-}
-
-.feature-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-2xl);
-  border-color: var(--primary-200);
-}
-
-.feature-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto var(--space-4);
-  background: linear-gradient(135deg, var(--primary-100) 0%, var(--secondary-100) 100%);
-  border-radius: var(--radius-xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--text-3xl);
-}
-
-.feature-title {
-  font-size: var(--text-xl);
-  font-weight: 600;
-  color: var(--gray-900);
-  margin-bottom: var(--space-3);
-}
-
-.feature-description {
+.meetingly-section-description {
+  font-size: clamp(1rem, 2vw, 1.125rem);
   color: var(--gray-600);
   line-height: 1.6;
 }
 
-/* Footer Section */
-.footer-wrapper {
-  min-height: 40vh;
-  scroll-snap-align: start;
+.meetingly-section-image {
+  max-width: 100%;
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-xl);
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.8s ease-out;
+}
+
+.meetingly-section-image.animate-in {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.meetingly-scroll-indicator {
+  position: fixed;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, var(--primary-900) 0%, var(--primary-800) 100%);
-  position: relative;
+  flex-direction: column;
+  gap: 1rem;
+  z-index: 10;
 }
 
-.footer-wrapper::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  pointer-events: none;
+.meetingly-scroll-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gray-300);
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .content-row {
-    grid-template-columns: 1fr;
-    gap: var(--space-12);
-    text-align: center;
-  }
-
-  .content-row.reverse {
-    direction: ltr;
-  }
-
-  .section-image {
-    max-width: 80%;
-  }
+.meetingly-scroll-dot.active {
+  background: var(--primary-500);
+  transform: scale(1.3);
 }
 
-@media (max-width: 768px) {
-  .main-section {
-    padding: var(--space-6) var(--space-4);
-  }
-
-  .intro-title {
-    font-size: clamp(2.5rem, 10vw, 4rem);
-  }
-
-  .intro-subtitle {
-    font-size: var(--text-xl);
-  }
-
-  .intro-content p {
-    font-size: var(--text-base);
-  }
-
-  .intro-buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .intro-button {
-    width: 100%;
-    max-width: 280px;
-  }
-
-  .content-row {
-    gap: var(--space-8);
-  }
-
-  .section-title {
-    font-size: clamp(1.75rem, 6vw, 2.5rem);
-  }
-
-  .section-description {
-    font-size: var(--text-base);
-  }
-
-  .features-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-  }
-
-  .feature-card {
-    padding: var(--space-6);
-  }
+.meetingly-footer-wrapper {
+  min-height: 200px;
+  background: var(--gray-900);
+  scroll-snap-align: start;
 }
 
-@media (max-width: 480px) {
-  .main-section {
-    padding: var(--space-4) var(--space-3);
-  }
-
-  .intro-content {
-    gap: var(--space-4);
-  }
-
-  .intro-buttons {
-    gap: var(--space-3);
-  }
-
-  .content-row {
-    gap: var(--space-6);
-  }
-
-  .section-image {
-    max-width: 100%;
-  }
+/* 애니메이션 클래스 */
+.meetingly-fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeIn 0.8s ease-out forwards;
 }
 
-/* Animation Enhancements */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
+.meetingly-delay-1 {
+  animation-delay: 0.2s;
+}
+
+.meetingly-delay-2 {
+  animation-delay: 0.4s;
+}
+
+.meetingly-delay-3 {
+  animation-delay: 0.6s;
+}
+
+@keyframes fadeIn {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .meetingly-content-row {
+    flex-direction: column;
+    gap: var(--space-8);
   }
-  50% {
-    transform: translateY(-10px);
+
+  .meetingly-content-row.reverse {
+    flex-direction: column;
+  }
+
+  .meetingly-scroll-indicator {
+    display: none;
   }
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+@media (max-width: 768px) {
+  .meetingly-section-inner {
+    padding: var(--space-6);
+  }
+
+  .meetingly-intro-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .meetingly-intro-buttons .btn {
+    width: 100%;
+  }
 }
 
-/* Parallax Effect */
-.parallax-element {
-  transform: translateZ(0);
-  will-change: transform;
-}
-
-/* Smooth scrolling for older browsers */
-html {
-  scroll-behavior: smooth;
+@media (max-width: 480px) {
+  .meetingly-section-inner {
+    padding: var(--space-4);
+  }
 }

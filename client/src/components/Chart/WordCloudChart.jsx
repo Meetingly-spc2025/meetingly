@@ -1,78 +1,114 @@
-import React from "react";
-import { Wordcloud } from "@visx/wordcloud";
+"use client"
 
-const stopwords = [
-  "이", "이거", "그", "그거", "저", "저는", "것", "수", "등", "의", "을", "를", "은", "는", "에", "로", "가", "도", "하고", "너무", "지금", "그냥", "아마", "근데",
-  "하며", "부터", "까지", "으로", "와", "과", "또는", "그리고", "그러나", "이제", "제가", "맞아요", "어떻게", "이렇게", "그래서", "그러면", "일단은", "같아요", "혹시", "일단",
-  "있다", "있으며", "있으나", "이때", "같은", "같이", "위해", "위한", "예정", "예정이다", "이와", "하는", "걸로", "다음에", "만약에", "사실",
-  "문제", "문제를", "문제가", "해결", "해결하기", "해결해", "사용한", "사용하면서", "필요", "필요하다",
-  "포함될", "설정", "설정을", "설정과", "관련된", "관련", "프로젝트", "프로젝트를", "오류", "예상치",
-  "못한", "한", "또한", "해서", "해서는", "한다", "되며", "되어", "다양한", "검토", "검토하며",
-  "확인", "확인하고", "있으므로", "방안", "찾아야", "하고자", "있어요", "번째",
-  "이슈", "이슈를", "작업", "작업을", "상황", "내용", "경우", "부분", "형태", "가능성", "중요", "진행", "해당", "기존", "현재", "기본", "부분의", "모든", "항목", "관련한"
-];
+import { useRef, useEffect, useState } from "react"
+import { Wordcloud } from "@visx/wordcloud"
 
+export default function WordCloudChart({ keywords }) {
+  const containerRef = useRef(null)
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const newWidth = containerRef.current.offsetWidth
+        // 📌 높이 비율을 조정하여 더 작게 만듦 (예: 너비의 30% 또는 최소 150px)
+        const newHeight = Math.max(Math.min(newWidth * 0.3, 250), 150) // 최대 높이 250px, 최소 높이 150px
+        setDimensions({ width: newWidth, height: newHeight })
+      }
+    }
 
-export default function WordCloudChart({ text }) {
-  const wordFreqMap = text
-    ?.toLowerCase()
-    .replace(/[^ㄱ-ㅎ가-힣a-zA-Z\s]/g, "")
-    .split(/\s+/)
-    .filter(
-      (word) =>
-        word.length > 1 &&
-        !stopwords.includes(word)
-    )
-    .reduce((acc, word) => {
-      acc[word] = (acc[word] || 0) + 1;
-      return acc;
-    }, {});
+    updateDimensions() // 초기 렌더링 시 크기 설정
 
-  // 상위 10개 단어만 추출
-  const sortedWords = Object.entries(wordFreqMap)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 20)
-    .map(([text, value]) => ({ text, value }));
+    const observer = new ResizeObserver(updateDimensions)
+    if (containerRef.current) {
+      observer.observe(containerRef.current)
+    }
 
-  const fontSizeMapper = (datum) => Math.log2(datum.value + 1) * 15;
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current)
+      }
+    }
+  }, [])
 
-  const getRandomColor = () =>
-    `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`;
+  let parsedKeywords = {}
+
+  try {
+    if (typeof keywords === "string") {
+      const cleaned = keywords
+        .replace(/^```json\s*/, "")
+        .replace(/\s*```$/, "")
+        .trim()
+      parsedKeywords = JSON.parse(cleaned)
+    } else if (typeof keywords === "object" && keywords !== null) {
+      parsedKeywords = keywords
+    }
+  } catch (err) {
+    console.error("키워드 파싱 오류:", err)
+    parsedKeywords = {}
+  }
+
+  const sortedWords = Object.entries(parsedKeywords).map(([text, value]) => ({
+    text,
+    value,
+  }))
+
+  // 📌 크기 계산을 위한 정규화
+  const values = sortedWords.map((w) => w.value)
+  const min = values.length > 0 ? Math.min(...values) : 0
+  const max = values.length > 0 ? Math.max(...values) : 1
+  const minFont = 12 // 최소 폰트 크기 더 줄임
+  const maxFont = 40 // 최대 폰트 크기 더 줄임
+
+  const fontSizeMapper = (datum) => {
+    if (max === min) return (minFont + maxFont) / 2
+    const normalized = (datum.value - min) / (max - min)
+    return minFont + normalized * (maxFont - minFont)
+  }
+
+  const getRandomColor = () => `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`
 
   return (
     <div
+      ref={containerRef}
       style={{
         width: "100%",
-        maxHeight: "400px",
+        maxHeight: "300px", // 전체 컨테이너의 최대 높이도 줄임
         maxWidth: "1000px",
         margin: "0 auto",
         overflow: "visible",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <h3 style={{ textAlign: "center", marginBottom: "1rem" }}>📌 주요 키워드</h3>
-      <Wordcloud
-        words={sortedWords}
-        width={900}
-        height={200}
-        fontSize={fontSizeMapper}
-        rotate={() => 0}
-      >
-        {(cloudWords) =>
-          cloudWords.map((word, i) => (
-            <text
-              key={i}
-              fontSize={word.size}
-              fill={getRandomColor()}
-              textAnchor="middle"
-              transform={`translate(${word.x}, ${word.y}) rotate(${word.rotate})`}
-              style={{ fontFamily: "Arial, sans-serif", cursor: "pointer" }}
-            >
-              {word.text}
-            </text>
-          ))
-        }
-      </Wordcloud>
+      {dimensions.width > 0 && dimensions.height > 0 && (
+        <Wordcloud
+          words={sortedWords}
+          width={dimensions.width}
+          height={dimensions.height}
+          fontSize={fontSizeMapper}
+          rotate={() => 0}
+          padding={2} // 단어 간 패딩 추가
+        >
+          {(cloudWords) =>
+            cloudWords.map((word, i) => (
+              <text
+                key={i}
+                fontSize={word.size}
+                fill={getRandomColor()}
+                textAnchor="middle"
+                transform={`translate(${word.x}, ${word.y}) rotate(${word.rotate})`}
+                style={{ fontFamily: "Arial, sans-serif", cursor: "pointer" }}
+              >
+                {word.text}
+              </text>
+            ))
+          }
+        </Wordcloud>
+      )}
     </div>
-  );
+  )
 }

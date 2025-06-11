@@ -1,17 +1,17 @@
-/* src/styles/TeamManagement.css */
-
 .team-container {
-  padding: 2rem;
-  background-color: #e6f2fc;
   min-height: 100vh;
-  padding: 32px 80px;
-  padding-top: 60px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  padding: 2rem;
 }
 
 .team-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 2rem;
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
 }
 
 .user-info {
@@ -25,58 +25,246 @@
   height: 60px;
   border-radius: 50%;
   object-fit: cover;
+  border: 3px solid #0ea5e9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .greeting {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #1e293b;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
 }
 
 .highlight {
-  color: #f43f5e;
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
 }
 
 .email {
+  color: #6b7280;
+  margin: 0;
   font-size: 0.9rem;
-  color: #64748b;
 }
 
 .team-box {
+  max-width: 1200px;
+  margin: 0 auto;
   background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 24px;
+  padding: 3rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
 }
 
 .team-box-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .team-box-header h2 {
-  font-size: 1.5rem;
-  color: #0f172a;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0;
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .subtext {
-  color: #94a3b8;
+  color: #6b7280;
   font-size: 0.9rem;
-  margin-left: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.link-copy-wrapper {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.team-url {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
+  color: #6b7280;
+  font-size: 0.9rem;
+  min-width: 300px;
 }
 
 .copy-btn {
-  background-color: #fda4af;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
   color: white;
   border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  font-weight: 500;
+  border-radius: 12px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
 }
 
+.copy-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* 차트 섹션 - 카드 형태로 묶음 */
+.charts-section {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.charts-section h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.charts-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.chart-card {
+  flex: 1;
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.chart-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+/* 관리자 컨트롤 */
+.admin-controls {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.edit-team-name {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.teamname-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
+  color: #374151;
+  font-size: 1rem;
+}
+
+.teamname-input:focus {
+  outline: none;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+.teamname-input:disabled {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-btn,
+.update-btn,
+.cancel-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  color: white;
+}
+
+.update-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.cancel-btn {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+.edit-btn:hover,
+.update-btn:hover,
+.cancel-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.delete-btn {
+  background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.delete-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+}
+
+/* 멤버 목록 */
 .member-list {
   display: flex;
   flex-direction: column;
@@ -84,198 +272,179 @@
 }
 
 .member-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  border: 1px solid #e2e8f0;
-  padding: 1rem;
-  border-radius: 10px;
-  background-color: white;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  gap: 1.5rem;
 }
 
 .member-card:hover {
-  background-color: #f1f5f9;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  transition: all 0.2s ease-in-out;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border-color: #0ea5e9;
 }
 
-/* admin인 팀원의 member-card 강조 */
 .member-card.admin-member {
-  border: 2px solid #0ea5e9; /* 파란 테두리 */
-  background-color: #e0f2fe; /* 연한 파란 배경 */
+  border-left: 4px solid #0ea5e9;
 }
 
 .member-photo {
   width: 50px;
   height: 50px;
-  background-color: #cbd5e1;
-  border-radius: 6px;
-  margin-right: 1rem;
+  border-radius: 50%;
+  background: #e5e7eb;
+  border: 2px solid #0ea5e9;
+}
+
+.member-info {
+  flex: 1;
 }
 
 .member-info h3 {
-  font-size: 1rem;
-  margin-bottom: 0.2rem;
-}
-
-.member-info p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #64748b;
-}
-
-.description {
-  color: #475569;
-  font-size: 0.85rem;
-}
-
-.pagination {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.page-btn {
-  width: 32px;
-  height: 32px;
-  background-color: #fff;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  color: #334155;
-  cursor: pointer;
-}
-
-.page-btn.active {
-  background-color: #020617;
-  color: white;
-}
-
-.next-page {
-  margin-left: 0.5rem;
-  font-weight: bold;
-  color: #0f172a;
-}
-
-/* team-url */
-.link-copy-wrapper {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex-shrink: 0;
-}
-
-.team-url {
-  padding: 0.6rem 0.8rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  width: 250px;
-  color: #334155;
-  background-color: #f8fafc;
-}
-
-/* admin */
-.admin-controls {
-  margin-bottom: 24px;
-  margin-top: 1rem;
-  background: #f8fafc;
-  padding: 1.2rem;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
 }
 
 .admin-badge {
+  background: #0ea5e9;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
   font-size: 0.75rem;
-  background-color: #0284c7;
-  color: white;
-  padding: 2px 6px;
-  border-radius: 6px;
-  margin-left: 8px;
-}
-
-.edit-team-name {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.teamname-input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.teamname-input:disabled {
-  background-color: #f1f5f9;
-  color: #888;
-}
-
-.button-group {
-  display: flex;
-  gap: 8px;
-}
-
-.edit-btn,
-.update-btn,
-.cancel-btn,
-.delete-btn {
-  padding: 6px 12px;
-  font-size: 0.9rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.edit-btn {
-  background-color: #0284c7;
-  color: white;
-}
-
-.update-btn {
-  background-color: #16a34a;
-  color: white;
-}
-
-.cancel-btn {
-  background-color: #f87171;
-  color: white;
-}
-
-.delete-btn {
-  background-color: #ef4444;
-  color: white;
-  margin-top: 8px;
-}
-
-.update-btn:hover {
-  background-color: #2563eb;
-}
-
-.delete-btn:hover {
-  background-color: #dc2626;
-}
-
-/* Kick Button */
-.kick-btn {
-  margin-left: auto;
-  background-color: #f87171; /* 연한 레드 */
-  color: white;
-  padding: 0.4rem 0.9rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.85rem;
   font-weight: 500;
+}
+
+.member-info p {
+  margin: 0.25rem 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.description {
+  font-style: italic;
+  color: #9ca3af;
+}
+
+.kick-btn {
+  background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
+  font-size: 0.75rem;
 }
 
 .kick-btn:hover {
-  background-color: #ef4444; /* 진한 레드 */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.page-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.page-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #0ea5e9;
+}
+
+.page-btn.active {
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  color: white;
+  border: none;
+}
+
+.next-page {
+  color: #6b7280;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.next-page:hover {
+  color: #0ea5e9;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .team-container {
+    padding: 1rem;
+  }
+
+  .team-box {
+    padding: 2rem;
+  }
+
+  .team-box-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .link-copy-wrapper {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .team-url {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .charts-container {
+    flex-direction: column;
+  }
+
+  .edit-team-name {
+    flex-direction: column;
+  }
+
+  .button-group {
+    justify-content: center;
+  }
+}
+
+.team-container .page-title {
+  text-align: center;
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  margin-bottom: var(--space-8);
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: var(--gray-900); /* fallback color */
 }

@@ -1,16 +1,18 @@
-import React, { useState } from "react";
-import "../../styles/Task/DiscussionList.css";
+"use client"
+
+import { useState } from "react"
+import "../../styles/Task/DiscussionList.css"
 
 const DiscussionList = ({ discussionContent, isCreator, onEdit }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedContent, setEditedContent] = useState(discussionContent);
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedContent, setEditedContent] = useState(discussionContent)
 
-  const lines = discussionContent.split("\n").filter((line) => line.trim() !== "");
+  const lines = discussionContent.split("\n").filter((line) => line.trim() !== "")
 
   const handleSave = () => {
-    onEdit({ content: editedContent });
-    setIsEditing(false);
-  };
+    onEdit({ content: editedContent })
+    setIsEditing(false)
+  }
 
   return (
     <div className="discussion-section">
@@ -18,13 +20,19 @@ const DiscussionList = ({ discussionContent, isCreator, onEdit }) => {
         <h3 className="discussion-title">주요 논의 사항</h3>
         {isCreator && !isEditing && (
           <div className="discussion-buttons">
-            <button onClick={() => setIsEditing(true)}>수정</button>
+            <button className="btn btn-primary btn-sm" onClick={() => setIsEditing(true)}>
+              수정
+            </button>
           </div>
         )}
         {isCreator && isEditing && (
           <div className="discussion-buttons">
-            <button onClick={handleSave}>저장</button>
-            <button onClick={() => setIsEditing(false)}>취소</button>
+            <button className="btn btn-success btn-sm" onClick={handleSave}>
+              저장
+            </button>
+            <button className="btn btn-secondary btn-sm" onClick={() => setIsEditing(false)}>
+              취소
+            </button>
           </div>
         )}
       </div>
@@ -45,7 +53,7 @@ const DiscussionList = ({ discussionContent, isCreator, onEdit }) => {
         <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>{discussionContent}</pre>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default DiscussionList;
+export default DiscussionList

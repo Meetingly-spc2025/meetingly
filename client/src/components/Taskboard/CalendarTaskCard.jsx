@@ -1,20 +1,19 @@
+
+import React from "react";
+
+// 색상 팔레트
 const colorPalette = [
-  "#FF6B6B",
-  "#4ECDC4",
-  "#45B7D1",
-  "#96CEB4",
-  "#FFEAA7",
-  "#DDA0DD",
-  "#98D8C8",
-  "#F7DC6F",
-  "#BB8FCE",
-  "#85C1E9",
-  "#F8C471",
-  "#82E0AA",
-  "#F1948A",
-  "#85C1E9",
-  "#D7BDE2",
+  "#FFCDD2", "#F8BBD0", "#E1BEE7", "#D1C4E9", "#C5CAE9",
+  "#B3E5FC", "#B2EBF2", "#B2DFDB", "#C8E6C9", "#DCEDC8",
+  "#F0F4C3", "#FFF9C4", "#FFE0B2", "#FFCCBC", "#D7CCC8",
 ];
+
+// task_id 기반 색상 결정
+// const getColorForTask = (taskId) => {
+//  let hash = 0;
+//  for (let i = 0; i < taskId.length; i++) {
+//    hash = taskId.charCodeAt(i) + ((hash << 5) - hash);
+//    hash = hash & hash;
 
 const getColorForDate = (dateStr) => {
   let hash = 0;
@@ -40,6 +39,31 @@ const getDisplayContent = (
   if (isStartDate && isEndDate) {
     return content;
   }
+  const index = Math.abs(hash) % colorPalette.length;
+  return colorPalette[index];
+};
+
+
+// 텍스트 분할 (단어 기준)
+// const getDisplayContentByWords = (
+//   task,
+//   isStartDate,
+//   isEndDate,
+//   isContinuation,
+//   currentDateIndex,
+//   totalDays
+// ) => {
+//   const content = task.content || "";
+//   const words = content.split(" ");
+//   const totalWords = words.length;
+//   const wordsPerDay = Math.ceil(totalWords / totalDays);
+
+//   const startIndex = currentDateIndex * wordsPerDay;
+//   const endIndex = Math.min(startIndex + wordsPerDay, totalWords);
+//   const chunk = words.slice(startIndex, endIndex).join(" ");
+
+//   return chunk.length > 30 ? chunk.slice(0, 30) + "..." : chunk;
+
 
   // 여러 칸에 걸친 태스크인 경우 - 텍스트 분배
   if (totalDays > 1) {
@@ -62,7 +86,7 @@ const getDisplayContent = (
   }
 
   return "";
-};
+
 
 const CalendarTaskCard = ({
   task,
@@ -72,6 +96,11 @@ const CalendarTaskCard = ({
   onClick,
   totalDays = 1,
 }) => {
+
+//   const color = getColorForTask(task.task_id);
+
+  // 형광펜처럼 이어지는 스타일 계산
+
   const startDateKey = task.created_at.split("T")[0];
   const color = getColorForDate(startDateKey);
 
@@ -79,20 +108,34 @@ const CalendarTaskCard = ({
   let marginLeft = "0";
   let marginRight = "0";
   let zIndex = 1;
+  // let textOverflow = "ellipsis";
+  // const whiteSpace = "nowrap";
+
 
   if (isStartDate && !isEndDate) {
     borderRadius = "6px 0px 0px 6px";
     marginRight = "-1px";
     zIndex = 3;
+    // textOverflow = "ellipsis";
   } else if (isEndDate && !isStartDate) {
     borderRadius = "0px 6px 6px 0px";
     marginLeft = "-1px";
     zIndex = 3;
+    // textOverflow = "ellipsis";
   } else if (isContinuation) {
     borderRadius = "0px";
     marginLeft = "-1px";
     marginRight = "-1px";
     zIndex = 2;
+
+//   const displayContent = getDisplayContentByWords(
+//     task,
+//     isStartDate,
+//     isEndDate,
+//     isContinuation,
+//     currentDateIndex,
+//     totalDays
+//   );
   }
 
   // 시작일에만 텍스트, 나머지는 빈 bar
@@ -102,7 +145,7 @@ const CalendarTaskCard = ({
     <div
       className="calendar-tile-task-card"
       style={{
-        backgroundColor: color,
+        backgroundColor: color, // 형광펜처럼 배경 유지
         borderRadius,
         marginLeft,
         marginRight,
@@ -116,13 +159,14 @@ const CalendarTaskCard = ({
         margin: "1px 0",
         fontWeight: 500,
         color: "#2D3748",
-        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-        border: `1px solid ${color}`,
+        boxShadow: "none",
+        border: "none", // 테두리 제거
         position: "relative",
         display: "flex",
         alignItems: "center",
         cursor: "pointer",
-        zIndex: zIndex,
+        zIndex,
+        marginBottom: "2px",
       }}
       title={task.content}
       onClick={() => onClick(task)}

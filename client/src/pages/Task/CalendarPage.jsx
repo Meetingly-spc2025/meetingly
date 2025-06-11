@@ -1,7 +1,9 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import Calendar from "react-calendar"
 import "react-calendar/dist/Calendar.css"
-import "../../styles/Task/CalendarPage.css";
+import "../../styles/Task/CalendarPage.css"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import CalendarTaskCard from "../../components/Taskboard/CalendarTaskCard.jsx"
@@ -155,19 +157,24 @@ const CalendarPage = () => {
 
   return (
     <div className="calendarpage-container">
-      <h2 className="calendarpage-title">Meetingly Calendar</h2>
-      <div className="calendar-toggle-buttons">
-        <button
-          className={`toggle-btn ${!showingTasksOnly ? "active" : ""}`}
-          onClick={() => setShowingTasksOnly(false)}
-        >
-          📅 팀 회의
-        </button>
-        <button className={`toggle-btn ${showingTasksOnly ? "active" : ""}`} onClick={() => setShowingTasksOnly(true)}>
-          ✅ 내 할 일
-        </button>
-      </div>
       <div className="calendar-wrapper">
+        {" "}
+        {/* 기존 calendar-header-card와 calendar-wrapper를 통합 */}
+        <h2 className="calendarpage-title">Meetingly Calendar</h2>
+        <div className="calendar-toggle-buttons">
+          <button
+            className={`calendar-toggle-btn ${!showingTasksOnly ? "active" : ""}`}
+            onClick={() => setShowingTasksOnly(false)}
+          >
+            📅 팀 회의
+          </button>
+          <button
+            className={`calendar-toggle-btn ${showingTasksOnly ? "active" : ""}`}
+            onClick={() => setShowingTasksOnly(true)}
+          >
+            ✅ 내 할 일
+          </button>
+        </div>
         <Calendar
           onActiveStartDateChange={handleActiveStartDateChange}
           tileClassName={({ date }) => {
@@ -206,7 +213,6 @@ const CalendarPage = () => {
                     // 현재 날짜가 태스크에서 몇 번째 날인지 계산
                     const currentDateObj = new Date(formattedDate)
                     const currentDateIndex = Math.ceil((currentDateObj - startDateObj) / (1000 * 60 * 60 * 24))
-
 
                     return (
                       <CalendarTaskCard

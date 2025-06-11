@@ -1,45 +1,64 @@
-import React, { useState } from "react";
-import "../../styles/Task/SummaryBlock.css";
+"use client"
+
+import { useState } from "react"
+import "../../styles/Task/SummaryBlock.css"
 
 const SummaryBlock = ({ content, isCreator, onEdit }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedContent, setEditedContent] = useState(content);
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedContent, setEditedContent] = useState(content || "")
 
   const handleSave = () => {
-    onEdit({ content: editedContent });
-    setIsEditing(false);
-  };
+    if (onEdit) {
+      onEdit({ content: editedContent })
+    }
+    setIsEditing(false)
+  }
+
+  const handleCancel = () => {
+    setEditedContent(content || "")
+    setIsEditing(false)
+  }
+
+  const handleEdit = () => {
+    setEditedContent(content || "")
+    setIsEditing(true)
+  }
 
   return (
     <div className="summary-block">
       <div className="summary-header">
-        <h3 className="summary-title">3문단 요약</h3>
+        <h3 className="summary-title">📝 3문단 요약</h3>
         {isCreator && !isEditing && (
           <div className="summary-buttons">
-            <button onClick={() => setIsEditing(true)}>수정</button>
-          </div>
-        )}
-        {isCreator && isEditing && (
-          <div className="summary-buttons">
-            <button onClick={handleSave}>저장</button>
-            <button onClick={() => setIsEditing(false)}>취소</button>
+            <button className="btn btn-primary" onClick={handleEdit}>
+              ✏️ 수정
+            </button>
           </div>
         )}
       </div>
 
       {isEditing ? (
-        <textarea
-          value={editedContent}
-          onChange={(e) => setEditedContent(e.target.value)}
-          style={{ width: "100%", height: "100px" }}
-        />
+        <div className="summary-edit-mode">
+          <textarea
+            className="summary-edit-textarea"
+            value={editedContent}
+            onChange={(e) => setEditedContent(e.target.value)}
+            placeholder="3문단 요약 내용을 입력하세요..."
+          />
+          <div className="summary-edit-actions">
+            <button className="summary-edit-btn save" onClick={handleSave}>
+              💾 저장
+            </button>
+            <button className="summary-edit-btn cancel" onClick={handleCancel}>
+              ✖️ 취소
+            </button>
+          </div>
+        </div>
       ) : (
-        <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
-          {content}
-        </pre>
+        <div className={`summary-content ${!content ? "empty" : ""}`}>{content || "아직 요약 내용이 없습니다."}</div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default SummaryBlock;
+export default SummaryBlock
