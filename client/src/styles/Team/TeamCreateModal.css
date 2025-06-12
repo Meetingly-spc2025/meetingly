@@ -1,60 +1,64 @@
 /* 팀 생성 모달 스타일 */
 .modal-backdrop {
   position: fixed;
-  inset: 0; /* top, left, right, bottom을 0으로 설정하여 전체 화면을 덮음 */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999 !important; /* 높은 z-index로 다른 요소 위에 표시 */
+  z-index: 99999 !important;
   padding: var(--space-4);
 }
 
 .modal-container {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
-  border-radius: 24px;
-  padding: 3rem;
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
   width: 100%;
   max-width: 500px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-2xl);
   border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
-  z-index: 1;
+  z-index: 100000 !important;
   animation: modalSlideIn 0.3s ease-out;
-  max-height: 90vh; /* 모달 내용이 길어질 경우 스크롤 가능하도록 */
-  overflow-y: auto; /* 모달 내용이 길어질 경우 스크롤 가능하도록 */
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal-close-btn {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
+  top: var(--space-4);
+  right: var(--space-4);
+  background: var(--gray-100);
   border: none;
-  font-size: 1.5rem;
-  color: var(--gray-500);
-  cursor: pointer;
+  border-radius: var(--radius-full);
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  transition: all 0.3s ease;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--gray-600);
+  font-weight: 700;
 }
 
 .modal-close-btn:hover {
-  background: var(--gray-100);
-  color: var(--gray-700);
+  background: var(--error-100);
+  color: var(--error-600);
+  transform: scale(1.1);
 }
 
 .modal-title {
   text-align: center;
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-6);
   background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -63,23 +67,23 @@
 
 .modal-label {
   font-weight: 600;
-  color: #374151;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  color: var(--gray-800);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-2);
   display: block;
 }
 
 .modal-input {
   height: 48px;
   width: 100%;
-  padding: 0 1rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
+  padding: 0 var(--space-4);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
+  transition: all var(--transition-fast);
   background: rgba(255, 255, 255, 0.8);
   box-sizing: border-box;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-4);
 }
 
 .modal-input:focus {
@@ -101,9 +105,9 @@
 
 .invite-link-wrapper {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--space-3);
   align-items: stretch;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-4);
 }
 
 .invite-link-wrapper .modal-input {
@@ -113,58 +117,58 @@
 
 .copy-button {
   height: 48px;
-  padding: 0 1rem;
-  background: var(--secondary-600);
+  padding: 0 var(--space-4);
+  background: linear-gradient(135deg, var(--secondary-600) 0%, var(--secondary-700) 100%);
   color: white;
   border: none;
-  border-radius: 12px;
-  font-size: 0.875rem;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
   box-sizing: border-box;
 }
 
 .copy-button:hover {
-  background: var(--secondary-700);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .modal-create-btn {
   height: 48px;
   width: 100%;
-  padding: 0 2rem;
+  padding: 0 var(--space-6);
   background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
   color: white;
   border: none;
-  border-radius: 12px;
-  font-size: 1rem;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
+  margin-top: var(--space-6);
 }
 
 .modal-create-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
 }
 
 .toast {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  bottom: var(--space-8);
+  right: var(--space-8);
   background: var(--success-600);
   color: white;
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   z-index: var(--z-toast);
   animation: toastSlideIn 0.3s ease-out;
 }
@@ -191,10 +195,10 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .modal-container {
-    padding: 2rem;
-    margin: 1rem;
+    padding: var(--space-6);
+    margin: var(--space-4);
   }
 
   .invite-link-wrapper {
@@ -206,8 +210,8 @@
   }
 
   .toast {
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
+    bottom: var(--space-4);
+    right: var(--space-4);
+    left: var(--space-4);
   }
 }

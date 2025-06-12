@@ -4,6 +4,7 @@ import axios from "axios";
 import TeamInviteModal from "./TeamInviteModal";
 import TeamCreateModal from "./TeamCreateModal";
 import LoadingScreen from "../LoadingScreen";
+import { createPortal } from "react-dom";
 import "../../styles/Team/TeamEmpty.css";
 
 const TeamEmpty = () => {
@@ -127,44 +128,48 @@ const TeamEmpty = () => {
   if (!user) return <LoadingScreen />;
 
   return (
-    <div className="my-team-empty-wrapper">
-      <h1 className="page-title">나의 팀 관리</h1>
-      <div className="empty-box">
-        <div className="icon-container">
-          <img
-            src="/images/team-empty-icon.svg"
-            alt="팀 없음 아이콘"
-            className="empty-icon"
-          />
-        </div>
-        <p className="empty-title">아직 소속된 팀이 없어요</p>
-        <p className="empty-description">
-          팀을 생성하거나 초대 링크를 통해 팀에 참여해보세요.
-        </p>
-        <div className="button-group">
-          <button className="primary-button" onClick={() => setShowModal(true)}>
-            팀 만들기
-          </button>
-          {showModal && (
-            <TeamCreateModal
-              onClose={() => setShowModal(false)}
-              onCreate={handleCreateSubmit}
-              userId={user.id}
-              userName={user.name}
-            />
-          )}
-          <button className="primary-button" onClick={() => setModalOpen(true)}>
-            초대 링크로 참여
-          </button>
-          {isModalOpen && (
-            <TeamInviteModal
-              onClose={() => setModalOpen(false)}
-              onSubmit={handleInviteSubmit}
-            />
-          )}
+    <>
+      <div className="my-team-empty-wrapper">
+        <h1 className="page-title">나의 팀 관리</h1>
+        <div className="empty-box">
+          <div className="icon-container">
+            <img src="/teamImg.png" alt="팀 없음 아이콘" className="empty-icon" />
+          </div>
+          <p className="empty-title">아직 소속된 팀이 없어요</p>
+          <p className="empty-description">
+            팀을 생성하거나 초대 링크를 통해 팀에 참여해보세요.
+          </p>
+          <div className="button-group">
+            <button className="primary-button" onClick={() => setShowModal(true)}>
+              팀 만들기
+            </button>
+            <button className="primary-button" onClick={() => setModalOpen(true)}>
+              초대 링크로 참여
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {showModal &&
+        createPortal(
+          <TeamCreateModal
+            onClose={() => setShowModal(false)}
+            onCreate={handleCreateSubmit}
+            userId={user.id}
+            userName={user.name}
+          />,
+          document.body,
+        )}
+
+      {isModalOpen &&
+        createPortal(
+          <TeamInviteModal
+            onClose={() => setModalOpen(false)}
+            onSubmit={handleInviteSubmit}
+          />,
+          document.body,
+        )}
+    </>
   );
 };
 

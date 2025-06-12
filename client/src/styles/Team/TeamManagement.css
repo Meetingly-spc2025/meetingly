@@ -2,16 +2,29 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
   padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.team-header-container {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  display: flex;
+  justify-content: space-evenly;
+  gap: 2rem;
 }
 
 .team-header {
-  max-width: 1200px;
-  margin: 0 auto 2rem;
   background: white;
   border-radius: 20px;
   padding: 1.5rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   border: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
 }
 
 .user-info {
@@ -172,11 +185,16 @@
 
 /* 관리자 컨트롤 */
 .admin-controls {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-end;
   background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   border: 1px solid #e5e7eb;
 }
 
@@ -184,7 +202,6 @@
   display: flex;
   gap: 1rem;
   align-items: center;
-  margin-bottom: 1rem;
 }
 
 .teamname-input {
@@ -211,18 +228,26 @@
 .button-group {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .edit-btn,
 .update-btn,
-.cancel-btn {
-  padding: 0.5rem 1rem;
+.cancel-btn,
+.delete-btn {
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.875rem;
+  min-width: 100px;
+  text-align: center;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .edit-btn {
@@ -240,27 +265,21 @@
   color: #4b5563;
 }
 
+.delete-btn {
+  background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+  color: white;
+  margin: 0;
+}
+
 .edit-btn:hover,
 .update-btn:hover,
-.cancel-btn:hover {
+.cancel-btn:hover,
+.delete-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.delete-btn {
-  background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
-}
-
 .delete-btn:hover {
-  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
 }
 
