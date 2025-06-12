@@ -1,26 +1,26 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import "../styles/ErrorPage.css"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/ErrorPage.css";
 
 const ErrorPage = ({ code = 404, message = "요청하신 페이지를 찾을 수 없습니다" }) => {
-  const navigate = useNavigate()
-  const [countdown, setCountdown] = useState(10)
+  const navigate = useNavigate();
+  const [countdown, setCountdown] = useState(10);
 
   // 자동 리디렉션 카운트다운
   useEffect(() => {
     if (countdown <= 0) {
-      navigate("/")
-      return
+      navigate("/");
+      return;
     }
 
     const timer = setTimeout(() => {
-      setCountdown(countdown - 1)
-    }, 1000)
+      setCountdown(countdown - 1);
+    }, 1000);
 
-    return () => clearTimeout(timer)
-  }, [countdown, navigate])
+    return () => clearTimeout(timer);
+  }, [countdown, navigate]);
 
   return (
     <div className="error-page">
@@ -102,7 +102,7 @@ const ErrorPage = ({ code = 404, message = "요청하신 페이지를 찾을 수
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ErrorPage
+export default ErrorPage;

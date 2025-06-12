@@ -1,11 +1,12 @@
-"use client"
-
-import React from "react"
-import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa"
-import { BsCameraVideo, BsCameraVideoOff } from "react-icons/bs"
-import { MdCallEnd, MdScreenShare, MdStopScreenShare } from "react-icons/md"
-import { RiRecordCircleLine, RiRecordCircleFill } from "react-icons/ri"
-import { toast } from "react-toastify"
+import React, { useEffect, useRef, useState } from "react";
+import {
+  BsFillMicFill,
+  BsFillMicMuteFill,
+  BsCameraVideoFill,
+  BsCameraVideoOffFill,
+  BsBoxArrowLeft,
+} from "react-icons/bs";
+import { MdFiberManualRecord, MdStop } from "react-icons/md";
 
 const Controls = ({
   muted,
@@ -23,107 +24,84 @@ const Controls = ({
   setRecording,
   recordingDone,
 }) => {
-  const [isScreenSharing, setIsScreenSharing] = React.useState(false)
-  const [screenStream, setScreenStream] = React.useState(null)
+  const [canStopRecording, setCanStopRecording] = useState(false);
+  const timerRef = useRef(null);
 
-  const handleScreenShare = async () => {
-    try {
-      if (!isScreenSharing) {
-        const stream = await navigator.mediaDevices.getDisplayMedia({
-          video: true,
-          audio: true,
-        })
-        setScreenStream(stream)
-        setIsScreenSharing(true)
+  const handleStartRecording = () => {
+    socket.emit("start_recording", roomId);
+    setRecording(true);
+    setCanStopRecording(false);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setCanStopRecording(true), 60 * 1000);
+  };
 
-        // 화면 공유 중지 이벤트 리스너
-        stream.getVideoTracks()[0].onended = () => {
-          stopScreenSharing()
-        }
-
-        // 소켓으로 화면 공유 시작 알림
-        socket.emit("screen_share", {
-          roomName: roomId,
-          isSharing: true,
-        })
-
-        toast.success("화면 공유가 시작되었습니다.")
-      } else {
-        stopScreenSharing()
-      }
-    } catch (error) {
-      console.error("화면 공유 에러:", error)
-      toast.error("화면 공유를 시작할 수 없습니다.")
+  const handleStopRecording = () => {
+    socket.emit("stop_recording", roomId);
+    setRecording(false);
+    setCanStopRecording(false);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
     }
-  }
+  };
 
-  const stopScreenSharing = () => {
-    if (screenStream) {
-      screenStream.getTracks().forEach((track) => track.stop())
-    }
-    setScreenStream(null)
-    setIsScreenSharing(false)
-
-    // 소켓으로 화면 공유 중지 알림
-    socket.emit("screen_share", {
-      roomName: roomId,
-      isSharing: false,
-    })
-
-    toast.info("화면 공유가 중지되었습니다.")
-  }
-
-  const handleRecording = () => {
+  useEffect(() => {
     if (!recording) {
-      socket.emit("start_recording", { roomName: roomId })
-      setRecording(true)
-      toast.success("녹화가 시작되었습니다.")
-    } else {
-      socket.emit("stop_recording", { roomName: roomId })
-      setRecording(false)
-      toast.info("녹화가 중지되었습니다.")
+      setCanStopRecording(false);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
     }
-  }
+  }, [recording]);
 
   return (
-    <>
-      <button onClick={toggleMute} title={muted ? "음소거 해제" : "음소거"}>
-        {muted ? <FaMicrophoneSlash size={20} /> : <FaMicrophone size={20} />}
+    <div id="controls">
+      <button onClick={toggleMute}>
+        {muted ? (
+          <BsFillMicMuteFill style={{ fontSize: "1.5rem" }} />
+        ) : (
+          <BsFillMicFill style={{ fontSize: "1.5rem" }} />
+        )}
+      </button>
+      <button onClick={toggleCamera}>
+        {cameraOff ? (
+          <BsCameraVideoOffFill style={{ fontSize: "1.5rem" }} />
+        ) : (
+          <BsCameraVideoFill style={{ fontSize: "1.5rem" }} />
+        )}
       </button>
 
-      <button onClick={toggleCamera} title={cameraOff ? "카메라 켜기" : "카메라 끄기"}>
-        {cameraOff ? <BsCameraVideoOff size={20} /> : <BsCameraVideo size={20} />}
+      {isCreator &&
+        !recordingDone &&
+        (!recording ? (
+          <button onClick={handleStartRecording}>
+            <MdFiberManualRecord style={{ fontSize: "1.5rem", color: "red" }} />
+          </button>
+        ) : (
+          <button
+            onClick={handleStopRecording}
+            disabled={!canStopRecording}
+            style={{
+              opacity: canStopRecording ? 1 : 0.5,
+              cursor: canStopRecording ? "pointer" : "not-allowed",
+            }}
+          >
+            <MdStop style={{ fontSize: "1.5rem", color: "black" }} />
+          </button>
+        ))}
+      <select value={selectedDeviceId || ""} onChange={changeCamera}>
+        {cameras.map((camera) => (
+          <option key={camera.deviceId} value={camera.deviceId}>
+            {camera.label}
+          </option>
+        ))}
+      </select>
+      <button onClick={handleLeaveRoom}>
+        <BsBoxArrowLeft style={{ fontSize: "1.5rem" }} />
       </button>
+    </div>
+  );
+};
 
-      {cameras.length > 1 && (
-        <select value={selectedDeviceId} onChange={changeCamera}>
-          {cameras.map((camera) => (
-            <option key={camera.deviceId} value={camera.deviceId}>
-              {camera.label || `카메라 ${cameras.indexOf(camera) + 1}`}
-            </option>
-          ))}
-        </select>
-      )}
-
-      <button onClick={handleScreenShare} title={isScreenSharing ? "화면 공유 중지" : "화면 공유"}>
-        {isScreenSharing ? <MdStopScreenShare size={20} /> : <MdScreenShare size={20} />}
-      </button>
-
-      {isCreator && (
-        <button onClick={handleRecording} title={recording ? "녹화 중지" : "녹화 시작"} disabled={recordingDone}>
-          {recording ? <RiRecordCircleFill size={20} color="red" /> : <RiRecordCircleLine size={20} />}
-        </button>
-      )}
-
-      <button
-        onClick={handleLeaveRoom}
-        title="회의 나가기"
-        style={{ background: "linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)" }}
-      >
-        <MdCallEnd size={20} />
-      </button>
-    </>
-  )
-}
-
-export default Controls
+export default Controls;
