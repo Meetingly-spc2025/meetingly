@@ -14,12 +14,16 @@
 }
 
 .calendarpage-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #4a5568;
-  margin: 0 0 16px 0;
   text-align: center;
-  letter-spacing: -0.5px;
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 800; 
+  margin-bottom: var(--space-8);
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .calendar-toggle-buttons {
