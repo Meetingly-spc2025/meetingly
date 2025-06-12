@@ -225,9 +225,9 @@ const CalendarPage = () => {
         datesSet={handleDatesSet}
         locale="ko"
         headerToolbar={{
-          left: "prev,next today",
+          left: "prev",
           center: "title",
-          right: "dayGridMonth",
+          right: "next",
         }}
         dayMaxEventRows={3}
         aspectRatio={1.5}

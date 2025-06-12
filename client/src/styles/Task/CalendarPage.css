@@ -76,44 +76,114 @@
 
 /* Calendar header styling */
 .fc-header-toolbar {
-  padding: 14px 16px;
+  padding: 16px 20px;
   background: #f8fafc;
   border-bottom: 1px solid #e5e7eb;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  position: relative;
 }
 
 .fc-toolbar-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: #4a5568;
   letter-spacing: -0.5px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
 }
 
-.fc-button-group .fc-button {
-  background: white;
-  border: 1px solid #d1d5db;
-  color: #6b7280;
-  padding: 6px 12px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  border-radius: 10px;
-  margin: 0 2px;
-  font-size: 12px;
+/* 이전/다음 버튼 컨테이너 */
+.fc-toolbar-chunk {
+  display: flex;
+  align-items: center;
+  z-index: 1;
 }
 
-.fc-button-group .fc-button:hover {
-  background: #f3f4f6;
-  border-color: #3b82f6;
-  color: #3b82f6;
+/* 이전/다음 버튼 스타일링 */
+.fc-button-group .fc-button,
+.fc-prev-button,
+.fc-next-button {
+  background: white !important;
+  border: 2px solid #e5e7eb !important;
+  color: #6b7280 !important;
+  padding: 0 !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+  border-radius: 12px !important;
+  margin: 0 !important;
+  font-size: 16px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  width: 40px !important;
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
 }
 
-.fc-button-group .fc-button.fc-button-active {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: white;
+.fc-button-group .fc-button:hover,
+.fc-prev-button:hover,
+.fc-next-button:hover {
+  background: #f8fafc !important;
+  border-color: #3b82f6 !important;
+  color: #3b82f6 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.15) !important;
 }
 
-.fc-button-group .fc-button:focus {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.fc-button-group .fc-button:active,
+.fc-prev-button:active,
+.fc-next-button:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2) !important;
+}
+
+.fc-button-group .fc-button:focus,
+.fc-prev-button:focus,
+.fc-next-button:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.fc-button-group .fc-button:disabled,
+.fc-prev-button:disabled,
+.fc-next-button:disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+/* 화살표 아이콘 커스터마이징 */
+.fc-icon-chevron-left,
+.fc-icon-chevron-right {
+  font-size: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.fc-icon-chevron-left:before,
+.fc-icon-chevron-right:before {
+  content: "" !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-top: 2px solid currentColor !important;
+  border-right: 2px solid currentColor !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+}
+
+.fc-icon-chevron-left:before {
+  transform: translate(-25%, -50%) rotate(-135deg) !important;
+}
+
+.fc-icon-chevron-right:before {
+  transform: translate(-75%, -50%) rotate(45deg) !important;
 }
 
 /* Calendar body */
@@ -257,13 +327,17 @@
   }
 
   .fc-header-toolbar {
-    padding: 10px 12px;
-    flex-direction: column;
-    gap: 10px;
+    padding: 12px 16px;
   }
 
   .fc-toolbar-title {
-    font-size: 16px;
+    font-size: 18px;
+  }
+
+  .fc-prev-button,
+  .fc-next-button {
+    width: 36px !important;
+    height: 36px !important;
   }
 
   .fc-daygrid-day {
@@ -276,12 +350,21 @@
     font-size: 18px;
   }
 
-  .fc-daygrid-day {
-    min-height: 50px;
+  .fc-header-toolbar {
+    padding: 10px 12px;
   }
 
-  .fc-button-group .fc-button {
-    padding: 4px 8px;
-    font-size: 11px;
+  .fc-toolbar-title {
+    font-size: 16px;
+  }
+
+  .fc-prev-button,
+  .fc-next-button {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .fc-daygrid-day {
+    min-height: 50px;
   }
 }
