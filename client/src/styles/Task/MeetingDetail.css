@@ -2,15 +2,15 @@
 .meeting-detail-page {
   min-height: 100vh;
   background: var(--bg-primary);
-  padding: var(--space-8) var(--space-4);
+  padding: var(--space-6) var(--space-4);
 }
 
-/* 통일된 메인 제목 스타일 (page-title 클래스) */
-.page-title {
+/* 회의목록과 동일한 제목 스타일 - 더 구체적인 선택자 사용 */
+.meeting-detail-page .meeting-detail-title {
   text-align: center;
-  font-size: clamp(2rem, 4vw, 2.5rem); /* 회의 목록 제목 스타일과 동일 */
-  font-weight: 800; /* 회의 목록 제목 스타일과 동일 */
-  margin-bottom: var(--space-8);
+  font-size: 1.75rem !important; /* 강제 적용 */
+  font-weight: 700 !important;
+  margin-bottom: var(--space-6);
   background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -19,55 +19,165 @@
   letter-spacing: -0.02em;
 }
 
-.delete-button-container {
-  max-width: var(--container-max-width);
-  margin: 0 auto var(--space-6);
-  text-align: right;
+/* 기존 page-title 스타일도 유지 (다른 곳에서 사용할 수 있으므로) */
+.page-title {
+  text-align: center;
+  font-size: 1.75rem !important;
+  font-weight: 700 !important;
+  margin-bottom: var(--space-6);
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
-.btn-danger {
-  background: linear-gradient(135deg, var(--error-500) 0%, var(--error-600) 100%);
-  color: white;
+/* 통일된 버튼 스타일 */
+.meeting-detail-page .btn,
+.meeting-detail-page .kanban-btn,
+.meeting-detail-page .view-content-button,
+.meeting-detail-page .summary-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 16px;
   border: none;
-  padding: var(--space-3) var(--space-6);
-  border-radius: var(--radius-lg);
+  border-radius: 8px;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-fast);
-  box-shadow: var(--shadow-md);
+  transition: all 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  outline: none;
+  min-height: 36px;
 }
 
-.btn-danger:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+/* 기본 버튼 (수정 버튼) - 파란 그라데이션 */
+.meeting-detail-page .btn-primary,
+.meeting-detail-page .btn:not(.btn-danger):not(.btn-secondary):not(.btn-success),
+.meeting-detail-page .view-content-button,
+.meeting-detail-page .summary-edit-btn.save,
+.meeting-detail-page .kanban-btn-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(14, 165, 233, 0.2);
+}
+
+.meeting-detail-page .btn-primary:hover,
+.meeting-detail-page .btn:not(.btn-danger):not(.btn-secondary):not(.btn-success):hover,
+.meeting-detail-page .view-content-button:hover,
+.meeting-detail-page .summary-edit-btn.save:hover,
+.meeting-detail-page .kanban-btn-primary:hover {
+  background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3);
+}
+
+/* 삭제 버튼 - 빨간 그라데이션 */
+.meeting-detail-page .btn-danger,
+.meeting-detail-page .kanban-btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+.meeting-detail-page .btn-danger:hover,
+.meeting-detail-page .kanban-btn-danger:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* 보조 버튼 (취소 버튼) - 회색 */
+.meeting-detail-page .btn-secondary,
+.meeting-detail-page .summary-edit-btn.cancel,
+.meeting-detail-page .kanban-btn-secondary {
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.meeting-detail-page .btn-secondary:hover,
+.meeting-detail-page .summary-edit-btn.cancel:hover,
+.meeting-detail-page .kanban-btn-secondary:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+/* 성공 버튼 (저장 버튼) - 초록 그라데이션 */
+.meeting-detail-page .btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.meeting-detail-page .btn-success:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* 작은 버튼 (칸반보드 카드 내 버튼) */
+.meeting-detail-page .kanban-btn-xs {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  min-width: 28px;
+  height: 28px;
+  min-height: 28px;
+}
+
+/* 고스트 버튼 (수정 버튼) - 파란 그라데이션으로 변경 */
+.meeting-detail-page .kanban-btn-ghost {
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+  color: white;
+  border: 1px solid transparent;
+  box-shadow: 0 2px 4px rgba(14, 165, 233, 0.2);
+}
+
+.meeting-detail-page .kanban-btn-ghost:hover {
+  background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3);
+}
+
+.delete-button-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto var(--space-4);
+  text-align: right;
 }
 
 .meeting-section-wrapper {
   max-width: var(--container-max-width);
-  margin: 0 auto var(--space-6);
+  margin: 0 auto var(--space-3); /* 간격 줄임 */
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .section-header {
   background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-2) var(--space-4); /* 패딩 줄임 */
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  /* font-size: var(--text-lg); /* 이 규칙은 strong에 직접 적용되므로 제거 */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  min-height: 40px; /* 최소 높이 설정 */
 }
 
 .section-header strong {
-  font-size: var(--text-xl); /* 모든 소제목 크기 통일 */
-  font-weight: 700; /* 모든 소제목 폰트 굵기 통일 */
-  letter-spacing: 0.5px;
+  font-size: var(--text-base); /* 크기 줄임 */
+  font-weight: 600; /* 폰트 굵기 줄임 */
+  letter-spacing: 0.3px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
@@ -75,34 +185,34 @@
   background: rgba(255, 255, 255, 0.2);
   color: white;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: var(--radius-lg);
-  width: 32px;
-  height: 32px;
+  border-radius: var(--radius-md);
+  width: 24px; /* 크기 줄임 */
+  height: 24px; /* 크기 줄임 */
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-fast);
   font-weight: 700;
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   backdrop-filter: blur(10px);
 }
 
 .toggle-btn:hover {
   background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .meeting-section-wrapper > div:not(.section-header) {
-  padding: var(--space-6);
+  padding: var(--space-4); /* 패딩 줄임 */
   background: white;
 }
 
 /* 차트 컨테이너 */
 .charts-container {
   display: flex;
-  gap: var(--space-6);
-  margin-bottom: var(--space-6);
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -113,7 +223,7 @@
   background: rgba(255, 255, 255, 0.9);
   border: 2px solid var(--gray-200);
   border-radius: var(--radius-xl);
-  padding: var(--space-4);
+  padding: var(--space-3);
   box-sizing: border-box;
 }
 
@@ -130,44 +240,25 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-6);
-  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
   background: rgba(255, 255, 255, 0.7);
   border: 2px solid var(--gray-200);
   border-radius: var(--radius-xl);
 }
 
 .kanban-header h1 {
-  font-size: var(--text-xl); /* 모든 소제목 크기 통일 */
-  font-weight: 700; /* 모든 소제목 폰트 굵기 통일 */
+  font-size: var(--text-lg);
+  font-weight: 600;
   color: var(--gray-800);
   margin: 0;
-}
-
-.kanban-btn-primary {
-  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-  color: white;
-  border: none;
-  padding: var(--space-3) var(--space-5);
-  border-radius: var(--radius-lg);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.kanban-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
 }
 
 .kanban-grid {
   display: flex;
   flex-wrap: nowrap;
-  gap: var(--space-4);
-  margin-top: var(--space-4);
+  gap: var(--space-3);
+  margin-top: var(--space-3);
   overflow-x: auto;
   padding-bottom: var(--space-2);
   -webkit-overflow-scrolling: touch;
@@ -175,30 +266,30 @@
 
 .kanban-grid > div {
   flex-shrink: 0;
-  min-width: 300px;
-  flex-basis: calc(33.33% - (var(--space-4) * 2 / 3));
+  min-width: 280px;
+  flex-basis: calc(33.33% - (var(--space-3) * 2 / 3));
 }
 
 /* 모달 스타일 */
 .modal-overlay {
   position: fixed;
-  inset: 0; /* top, left, right, bottom을 0으로 설정하여 전체 화면을 덮음 */
+  inset: 0;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
   display: flex;
-  align-items: flex-start; /* 상단에 정렬 */
+  align-items: flex-start;
   justify-content: center;
-  z-index: 9999 !important; /* 높은 z-index로 다른 요소 위에 표시 */
-  padding: 120px var(--space-4) 0 var(--space-4); /* 상단 여백 추가 */
+  z-index: 9999 !important;
+  padding: 120px var(--space-4) 0 var(--space-4);
 }
 
 .modal-content {
   background: white;
   border-radius: var(--radius-2xl);
-  padding: var(--space-8);
+  padding: var(--space-6);
   max-width: 600px;
   width: 100%;
-  max-height: calc(100vh - 240px); /* 상단 여백 고려하여 최대 높이 조정 */
+  max-height: calc(100vh - 240px);
   overflow-y: auto;
   position: relative;
   box-shadow: var(--shadow-2xl);
@@ -207,13 +298,13 @@
 
 .modal-close {
   position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
+  top: var(--space-3);
+  right: var(--space-3);
   background: var(--gray-100);
   border: none;
   border-radius: var(--radius-full);
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -236,32 +327,32 @@
   line-height: 1.6;
   color: var(--gray-700);
   font-size: var(--text-base);
-  margin-top: var(--space-6);
+  margin-top: var(--space-4);
 }
 
 .modal-content p {
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   color: var(--gray-700);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-4);
   text-align: center;
 }
 
 .modal-content div[style*="text-align: right"] {
   display: flex;
   justify-content: center;
-  gap: var(--space-4);
-  margin-top: var(--space-6);
+  gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 
 .modal-content button {
-  padding: var(--space-3) var(--space-6);
+  padding: var(--space-2) var(--space-4);
   border: none;
   border-radius: var(--radius-lg);
   font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
-  min-width: 100px;
+  min-width: 80px;
 }
 
 .modal-content button:first-child {
@@ -289,7 +380,7 @@
 /* 반응형 디자인 */
 @media (max-width: 1024px) {
   .meeting-detail-page {
-    padding: var(--space-6);
+    padding: var(--space-4);
   }
 
   .charts-container {
@@ -303,56 +394,62 @@
 
 @media (max-width: 768px) {
   .meeting-detail-page {
-    padding: var(--space-4);
+    padding: var(--space-3);
   }
 
   .meeting-section-wrapper {
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-2);
   }
 
   .section-header {
-    padding: var(--space-3) var(--space-4);
-    /* font-size: var(--text-sm); /* 이 규칙은 strong에 직접 적용되므로 제거 */
+    padding: var(--space-2) var(--space-3);
+    min-height: 36px;
   }
 
-  .meeting-section-wrapper > div:not(.section-header) {
-    padding: var(--space-4);
-  }
-
-  .toggle-btn {
-    width: 28px;
-    height: 28px;
+  .section-header strong {
     font-size: var(--text-sm);
   }
 
+  .meeting-section-wrapper > div:not(.section-header) {
+    padding: var(--space-3);
+  }
+
+  .toggle-btn {
+    width: 20px;
+    height: 20px;
+    font-size: var(--text-xs);
+  }
+
   .modal-content {
-    padding: var(--space-6);
-    margin: var(--space-4);
+    padding: var(--space-4);
+    margin: var(--space-3);
   }
 
   .delete-button-container {
     text-align: center;
   }
 
-  /* 반응형에서 page-title 크기 조정 */
+  /* 반응형에서 제목 크기 조정 */
+  .meeting-detail-page .meeting-detail-title,
   .page-title {
-    font-size: clamp(1.5rem, 3.5vw, 2rem); /* 768px 이하에서 크기 조정 */
+    font-size: 1.5rem !important;
   }
 }
 
 @media (max-width: 480px) {
   .meeting-detail-page {
-    padding: var(--space-3);
+    padding: var(--space-2);
   }
 
   .meeting-section-wrapper {
-    margin-bottom: var(--space-3);
+    margin-bottom: var(--space-2);
   }
 
   .section-header {
     flex-direction: column;
-    gap: var(--space-2);
+    gap: var(--space-1);
     text-align: center;
+    min-height: 32px;
   }
 
   .modal-content div[style*="text-align: right"] {
@@ -365,13 +462,14 @@
 
   .kanban-header {
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-2);
     text-align: center;
   }
 
-  /* 반응형에서 page-title 크기 조정 */
+  /* 더 작은 화면에서 제목 크기 조정 */
+  .meeting-detail-page .meeting-detail-title,
   .page-title {
-    font-size: clamp(1.25rem, 3vw, 1.75rem); /* 480px 이하에서 크기 조정 */
+    font-size: 1.25rem !important;
   }
 }
 
@@ -380,7 +478,7 @@
   from {
     opacity: 0;
     max-height: 0;
-    transform: translateY(-10px);
+    transform: translateY(-5px);
   }
   to {
     opacity: 1;
@@ -390,7 +488,7 @@
 }
 
 .meeting-section-wrapper > div:not(.section-header) {
-  animation: slideDown 0.3s ease-out;
+  animation: slideDown 0.2s ease-out;
 }
 
 /* 로딩 상태 */
@@ -398,10 +496,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: var(--space-12);
+  padding: var(--space-8);
   color: var(--gray-500);
 }
 
 .loading-section .spinner {
-  margin-right: var(--space-3);
+  margin-right: var(--space-2);
 }

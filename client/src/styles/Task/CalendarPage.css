@@ -15,8 +15,8 @@
 
 .calendarpage-title {
   text-align: center;
-  font-size: clamp(2rem, 4vw, 2.5rem);
-  font-weight: 800; 
+  font-size: 1.75rem;
+  font-weight: 700;
   margin-bottom: var(--space-8);
   background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
   -webkit-background-clip: text;
@@ -315,7 +315,7 @@
   }
 
   .calendarpage-title {
-    font-size: 20px;
+    font-size: 1.5rem;
     margin-bottom: 12px;
   }
 
@@ -351,7 +351,7 @@
 
 @media (max-width: 480px) {
   .calendarpage-title {
-    font-size: 18px;
+    font-size: 1.25rem;
   }
 
   .fc-header-toolbar {
