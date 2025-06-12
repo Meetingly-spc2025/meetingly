@@ -1,60 +1,72 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Calendar from "react-calendar"
-import "react-calendar/dist/Calendar.css"
-import "../../styles/Task/CalendarPage.css"
+import FullCalendar from "@fullcalendar/react"
+import dayGridPlugin from "@fullcalendar/daygrid"
+import interactionPlugin from "@fullcalendar/interaction"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
-import CalendarTaskCard from "../../components/Taskboard/CalendarTaskCard.jsx"
 import TaskModal from "../../components/Kanban/TaskModal.jsx"
+import "../../styles/Task/CalendarPage.css"
 
 const CalendarPage = () => {
-  const [meetingsByDate, setMeetingsByDate] = useState({})
-  const [tasksByDate, setTasksByDate] = useState({})
+  const [allTaskEvents, setAllTaskEvents] = useState([])
+  const [allMeetingEvents, setAllMeetingEvents] = useState([])
+  const [displayEvents, setDisplayEvents] = useState([])
   const [showingTasksOnly, setShowingTasksOnly] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [teamId, setTeamId] = useState(null)
   const [userId, setUserId] = useState(null)
-  const navigate = useNavigate()
+  const [teamMembers, setTeamMembers] = useState([])
   const [selectedTask, setSelectedTask] = useState(null)
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
-  const [teamMembers, setTeamMembers] = useState([])
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear())
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1)
+  const navigate = useNavigate()
 
-  const openTaskModal = (task) => {
-    const matchedAssignee = teamMembers.find((member) => member.user_id === task.assignee_id)
+  // 테마에 맞는 파스텔 색상 배열
+  const pastelColors = [
+    { bg: "#ffecb3", text: "#e65100" }, // 노랑
+    { bg: "#e1bee7", text: "#6a1b9a" }, // 보라
+    { bg: "#bbdefb", text: "#0d47a1" }, // 파랑
+    { bg: "#c8e6c9", text: "#1b5e20" }, // 초록
+    { bg: "#ffcdd2", text: "#b71c1c" }, // 빨강
+    { bg: "#b3e5fc", text: "#01579b" }, // 하늘
+    { bg: "#f8bbd0", text: "#880e4f" }, // 분홍
+    { bg: "#d7ccc8", text: "#3e2723" }, // 갈색
+    { bg: "#dcedc8", text: "#33691e" }, // 연두
+    { bg: "#cfd8dc", text: "#263238" }, // 회색
+  ]
 
-    // assignee_id가 없으면 userId를 기본값으로 설정
-    const defaultAssigneeId = task.assignee_id || userId
-
-    setSelectedTask({
-      ...task,
-      assignee_id: matchedAssignee?.user_id || defaultAssigneeId,
-      assignee: matchedAssignee || teamMembers.find((m) => m.user_id === defaultAssigneeId) || null,
-    })
-
-    setIsTaskModalOpen(true)
-  }
-
-  const closeTaskModal = () => {
-    setSelectedTask(null)
-    setIsTaskModalOpen(false)
-  }
-
-  const handleTaskSave = async (updatedTask) => {
+  // 안전한 색상 선택 함수
+  const getTaskColor = (taskId) => {
     try {
-      await axios.put(`/api/meetingData/tasks/${updatedTask.task_id}`, updatedTask)
-      alert("작업이 성공적으로 저장되었습니다.")
-      const today = new Date()
-      const year = today.getFullYear()
-      const month = today.getMonth() + 1
-      fetchTasksForMonth(year, month)
-      setShowingTasksOnly(true)
-    } catch (err) {
-      console.error("작업 저장 실패:", err)
-      alert("작업 저장 중 오류가 발생했습니다.")
-    } finally {
-      closeTaskModal()
+      // 기본값 설정
+      let colorIndex = 0
+
+      // taskId가 존재하는지 확인
+      if (taskId) {
+        // 문자열을 숫자로 변환하되, 실패하면 0 사용
+        const taskIdStr = String(taskId)
+        let numericId = 0
+
+        // 문자열의 각 문자 코드를 합산하여 숫자 생성
+        for (let i = 0; i < taskIdStr.length; i++) {
+          numericId += taskIdStr.charCodeAt(i)
+        }
+
+        colorIndex = numericId % pastelColors.length
+      }
+
+      // 인덱스가 유효한지 확인
+      if (colorIndex < 0 || colorIndex >= pastelColors.length) {
+        colorIndex = 0
+      }
+
+      return pastelColors[colorIndex]
+    } catch (error) {
+      console.warn("색상 선택 중 오류:", error)
+      // 오류 발생 시 첫 번째 색상 반환
+      return pastelColors[0]
     }
   }
 
@@ -78,184 +90,154 @@ const CalendarPage = () => {
         console.error("유저 팀 정보 확인 실패:", err)
         alert("로그인이 필요합니다.")
         navigate("/login")
-      } finally {
-        setLoading(false)
       }
     }
-
     fetchUserTeam()
   }, [navigate])
 
-  const fetchMeetingsForMonth = async (year, month) => {
-    if (!teamId) return
-    try {
-      const res = await axios.get(`/api/meetingData/meetinglists/task/${teamId}/by-month?year=${year}&month=${month}`)
-      const meetings = res.data.meetings
-      const grouped = meetings.reduce((acc, meeting) => {
-        const dateKey = new Date(meeting.date).toLocaleDateString("sv-SE")
-        if (!acc[dateKey]) acc[dateKey] = []
-        acc[dateKey].push(meeting)
-        return acc
-      }, {})
-      setMeetingsByDate(grouped)
-    } catch (err) {
-      console.error("월간 회의 목록 불러오기 오류:", err)
-    }
-  }
-
-  const fetchTasksForMonth = async (year, month) => {
-    if (!userId || teamMembers.length === 0) return
-    try {
-      const res = await axios.get(`/api/meetingData/tasks/by-user/${userId}/by-month?year=${year}&month=${month}`)
-      const tasks = res.data.tasks
-
-      const tasksWithAssignees = tasks.map((task) => {
-        const fallbackAssigneeId = task.assignee_id || userId
-        const assignee = teamMembers.find((member) => member.user_id === fallbackAssigneeId)
-        return {
-          ...task,
-          assignee_id: fallbackAssigneeId,
-          assignee,
-          meeting_id: task.meeting_id,
-          team_id: teamId,
-        }
-      })
-
-      const grouped = {}
-      tasksWithAssignees.forEach((task) => {
-        const start = new Date(task.created_at)
-        const end = new Date(task.finished_at)
-        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-          const dateKey = d.toLocaleDateString("sv-SE")
-          if (!grouped[dateKey]) grouped[dateKey] = []
-          grouped[dateKey].push(task)
-        }
-      })
-      setTasksByDate(grouped)
-    } catch (err) {
-      console.error("월간 개인 할 일 목록 불러오기 오류:", err)
-    }
-  }
-
+  // ✅ 유저 정보, 팀 멤버 정보, 날짜 정보가 모두 준비되면 자동으로 fetch 실행
   useEffect(() => {
-    if (!teamId || !userId || teamMembers.length === 0) return
-    const today = new Date()
-    const year = today.getFullYear()
-    const month = today.getMonth() + 1
-    fetchMeetingsForMonth(year, month)
-    fetchTasksForMonth(year, month)
-  }, [teamId, userId, teamMembers])
+    if (teamId && userId && teamMembers.length > 0 && currentYear && currentMonth) {
+      fetchEvents(currentYear, currentMonth)
+    }
+  }, [teamId, userId, teamMembers, currentYear, currentMonth])
 
-  const handleActiveStartDateChange = ({ activeStartDate }) => {
-    const year = activeStartDate.getFullYear()
-    const month = activeStartDate.getMonth() + 1
-    fetchMeetingsForMonth(year, month)
-    fetchTasksForMonth(year, month)
+  const fetchEvents = async (year, month) => {
+    try {
+      const [taskRes, meetingRes] = await Promise.all([
+        axios.get(`/api/meetingData/tasks/by-user/${userId}/by-month?year=${year}&month=${month}`),
+        axios.get(`/api/meetingData/meetinglists/task/${teamId}/by-month?year=${year}&month=${month}`),
+      ])
+
+      // 태스크 이벤트 생성 - 직접 색상과 제목 설정
+      const taskEvents = taskRes.data.tasks.map((task) => {
+        const color = getTaskColor(task.task_id)
+        return {
+          id: task.task_id,
+          title: task.content, // 제목 직접 설정
+          start: task.created_at,
+          end: addOneDay(task.finished_at),
+          backgroundColor: color.bg, // 배경색 직접 설정
+          borderColor: color.bg,
+          textColor: color.text, // 텍스트 색상 직접 설정
+          extendedProps: {
+            type: "task",
+            task,
+          },
+        }
+      })
+
+      const meetingEvents = meetingRes.data.meetings.map((meeting) => ({
+        id: meeting.meeting_id,
+        title: `📅 ${meeting.title}`,
+        start: meeting.date,
+        backgroundColor: "#bbdefb",
+        borderColor: "#90caf9",
+        textColor: "#1976d2",
+        allDay: true,
+        extendedProps: {
+          type: "meeting",
+          meeting,
+        },
+      }))
+
+      setAllTaskEvents(taskEvents)
+      setAllMeetingEvents(meetingEvents)
+      setDisplayEvents(showingTasksOnly ? taskEvents : meetingEvents)
+    } catch (err) {
+      console.error("이벤트 불러오기 실패:", err)
+    }
   }
 
-  if (loading) return <div>로딩 중...</div>
+  const addOneDay = (dateStr) => {
+    const date = new Date(dateStr)
+    date.setDate(date.getDate() + 1)
+    return date.toISOString().split("T")[0]
+  }
+
+  const handleEventClick = (info) => {
+    const { type, task, meeting } = info.event.extendedProps
+    if (type === "task") {
+      const matchedAssignee = teamMembers.find((m) => m.user_id === task.assignee_id)
+      setSelectedTask({
+        ...task,
+        assignee: matchedAssignee,
+      })
+      setIsTaskModalOpen(true)
+    } else if (type === "meeting") {
+      navigate(`/meeting/${meeting.meeting_id}?teamId=${teamId}`)
+    }
+  }
+
+  const handleDatesSet = (arg) => {
+    const date = arg.start
+    setCurrentYear(date.getFullYear())
+    setCurrentMonth(date.getMonth() + 1)
+  }
+
+  const handleTaskSave = async (updatedTask) => {
+    try {
+      await axios.put(`/api/meetingData/tasks/${updatedTask.task_id}`, updatedTask)
+      alert("작업이 저장되었습니다.")
+      if (currentYear && currentMonth) {
+        fetchEvents(currentYear, currentMonth)
+      }
+    } catch (err) {
+      console.error("작업 저장 실패:", err)
+      alert("작업 저장 중 오류 발생")
+    } finally {
+      setIsTaskModalOpen(false)
+      setSelectedTask(null)
+    }
+  }
+
+  const handleToggle = (mode) => {
+    const isTask = mode === "task"
+    setShowingTasksOnly(isTask)
+    setDisplayEvents(isTask ? allTaskEvents : allMeetingEvents)
+  }
 
   return (
     <div className="calendarpage-container">
-      <div className="calendar-wrapper">
-        {" "}
-        {/* 기존 calendar-header-card와 calendar-wrapper를 통합 */}
+      <div className="calendar-header-card">
         <h2 className="calendarpage-title">Meetingly Calendar</h2>
         <div className="calendar-toggle-buttons">
           <button
             className={`calendar-toggle-btn ${!showingTasksOnly ? "active" : ""}`}
-            onClick={() => setShowingTasksOnly(false)}
+            onClick={() => handleToggle("meeting")}
           >
             📅 팀 회의
           </button>
           <button
             className={`calendar-toggle-btn ${showingTasksOnly ? "active" : ""}`}
-            onClick={() => setShowingTasksOnly(true)}
+            onClick={() => handleToggle("task")}
           >
             ✅ 내 할 일
           </button>
         </div>
-        <Calendar
-          onActiveStartDateChange={handleActiveStartDateChange}
-          tileClassName={({ date }) => {
-            const key = date.toISOString().split("T")[0]
-            return showingTasksOnly && tasksByDate[key] ? "task-highlight" : null
-          }}
-          tileContent={({ date }) => {
-            const formattedDate = date.toLocaleDateString("sv-SE")
-
-            if (showingTasksOnly) {
-              const tasks = tasksByDate[formattedDate]
-              if (!tasks) return null
-
-              const uniqueTasks = tasks.reduce((acc, task) => {
-                if (!acc[task.task_id]) {
-                  acc[task.task_id] = task
-                }
-                return acc
-              }, {})
-
-              return (
-                <div className="calendar-tile-tasks">
-                  {Object.values(uniqueTasks).map((t) => {
-                    const taskStart = new Date(t.created_at).toISOString().split("T")[0]
-                    const taskEnd = new Date(t.finished_at).toISOString().split("T")[0]
-                    const isStartDate = formattedDate === taskStart
-                    const isEndDate = formattedDate === taskEnd
-                    const isContinuation = !isStartDate && !isEndDate
-                    const isTruncated = !isStartDate && formattedDate !== taskEnd
-
-                    // 태스크의 총 일수 계산
-                    const startDateObj = new Date(taskStart)
-                    const endDateObj = new Date(taskEnd)
-                    const totalDays = Math.ceil((endDateObj - startDateObj) / (1000 * 60 * 60 * 24)) + 1
-
-                    // 현재 날짜가 태스크에서 몇 번째 날인지 계산
-                    const currentDateObj = new Date(formattedDate)
-                    const currentDateIndex = Math.ceil((currentDateObj - startDateObj) / (1000 * 60 * 60 * 24))
-
-                    return (
-                      <CalendarTaskCard
-                        key={`${t.task_id}-${formattedDate}`}
-                        task={t}
-                        isStartDate={isStartDate}
-                        isEndDate={isEndDate}
-                        isContinuation={isContinuation}
-                        isTruncated={isTruncated}
-                        currentDateIndex={currentDateIndex}
-                        totalDays={totalDays}
-                        onClick={() => openTaskModal(t)}
-                      />
-                    )
-                  })}
-                </div>
-              )
-            } else {
-              const meetings = meetingsByDate[formattedDate]
-              if (!meetings) return null
-              return (
-                <div className="calendar-tile-meetings">
-                  {meetings.map((m) => (
-                    <div
-                      key={m.meeting_id}
-                      className="calendar-tile-meeting-card"
-                      onClick={() => navigate(`/meeting/${m.meeting_id}?teamId=${teamId}`)}
-                    >
-                      <span className="calendar-tile-meeting-title">{m.title}</span>
-                    </div>
-                  ))}
-                </div>
-              )
-            }
-          }}
-        />
       </div>
+      <FullCalendar
+        plugins={[dayGridPlugin, interactionPlugin]}
+        initialView="dayGridMonth"
+        height="auto"
+        events={displayEvents}
+        eventClick={handleEventClick}
+        datesSet={handleDatesSet}
+        locale="ko"
+        headerToolbar={{
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth",
+        }}
+        dayMaxEventRows={3}
+        aspectRatio={1.5}
+      />
       {isTaskModalOpen && selectedTask && (
         <TaskModal
           task={selectedTask}
           teamMembers={teamMembers}
           userId={userId}
-          onClose={closeTaskModal}
+          onClose={() => setIsTaskModalOpen(false)}
           onSave={handleTaskSave}
           origin="calendar"
         />
