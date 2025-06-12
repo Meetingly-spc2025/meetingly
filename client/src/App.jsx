@@ -73,6 +73,14 @@ function App() {
               }
             />
             <Route
+              path="/team/join"
+              element={
+                <SidebarLayout>
+                  <TeamEmpty />
+                </SidebarLayout>
+              }
+            />
+            <Route
               path="/meeting/start"
               element={
                 <SidebarLayout>

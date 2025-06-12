@@ -1,317 +1,374 @@
 .calendarpage-container {
-  min-height: 100vh;
-  background: var(--bg-primary);
-  padding: var(--space-8);
+  padding: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-.calendar-wrapper {
-  max-width: 1000px;
-  margin: 0 auto var(--space-8) auto;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: var(--radius-2xl);
-  padding: var(--space-8);
-  box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-6);
+.calendar-header-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #f0f0f0;
 }
 
 .calendarpage-title {
-  font-size: var(--text-3xl); /* 회의 목록 제목과 동일하게 변경 */
-  font-weight: 700; /* 회의 목록 제목과 동일하게 변경 */
-  line-height: 1.1; /* 회의 목록 제목에 없으므로 제거 */
-  letter-spacing: -0.02em; /* 회의 목록 제목에 없으므로 제거 */
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: var(--space-8);
   background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-600) 100%);
-  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-align: center;
-  margin: 0 0 var(--space-8) 0; /* 회의 목록 제목과 동일하게 변경 */
-  text-shadow: none; /* 회의 목록 제목에 없으므로 제거 */
+  background-clip: text;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .calendar-toggle-buttons {
   display: flex;
+  gap: 10px;
   justify-content: center;
-  gap: var(--space-4);
   flex-wrap: wrap;
-  margin: 0;
 }
 
 .calendar-toggle-btn {
-  padding: var(--space-3) var(--space-6);
-  border: 2px solid var(--gray-200);
+  padding: 10px 18px;
+  border: 2px solid #e5e7eb;
   background: white;
-  color: var(--gray-700);
-  border-radius: var(--radius-lg);
+  color: #6b7280;
+  border-radius: 12px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-fast);
-  font-size: var(--text-base);
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  min-width: 140px;
-  justify-content: center;
-  box-shadow: var(--shadow-sm);
-  white-space: nowrap;
+  gap: 6px;
 }
 
 .calendar-toggle-btn:hover {
-  border-color: var(--primary-300);
-  background: var(--primary-50);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  border-color: #3b82f6;
+  color: #3b82f6;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.15);
 }
 
 .calendar-toggle-btn.active {
-  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  background: #3b82f6;
+  border-color: #3b82f6;
   color: white;
-  border-color: var(--primary-500);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.25);
 }
 
-.calendar-toggle-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--primary-100);
+.calendar-toggle-btn.active:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  transform: translateY(-1px);
 }
 
-/* React Calendar 스타일 커스터마이징 */
-.react-calendar {
-  width: 100%;
-  background: transparent;
-  border: none;
-  font-family: var(--font-family-sans);
-}
-
-.react-calendar__navigation {
-  display: flex;
-  height: 60px;
-  margin-bottom: var(--space-4);
-}
-
-.react-calendar__navigation button {
-  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-  color: white;
-  border: none;
-  border-radius: var(--radius-lg);
-  font-weight: 600;
-  font-size: var(--text-base);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  margin: 0 var(--space-1);
-}
-
-.react-calendar__navigation button:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.react-calendar__navigation button:disabled {
-  background: var(--gray-300);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.react-calendar__month-view__weekdays {
-  text-align: center;
-  text-transform: uppercase;
-  font-weight: 600;
-  font-size: var(--text-sm);
-  color: var(--gray-600);
-  margin-bottom: var(--space-2);
-}
-
-.react-calendar__month-view__weekdays__weekday {
-  padding: var(--space-2);
-}
-
-.react-calendar__month-view__days {
-  display: grid !important;
-  grid-template-columns: repeat(7, 1fr);
-  gap: var(--space-1);
-  grid-gap: 0px;
-}
-
-.react-calendar__month-view__days {
-  display: grid !important;
-/*   gap: 0 !important; 날짜 간격 제거 */
-  grid-template-columns: repeat(7, 1fr) !important;
-  grid-gap: 0px;
-}
-
-.react-calendar__tile {
+/* Calendar wrapper */
+.fc {
   background: white;
-  border: 2px solid var(--gray-100);
-  border-radius: var(--radius-lg);
-  padding: var(--space-2);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  min-height: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  position: relative;
-  box-sizing: border-box;
-}
-
-.react-calendar__tile:hover {
-  border-color: var(--primary-300);
-  background: var(--primary-50);
-  transform: none;
-  box-shadow: none;
-}
-
-/* 모든 날짜 숫자에 일관된 크기 적용 */
-.react-calendar__tile abbr {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 40px; /* '20일'과 같은 긴 날짜도 줄바꿈 없이 표시되도록 너비 증가 */
-  height: 28px;
-  line-height: 1;
-  box-sizing: border-box;
-}
-
-/* 오늘 날짜 텍스트에만 핑크색 원형 하이라이트 */
-.react-calendar__tile--now {
-  background: transparent !important;
-  border: 2px solid transparent;
-}
-.react-calendar__tile--now abbr {
-  background-color: #ffc0cb;
-  border-radius: 9999px;
-  font-weight: bold;
-  color: #333;
-}
-
-/* 선택한 날짜는 보더 색상 강조만 */
-.react-calendar__tile--active {
-  background: transparent !important;
-  color: var(--primary-600);
-  border: 2px solid #ff6f91;
-  border-radius: var(--radius-lg);
-  font-weight: bold;
-}
-
-.react-calendar__tile--neighboringMonth {
-  color: var(--gray-400);
-  background: var(--gray-50);
-}
-
-.task-highlight {
-  background: linear-gradient(135deg, var(--success-100) 0%, var(--success-200) 100%);
-  border-color: var(--success-400);
-}
-
-/* 캘린더 타일 내용 */
-.calendar-tile-tasks,
-.calendar-tile-meetings {
-  width: 100%;
-  margin-top: var(--space-1);
-}
-
-.calendar-tile-meeting-card {
-  background: linear-gradient(135deg, var(--primary-400) 0%, var(--primary-500) 100%);
-  color: white;
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-1);
-  font-size: var(--text-xs);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.calendar-tile-meeting-card:hover {
-  transform: scale(1.05);
-  box-shadow: var(--shadow-sm);
-}
-
-.calendar-tile-meeting-title {
-  display: block;
-  white-space: nowrap;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  text-overflow: ellipsis;
+  border: 1px solid #f0f0f0;
+  font-family: "Nunito", "Segoe UI", system-ui, sans-serif;
+}
+
+/* Calendar header styling */
+.fc-header-toolbar {
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  position: relative;
+}
+
+.fc-toolbar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #4a5568;
+  letter-spacing: -0.5px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+}
+
+/* 이전/다음 버튼 컨테이너 */
+.fc-toolbar-chunk {
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+
+/* 이전/다음 버튼 스타일링 */
+.fc-button-group .fc-button,
+.fc-prev-button,
+.fc-next-button {
+  background: white !important;
+  border: 2px solid #e5e7eb !important;
+  color: #6b7280 !important;
+  padding: 0 !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+  border-radius: 12px !important;
+  margin: 0 !important;
+  font-size: 16px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  width: 40px !important;
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+}
+
+.fc-button-group .fc-button:hover,
+.fc-prev-button:hover,
+.fc-next-button:hover {
+  background: #f8fafc !important;
+  border-color: #3b82f6 !important;
+  color: #3b82f6 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.15) !important;
+}
+
+.fc-button-group .fc-button:active,
+.fc-prev-button:active,
+.fc-next-button:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2) !important;
+}
+
+.fc-button-group .fc-button:focus,
+.fc-prev-button:focus,
+.fc-next-button:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.fc-button-group .fc-button:disabled,
+.fc-prev-button:disabled,
+.fc-next-button:disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+/* 화살표 아이콘 커스터마이징 */
+.fc-icon-chevron-left,
+.fc-icon-chevron-right {
+  font-size: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.fc-icon-chevron-left:before,
+.fc-icon-chevron-right:before {
+  content: "" !important;
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-top: 2px solid currentColor !important;
+  border-right: 2px solid currentColor !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+}
+
+.fc-icon-chevron-left:before {
+  transform: translate(-25%, -50%) rotate(-135deg) !important;
+}
+
+.fc-icon-chevron-right:before {
+  transform: translate(-75%, -50%) rotate(45deg) !important;
+}
+
+/* Calendar body */
+.fc-scrollgrid {
+  border: none;
+}
+
+.fc-col-header {
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.fc-col-header-cell {
+  padding: 10px 6px;
   font-weight: 600;
+  color: #4a5568;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.fc-daygrid-day {
+  border-color: #e5e7eb;
+  min-height: 90px;
+}
+
+.fc-daygrid-day:hover {
+  background: #f9fafb;
+}
+
+.fc-daygrid-day-number {
+  padding: 6px;
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 13px;
+}
+
+/* 오늘 날짜 하이라이트 */
+.fc-day-today {
+  background: #eff6ff !important;
+}
+
+.fc-day-today .fc-daygrid-day-number {
+  background: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 3px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0;
+  text-align: center;
+  line-height: 1;
+}
+
+/* 캘린더 이벤트 스타일 개선 */
+.fc-event {
+  border: none !important;
+  border-radius: 6px !important;
+  margin: 2px !important;
+  padding: 4px 8px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.fc-event:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) !important;
+  filter: brightness(0.95) !important;
+}
+
+.fc-event-title {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-weight: 500 !important;
+}
+
+/* 월간 캘린더 더 컴팩트하게 */
+.fc-daygrid-day-frame {
+  padding: 2px 4px;
+}
+
+.fc-daygrid-day-events {
+  padding: 0 2px;
+  margin-top: 2px;
+}
+
+.fc-daygrid-day-top {
+  padding: 2px;
+}
+
+/* 주말 색상 */
+.fc-day-sat {
+  color: #3b82f6;
+  background-color: #f8faff;
+}
+
+.fc-day-sun {
+  color: #ef4444;
+  background-color: #fff8f8;
+}
+
+/* 이전/다음 달 날짜 스타일 */
+.fc-day-other .fc-daygrid-day-number {
+  opacity: 0.4;
 }
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .calendarpage-container {
-    padding: var(--space-4);
+    padding: 12px;
   }
 
-  .calendar-wrapper {
-    padding: var(--space-6);
-    gap: var(--space-4);
+  .calendar-header-card {
+    padding: 14px;
+    margin-bottom: 14px;
   }
 
   .calendarpage-title {
-    font-size: var(--text-2xl); /* 반응형에서도 일관성 유지 */
+    font-size: 1.5rem;
+    margin-bottom: 12px;
   }
 
   .calendar-toggle-buttons {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: var(--space-3);
+    gap: 8px;
   }
 
   .calendar-toggle-btn {
-    width: 200px;
-    justify-content: center;
-    min-width: unset;
+    padding: 8px 14px;
+    font-size: 12px;
   }
 
-  .react-calendar__tile {
-    min-height: 60px;
-    font-size: var(--text-sm);
+  .fc-header-toolbar {
+    padding: 12px 16px;
   }
 
-  .react-calendar__navigation button {
-    font-size: var(--text-sm);
-    padding: var(--space-2) var(--space-3);
+  .fc-toolbar-title {
+    font-size: 18px;
+  }
+
+  .fc-prev-button,
+  .fc-next-button {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .fc-daygrid-day {
+    min-height: 70px;
   }
 }
 
 @media (max-width: 480px) {
-  .calendarpage-container {
-    padding: var(--space-3);
+  .calendarpage-title {
+    font-size: 1.25rem;
   }
 
-  .calendar-wrapper {
-    padding: var(--space-4);
-    gap: var(--space-3);
+  .fc-header-toolbar {
+    padding: 10px 12px;
   }
 
-  .calendar-toggle-buttons {
-    gap: var(--space-2);
+  .fc-toolbar-title {
+    font-size: 16px;
   }
 
-  .calendar-toggle-btn {
-    width: 100%;
-    max-width: 280px;
-    padding: var(--space-2) var(--space-4);
-    font-size: var(--text-sm);
+  .fc-prev-button,
+  .fc-next-button {
+    width: 32px !important;
+    height: 32px !important;
   }
 
-  .react-calendar__month-view__days {
-    gap: 2px;
-  }
-
-  .react-calendar__tile {
+  .fc-daygrid-day {
     min-height: 50px;
-    padding: var(--space-1);
-    font-size: var(--text-xs);
-  }
-
-  .calendar-tile-meeting-card {
-    padding: 2px var(--space-1);
-    font-size: 10px;
   }
 }

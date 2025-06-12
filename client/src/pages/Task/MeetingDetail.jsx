@@ -18,9 +18,9 @@ const MeetingDetail = () => {
 
   const [sections, setSections] = useState([
     { type: "info", collapsed: false },
-    { type: "discussion", collapsed: false },
-    { type: "summary", collapsed: false },
-    { type: "kanban", collapsed: false },
+    { type: "discussion", collapsed: true },
+    { type: "summary", collapsed: true },
+    { type: "kanban", collapsed: true },
   ])
 
   const [meetingInfo, setMeetingInfo] = useState(null)
@@ -206,33 +206,7 @@ const MeetingDetail = () => {
   return (
     <div className="meeting-detail-page">
       <div className="page-card-container">
-        <h2 className="page-title">회의 기록 상세</h2> {/* detailpage-title 대신 page-title 사용 */}
-        {/* isCreator && (
-          <>
-            {isDeleteConfirmOpen && (
-              <div className="modal-overlay">
-                <div className="modal-content">
-                  <button className="modal-close" onClick={() => setIsDeleteConfirmOpen(false)}>
-                    X
-                  </button>
-                  <p>정말로 이 회의를 삭제하시겠습니까?</p>
-                  <div style={{ marginTop: "1rem", textAlign: "right" }}>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={handleDeleteMeeting}
-                      style={{ marginRight: "10px" }}
-                    >
-                      확인
-                    </button>
-                    <button className="btn btn-secondary btn-sm" onClick={() => setIsDeleteConfirmOpen(false)}>
-                      취소
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </>
-        ) */}
+        <h2 className="meeting-detail-title">회의 기록 상세</h2>
         {sections.map((section, index) => (
           <div key={`${section.type}-${index}`} className="meeting-section-wrapper">
             <div className="section-header">

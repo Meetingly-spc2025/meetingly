@@ -21,7 +21,7 @@ const DiscussionList = ({ discussionContent, isCreator, onEdit }) => {
         {isCreator && !isEditing && (
           <div className="discussion-buttons">
             <button className="btn btn-primary btn-sm" onClick={() => setIsEditing(true)}>
-              수정
+            ✏️ 수정
             </button>
           </div>
         )}
