@@ -4,6 +4,8 @@ import { useState, useRef } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import "../../styles/Login/Auth.css"
 import axios from "axios"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 const Register = () => {
   const navigate = useNavigate()
@@ -93,9 +95,9 @@ const Register = () => {
     try {
       await axios.post("/api/users/verify-email", { email: formData.email }, { withCredentials: true })
       setIsVerificationSent(true)
-      alert("인증번호가 이메일로 전송되었습니다.")
+      toast.success("인증번호가 이메일로 전송되었습니다.")
     } catch (error) {
-      alert("이메일 인증 실패")
+      toast.error("이메일 인증 실패")
     } finally {
       setIsVerificationLoading(false)
     }
@@ -104,10 +106,10 @@ const Register = () => {
   const verifyCode = async () => {
     try {
       const response = await axios.post("/api/users/verify-code", { code: verificationCode }, { withCredentials: true })
-      alert(response.data.message)
+      toast.success(response.data.message)
       setIsEmailConfirmed(true)
     } catch (error) {
-      alert(error.response.data.message || "인증 실패")
+      toast.error(error.response?.data?.message || "인증 실패")
     }
   }
 
@@ -133,7 +135,7 @@ const Register = () => {
       } else {
         setErrors({ ...errors, email: null })
         setIsEmailVerified(true)
-        alert("사용 가능한 이메일입니다.")
+        toast.success("사용 가능한 이메일입니다.")
       }
     } catch (error) {
       setErrors({ ...errors, email: "이메일 중복 확인 기능 자체가 안됨:" })
@@ -151,10 +153,11 @@ const Register = () => {
       await axios.post("/api/users/register", formData, {
         withCredentials: true,
       })
-      alert("회원가입 성공! 로그인 창으로 이동합니다.")
+      toast.success("회원가입 성공! 로그인 창으로 이동합니다.")
       navigate("/login")
     } catch (error) {
-      setErrors({ general: "회원가입에 실패했습니다. 다시 시도해주세요." })
+      toast.error("회원가입에 실패했습니다. 다시 시도해주세요.")
+      // setErrors({ general: "회원가입에 실패했습니다. 다시 시도해주세요." })
     }
   }
 
@@ -302,6 +305,7 @@ const Register = () => {
           </p>
         </div>
       </div>
+      <ToastContainer position="top-center" autoClose={3000} hideProgressBar theme="colored" />
     </div>
   )
 }
