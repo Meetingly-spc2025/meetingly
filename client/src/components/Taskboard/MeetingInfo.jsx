@@ -2,17 +2,7 @@
 
 import { useState } from "react"
 import "../../styles/Task/MeetingInfo.css"
-
-const Modal = ({ onClose, children }) => (
-  <div className="modal-overlay">
-    <div className="modal-content">
-      <button className="modal-close" onClick={onClose}>
-        ×
-      </button>
-      <div className="modal-text">{children}</div>
-    </div>
-  </div>
-)
+import Modal from "../Common/Modal"
 
 const MeetingInfo = ({
   meetingName,

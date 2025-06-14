@@ -10,7 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@hello-pangea/dnd": "^18.0.1",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@fullcalendar/core": "^6.1.17",
+    "@fullcalendar/daygrid": "^6.1.17",
+    "@fullcalendar/interaction": "^6.1.17",
+    "@fullcalendar/react": "^6.1.17",
     "@visx/wordcloud": "^3.12.0",
     "axios": "^1.6.2",
     "chart.js": "^4.4.9",
@@ -20,8 +25,6 @@
     "lucide-react": "^0.513.0",
     "mysql2": "^3.14.1",
     "react": "^18.3.1",
-    "react-beautiful-dnd": "^13.1.1",
-    "react-calendar": "^5.1.0",
     "react-chartjs-2": "^5.3.0",
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.3.1",
