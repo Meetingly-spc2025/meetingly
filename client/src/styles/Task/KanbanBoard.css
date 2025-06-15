@@ -96,15 +96,16 @@
 
 /* 칸반보드 헤더 */
 .kanban-header {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 32px;
-  padding: 20px 24px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e2e8f0;
+  padding: 20px 0 0 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
 }
 
 .kanban-header h1 {
@@ -120,10 +121,10 @@
 /* 칸반보드 그리드 */
 .kanban-grid {
   display: flex;
+  width: 100%;
   gap: 24px;
-  overflow-x: auto;
-  padding: 8px;
   min-height: 600px;
+  flex: 1 1 0;
 }
 
 .kanban-grid::-webkit-scrollbar {
@@ -146,8 +147,9 @@
 
 /* TaskColumn 스타일 */
 .taskcolumn-container {
-  width: 320px;
-  min-width: 320px;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 1fr;
   min-height: 500px;
   background: white;
   border-radius: 16px;
@@ -373,4 +375,15 @@
   .taskcard-dates {
     color: #94a3b8;
   }
+}
+
+.kanban-board-wrapper {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  border: 1px solid #e2e8f0;
+  padding: 32px 24px 32px 24px;
+  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
 }
