@@ -1,14 +1,17 @@
 .team-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: var(--bg-primary);
   padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  width: 100%;
 }
 
 .team-header-container {
-  max-width: 1200px;
+  max-width: var(--container-max-width);
   margin: 0 auto 2rem;
   display: flex;
   justify-content: space-evenly;
@@ -316,8 +319,9 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: #e5e7eb;
+  object-fit: cover;
   border: 2px solid #0ea5e9;
+  background: #e5e7eb;
 }
 
 .member-info {
@@ -466,4 +470,27 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: var(--gray-900); /* fallback color */
+}
+
+.copy-toast {
+  font-size: 1rem !important;
+  padding: 1rem 1.5rem !important;
+  box-shadow: var(--shadow-lg) !important;
+  border-radius: var(--radius-xl) !important;
+  border: 1px solid var(--gray-200) !important;
+  backdrop-filter: blur(8px) !important;
+  min-width: 300px !important;
+}
+
+.copy-toast-title {
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  color: var(--gray-900) !important;
+}
+
+.page-card-container {
+  max-width: var(--container-max-width);
+  padding: 30px;
+  margin: 0 auto;
+  width: 100%;
 }

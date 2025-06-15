@@ -213,10 +213,14 @@
 .modal {
   background: white;
   border-radius: var(--radius-2xl);
-  padding: var(--space-8);
-  width: 90%;
-  max-width: 500px;
+  padding: var(--space-6);
+  width: 60%;
+  max-width: 320px;
   box-shadow: var(--shadow-2xl);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .modal h3 {
@@ -270,20 +274,26 @@
 }
 
 .image-option-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: var(--space-2) 0;
 }
 
 .profile-option {
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--gray-200);
   cursor: pointer;
   transition: all var(--transition-fast);
+  flex-shrink: 0;
+  margin-left: 30px;
 }
 
 .profile-option:hover {
@@ -308,7 +318,6 @@
   background-clip: text;
 }
 
-
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .my-page {
@@ -321,17 +330,18 @@
   }
 
   .modal {
-    padding: var(--space-6);
+    padding: var(--space-4);
     width: 95%;
+    max-width: 280px;
   }
 
   .image-option-list {
-    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: var(--space-2);
   }
 
   .profile-option {
-    width: 70px;
-    height: 70px;
+    width: 65px;
+    height: 65px;
   }
 }
 
@@ -356,9 +366,13 @@
     width: 100%;
   }
 
+  .modal {
+    padding: var(--space-3);
+    max-width: 260px;
+  }
+
   .image-option-list {
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-    gap: var(--space-3);
+    gap: var(--space-2);
   }
 
   .profile-option {
