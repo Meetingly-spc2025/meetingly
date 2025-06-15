@@ -5,6 +5,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
 
+@font-face {
+  font-family: "PyeojinGothic-Bold";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2504-1@1.0/PyeojinGothic-Bold.woff2")
+    format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
+
 /* Reset & Base Styles */
 
 html,
@@ -13,7 +21,7 @@ body {
   padding: 0;
   height: 100%;
   width: 100%;
-  font-family: "Inter", "Noto Sans KR", sans-serif;
+  font-family: "PyeojinGothic-Bold", "Inter", "Noto Sans KR", sans-serif;
 }
 
 * {

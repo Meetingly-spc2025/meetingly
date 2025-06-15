@@ -3,7 +3,7 @@ const db = require("./meetingly_db");
 exports.getTeamMemberList = async ({ teamId }) => {
   const [members] = await db.query(
     `SELECT 
-      u.user_id, u.name, u.email, u.nickname, tm.role
+      u.user_id, u.name, u.email, u.nickname, u.user_image, tm.role
       FROM team_members tm
       JOIN users u ON tm.user_id = u.user_id
       WHERE tm.team_id = ?`,
@@ -21,20 +21,13 @@ exports.getTeamInfo = async ({ teamId }) => {
 };
 
 exports.validateTeamURL = async ({ teamUrl }) => {
-  const [existing] = await db.query(
-    "SELECT team_id FROM teams WHERE team_url = ?",
-    [teamUrl],
-  );
+  const [existing] = await db.query("SELECT team_id FROM teams WHERE team_url = ?", [
+    teamUrl,
+  ]);
   return existing;
 };
 
-exports.createTeam = async ({
-  teamId,
-  teamName,
-  description,
-  teamUrl,
-  userId,
-}) => {
+exports.createTeam = async ({ teamId, teamName, description, teamUrl, userId }) => {
   await db.query(
     `INSERT INTO teams (team_id, team_name, description, team_url, user_id)
        VALUES (?, ?, ?, ?, ?)`,
@@ -43,10 +36,7 @@ exports.createTeam = async ({
 };
 
 exports.addUserTeam = async ({ teamId, userId }) => {
-  await db.query("UPDATE users SET team_id = ? WHERE user_id = ?", [
-    teamId,
-    userId,
-  ]);
+  await db.query("UPDATE users SET team_id = ? WHERE user_id = ?", [teamId, userId]);
 };
 
 exports.grantAdmin = async ({ teamId, userId }) => {
@@ -70,13 +60,11 @@ exports.kickoutMember = async ({ teamId, userId }) => {
     teamId,
     userId,
   ]);
+  await db.query("UPDATE users SET team_id = NULL WHERE user_id=?", [userId]);
 };
 
 exports.updateTeamName = async ({ name, teamId }) => {
-  await db.query(`UPDATE teams SET team_name = ? WHERE team_id = ?`, [
-    name,
-    teamId,
-  ]);
+  await db.query(`UPDATE teams SET team_name = ? WHERE team_id = ?`, [name, teamId]);
 };
 
 exports.deleteTeam = async ({ teamId }) => {

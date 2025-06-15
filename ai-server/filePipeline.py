@@ -81,8 +81,22 @@ def extract_tasks(summary):
     )
     return response.choices[0].message.content.strip()
 
+# 오디오 길이 체크
+def check_audio_duration(audio_path):
+    try:
+        audio = AudioSegment.from_file(audio_path)
+        duration_minutes = len(audio) / (1000 * 60)  # 밀리초를 분으로 변환
+        return duration_minutes
+    except Exception as e:
+        raise RuntimeError(f"오디오 길이 확인 실패: {str(e)}")
+
 # 최종 파이프라인
 def run_pipeline(audio_path, char_limit=5000):
+    print("[⏱️] 오디오 길이 확인 중...")
+    duration = check_audio_duration(audio_path)
+    if duration > 10:
+        raise ValueError("오디오 파일이 10분을 초과합니다. 더 짧은 파일을 업로드해주세요.")
+
     print("[🔧] Whisper 처리를 위해 wav 변환 중...")
     wav_path = convert_to_wav(audio_path)
 

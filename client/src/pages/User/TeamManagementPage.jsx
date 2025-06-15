@@ -6,6 +6,7 @@ import LoadingScreen from "../../components/LoadingScreen";
 import "../../styles/Team/TeamManagement.css";
 import TeamParticipationChart from "../../components/Chart/TeamParticipationChart";
 import WeeklyMeetingChart from "../../components/Chart/WeeklyMeetingChart";
+import Swal from "sweetalert2";
 
 const TeamManagementPage = () => {
   const [members, setMembers] = useState([]);
@@ -21,6 +22,15 @@ const TeamManagementPage = () => {
   const [isEditingTeamName, setIsEditingTeamName] = useState(false);
 
   const isAdmin = userRole === "admin";
+
+  // 관리자를 맨 위로 정렬하는 함수
+  const sortMembers = (membersList) => {
+    return [...membersList].sort((a, b) => {
+      if (a.role === "admin" && b.role !== "admin") return -1;
+      if (a.role !== "admin" && b.role === "admin") return 1;
+      return 0;
+    });
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -52,7 +62,7 @@ const TeamManagementPage = () => {
       try {
         const res = await axios.get(`/api/teams/${teamId}/members`);
         console.log("res.data :: ", res.data);
-        setMembers(res.data.members);
+        setMembers(sortMembers(res.data.members));
         setTeamName(res.data.teamName);
         setTeamUrl(res.data.teamUrl);
         setEditedTeamName(res.data.teamName);
@@ -67,23 +77,98 @@ const TeamManagementPage = () => {
   }, [teamId]);
 
   const handleKickMember = (userId) => {
-    if (window.confirm("정말 이 팀원을 강퇴하시겠습니까?")) {
-      alert(`강퇴 처리: user_id ${userId}`);
-      axios.delete(`/api/teams/${teamId}/members/${userId}`);
-    }
+    Swal.fire({
+      title: "팀원 강퇴",
+      text: "정말 이 팀원을 강퇴하시겠습니까?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#0ea5e9",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "네, 강퇴합니다",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`/api/teams/${teamId}/members/${userId}`)
+          .then(() => {
+            Swal.fire({
+              title: "강퇴 완료",
+              text: "팀원이 성공적으로 강퇴되었습니다.",
+              icon: "success",
+              confirmButtonColor: "#0ea5e9",
+            }).then(() => {
+              window.location.reload();
+            });
+          })
+          .catch((error) => {
+            Swal.fire({
+              title: "오류 발생",
+              text: "팀원 강퇴 중 문제가 발생했습니다.",
+              icon: "error",
+              confirmButtonColor: "#0ea5e9",
+            });
+          });
+      }
+    });
   };
 
   const handleUpdateTeamName = () => {
-    alert(`팀 이름 변경: ${editedTeamName}`);
-    setTeamName(editedTeamName);
-    axios.patch(`/api/teams/update/${teamId}`, { name: editedTeamName });
+    axios
+      .patch(`/api/teams/update/${teamId}`, { name: editedTeamName })
+      .then(() => {
+        Swal.fire({
+          title: "팀 이름 변경 완료",
+          text: "팀 이름이 성공적으로 변경되었습니다.",
+          icon: "success",
+          confirmButtonColor: "#0ea5e9",
+        }).then(() => {
+          window.location.reload();
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          title: "오류 발생",
+          text: "팀 이름 변경 중 문제가 발생했습니다.",
+          icon: "error",
+          confirmButtonColor: "#0ea5e9",
+        });
+      });
   };
 
   const handleDeleteTeam = () => {
-    if (window.confirm("정말 팀을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
-      alert("팀 삭제 처리");
-      axios.delete(`/api/teams/delete/${teamId}`);
-    }
+    Swal.fire({
+      title: "팀 삭제",
+      text: "정말 팀을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ec4899",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "네, 삭제합니다",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`/api/teams/delete/${teamId}`)
+          .then(() => {
+            Swal.fire({
+              title: "팀 삭제 완료",
+              text: "팀이 성공적으로 삭제되었습니다.",
+              icon: "success",
+              confirmButtonColor: "#0ea5e9",
+            }).then(() => {
+              window.location.reload();
+            });
+          })
+          .catch((error) => {
+            Swal.fire({
+              title: "오류 발생",
+              text: "팀 삭제 중 문제가 발생했습니다.",
+              icon: "error",
+              confirmButtonColor: "#0ea5e9",
+            });
+          });
+      }
+    });
   };
 
   if (loading) return <LoadingScreen />;
@@ -171,7 +256,21 @@ const TeamManagementPage = () => {
                   navigator.clipboard.writeText(
                     `${window.location.origin}/team/${teamUrl}`,
                   );
-                  alert("팀 링크가 복사되었습니다!");
+                  Swal.fire({
+                    title: "팀 링크가 복사되었습니다!",
+                    icon: "success",
+                    toast: true,
+                    position: "top",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: false,
+                    background: "var(--bg-secondary)",
+                    color: "var(--gray-900)",
+                    customClass: {
+                      popup: "copy-toast",
+                      title: "copy-toast-title",
+                    },
+                  });
                 }}
               >
                 👥 팀 링크 복사
@@ -200,7 +299,11 @@ const TeamManagementPage = () => {
                 key={member.user_id}
                 className={`member-card ${member.role === "admin" ? "admin-member" : ""}`}
               >
-                <div className="member-photo" />
+                <img
+                  src={member.user_image || "/placeholder.svg"}
+                  alt={`${member.name}의 프로필`}
+                  className="member-photo"
+                />
                 <div className="member-info">
                   <h3>
                     {member.name}
