@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import "../../styles/Task/SummaryBlock.css"
+import "../../styles/Task/Modal.css"
+import Modal from "../Common/Modal"
 
 const SummaryBlock = ({ content, isCreator, onEdit }) => {
   const [isEditing, setIsEditing] = useState(false)

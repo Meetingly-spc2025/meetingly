@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { DragDropContext } from "@hello-pangea/dnd"
+import { useState, useEffect } from "react"
+import { DndContext, closestCenter } from "@dnd-kit/core"
+import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import TaskColumn from "./TaskColumn"
 import TaskModal from "./TaskModal"
 import axios from "axios"
@@ -14,22 +15,53 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
   const [modal, setModal] = useState({ open: false, task: null })
 
   useEffect(() => {
-    setTasks(initialTasks)
+    setTasks(initialTasks || [])
   }, [initialTasks])
 
-  const handleDragEnd = async ({ source, destination, draggableId }) => {
-    if (!destination || source.droppableId === destination.droppableId) return
-
-    const updated = tasks.map((task) =>
-      task.task_id === draggableId ? { ...task, status: destination.droppableId } : task,
-    )
-    const moved = updated.find((t) => t.task_id === draggableId)
-    setTasks(updated)
-
+  // status 변경 시 DB에도 저장
+  const handleStatusChange = async (taskId, newStatus) => {
+    const task = tasks.find((t) => t.task_id === taskId)
+    if (!task) return
+    const updatedTask = { ...task, status: newStatus }
     try {
-      await axios.put(`/api/meetingData/tasks/${draggableId}`, moved)
+      await axios.put(`/api/meetingData/tasks/${taskId}`, updatedTask)
+      const newTasks = tasks.map((t) => t.task_id === taskId ? updatedTask : t)
+      setTasks(newTasks)
+      if (onTasksUpdate) onTasksUpdate(newTasks)
     } catch (err) {
-      console.error("드래그 상태 업데이트 오류:", err)
+      alert('상태 변경 저장 실패')
+    }
+  }
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event
+    if (!over) return
+    if (active.id === over.id) return
+
+    const activeTask = tasks.find((t) => t.task_id === active.id)
+
+    if (STATUSES.includes(over.id)) {
+      // 컬럼 이동: DB에도 저장
+      handleStatusChange(active.id, over.id)
+      return
+    }
+
+    const overTask = tasks.find((t) => t.task_id === over.id)
+    if (!activeTask || !overTask) return
+
+    if (activeTask.status === overTask.status) {
+      const filtered = tasks.filter((t) => t.status === activeTask.status)
+      const oldIndex = filtered.findIndex((t) => t.task_id === active.id)
+      const newIndex = filtered.findIndex((t) => t.task_id === over.id)
+      const moved = arrayMove(filtered, oldIndex, newIndex)
+      const newTasks = tasks
+        .filter((t) => t.status !== activeTask.status)
+        .concat(moved)
+      setTasks(newTasks)
+      if (onTasksUpdate) onTasksUpdate(newTasks)
+    } else {
+      // 다른 컬럼의 특정 위치로 이동: status 변경 + DB 저장
+      handleStatusChange(active.id, overTask.status)
     }
   }
 
@@ -46,7 +78,6 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
   }
 
   const handleSave = async (task) => {
-    // 날짜 문자열 (yyyy-mm-dd)만 받아온다고 가정하고 시간 붙이기
     const createdAt = new Date(`${task.created_at}T09:00:00`)
     const finishedAt = new Date(`${task.finished_at}T18:00:00`)
 
@@ -54,8 +85,8 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
       ...task,
       summary_id: summaryId,
       team_id: teamId,
-      created_at: createdAt.toISOString(), // 또는 createdAt.toLocaleString("sv-SE")
-      finished_at: finishedAt.toISOString(), // 또는 finishedAt.toLocaleString("sv-SE")
+      created_at: createdAt.toISOString(),
+      finished_at: finishedAt.toISOString(),
     }
 
     try {
@@ -78,27 +109,36 @@ export default function KanbanBoard({ tasks: initialTasks, summaryId, teamId, te
   }
 
   return (
-    <div className="kanban-container">
+    <div className="kanban-board-wrapper">
       <div className="kanban-header">
         <h1>✨ 칸반보드</h1>
         <button className="kanban-btn kanban-btn-primary" onClick={handleAdd}>
           <span>+</span>할 일 추가
         </button>
       </div>
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="kanban-grid">
+      <div style={{ display: "flex", gap: 24, padding: 24 }} className="kanban-grid">
+        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           {STATUSES.map((status) => (
-            <TaskColumn
+            <SortableContext
               key={status}
-              status={status}
-              tasks={tasks.filter((t) => t.status === status)}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              teamMembers={teamMembers}
-            />
+              items={tasks.filter((t) => t.status === status).map((t) => t.task_id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <TaskColumn
+                status={status}
+                tasks={tasks.filter((t) => t.status === status)}
+                teamMembers={teamMembers}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                summaryId={summaryId}
+                teamId={teamId}
+                userId={userId}
+                onTasksUpdate={onTasksUpdate}
+              />
+            </SortableContext>
           ))}
-        </div>
-      </DragDropContext>
+        </DndContext>
+      </div>
       {modal.open && (
         <TaskModal
           task={modal.task}

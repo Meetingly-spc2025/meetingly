@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import "../../styles/Task/DiscussionList.css"
+import "../../styles/Task/Modal.css"
+import Modal from "../Common/Modal"
 
 const DiscussionList = ({ discussionContent, isCreator, onEdit }) => {
   const [isEditing, setIsEditing] = useState(false)

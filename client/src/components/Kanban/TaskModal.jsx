@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { createPortal } from "react-dom"
 import "../../styles/Task/TaskModal.css"
 
 // 할 일 추가/수정 모달 컴포넌트
@@ -52,9 +53,9 @@ export default function TaskModal({ task, onClose, onSave, teamMembers = [], ori
     onSave(newTask)
   }
 
-  return (
-    <div className="taskmodal-overlay">
-      <div className="taskmodal-container">
+  return createPortal(
+    <div className="taskmodal-overlay" onClick={onClose}>
+      <div className="taskmodal-container" onClick={(e) => e.stopPropagation()}>
         <h3>{task ? "✏️ 할 일 수정" : "➕ 할 일 추가"}</h3>
 
         <textarea
@@ -113,6 +114,7 @@ export default function TaskModal({ task, onClose, onSave, teamMembers = [], ori
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

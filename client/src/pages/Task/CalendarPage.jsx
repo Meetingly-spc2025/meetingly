@@ -199,49 +199,51 @@ const CalendarPage = () => {
 
   return (
     <div className="calendarpage-container">
-      <div className="calendar-header-card">
-        <h2 className="calendarpage-title">Meetingly Calendar</h2>
-        <div className="calendar-toggle-buttons">
-          <button
-            className={`calendar-toggle-btn ${!showingTasksOnly ? "active" : ""}`}
-            onClick={() => handleToggle("meeting")}
-          >
-            📅 팀 회의
-          </button>
-          <button
-            className={`calendar-toggle-btn ${showingTasksOnly ? "active" : ""}`}
-            onClick={() => handleToggle("task")}
-          >
-            ✅ 내 할 일
-          </button>
-        </div>
-      </div>
-      <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        height="auto"
-        events={displayEvents}
-        eventClick={handleEventClick}
-        datesSet={handleDatesSet}
-        locale="ko"
-        headerToolbar={{
-          left: "prev",
-          center: "title",
-          right: "next",
-        }}
-        dayMaxEventRows={3}
-        aspectRatio={1.5}
-      />
-      {isTaskModalOpen && selectedTask && (
-        <TaskModal
-          task={selectedTask}
-          teamMembers={teamMembers}
-          userId={userId}
-          onClose={() => setIsTaskModalOpen(false)}
-          onSave={handleTaskSave}
-          origin="calendar"
+      <div className="calendarpage-main-content">
+        <section className="calendar-header-card">
+          <h2 className="calendarpage-title">Meetingly Calendar</h2>
+          <div className="calendar-toggle-buttons">
+            <button
+              className={`calendar-toggle-btn ${!showingTasksOnly ? "active" : ""}`}
+              onClick={() => handleToggle("meeting")}
+            >
+              📅 팀 회의
+            </button>
+            <button
+              className={`calendar-toggle-btn ${showingTasksOnly ? "active" : ""}`}
+              onClick={() => handleToggle("task")}
+            >
+              ✅ 내 할 일
+            </button>
+          </div>
+        </section>
+        <FullCalendar
+          plugins={[dayGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          height="auto"
+          events={displayEvents}
+          eventClick={handleEventClick}
+          datesSet={handleDatesSet}
+          locale="ko"
+          headerToolbar={{
+            left: "prev",
+            center: "title",
+            right: "next",
+          }}
+          dayMaxEventRows={3}
+          aspectRatio={1.5}
         />
-      )}
+        {isTaskModalOpen && selectedTask && (
+          <TaskModal
+            task={selectedTask}
+            teamMembers={teamMembers}
+            userId={userId}
+            onClose={() => setIsTaskModalOpen(false)}
+            onSave={handleTaskSave}
+            origin="calendar"
+          />
+        )}
+      </div>
     </div>
   )
 }
