@@ -1,18 +1,18 @@
 /* 회의 생성 페이지 스타일 */
 .create-room {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: var(--bg-primary);
   padding: 2rem;
 }
 
 .create-room-box {
-  max-width: 1200px;
+  max-width: var(--container-max-width);
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-secondary);
   backdrop-filter: blur(20px);
-  border-radius: 24px;
-  padding: 3rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -277,13 +277,13 @@
 }
 
 /* 반응형 디자인 */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .create-room {
-    padding: 1rem;
+    padding: var(--space-4);
   }
 
   .create-room-box {
-    padding: 2rem;
+    padding: var(--space-6);
   }
 
   .create-room-box h1 {
@@ -302,6 +302,10 @@
 }
 
 @media (max-width: 480px) {
+  .create-room {
+    padding: var(--space-3);
+  }
+
   .create-room-box {
     padding: var(--space-4);
   }
