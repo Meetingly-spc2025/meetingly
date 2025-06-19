@@ -7,6 +7,7 @@ import "../../styles/Team/TeamManagement.css";
 import TeamParticipationChart from "../../components/Chart/TeamParticipationChart";
 import WeeklyMeetingChart from "../../components/Chart/WeeklyMeetingChart";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const TeamManagementPage = () => {
   const [members, setMembers] = useState([]);
@@ -20,6 +21,7 @@ const TeamManagementPage = () => {
   const [userImage, setUserImage] = useState("");
   const [editedTeamName, setEditedTeamName] = useState("");
   const [isEditingTeamName, setIsEditingTeamName] = useState(false);
+  const navigate = useNavigate();
 
   const isAdmin = userRole === "admin";
 
@@ -156,7 +158,7 @@ const TeamManagementPage = () => {
               icon: "success",
               confirmButtonColor: "#0ea5e9",
             }).then(() => {
-              window.location.reload();
+              navigate("/team/join");
             });
           })
           .catch((error) => {

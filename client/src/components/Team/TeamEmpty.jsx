@@ -5,6 +5,7 @@ import TeamInviteModal from "./TeamInviteModal";
 import TeamCreateModal from "./TeamCreateModal";
 import LoadingScreen from "../LoadingScreen";
 import { createPortal } from "react-dom";
+import Swal from "sweetalert2";
 import "../../styles/Team/TeamEmpty.css";
 
 const TeamEmpty = () => {
@@ -46,8 +47,14 @@ const TeamEmpty = () => {
 
         if (data.user && data.user.teamId) {
           console.log("팀이 존재함, 리다이렉트 시도");
-          alert("팀에 이미 가입되어 있습니다.");
-          navigate(`/team/${data.user.teamId}`);
+          Swal.fire({
+            title: "팀 가입 확인",
+            text: "팀에 이미 가입되어 있습니다.",
+            icon: "info",
+            confirmButtonColor: "#0ea5e9",
+          }).then(() => {
+            navigate(`/team/${data.user.teamId}`);
+          });
           return;
         }
 
@@ -81,12 +88,23 @@ const TeamEmpty = () => {
           },
         },
       );
-      alert("팀 참여 성공!");
-      setModalOpen(false);
-      navigate("/team");
+      Swal.fire({
+        title: "팀 참여 성공!",
+        text: "팀에 성공적으로 참여했습니다.",
+        icon: "success",
+        confirmButtonColor: "#0ea5e9",
+      }).then(() => {
+        setModalOpen(false);
+        navigate("/team");
+      });
     } catch (err) {
       console.error(err);
-      alert("팀 참여 실패");
+      Swal.fire({
+        title: "팀 참여 실패",
+        text: "팀 참여 중 문제가 발생했습니다.",
+        icon: "error",
+        confirmButtonColor: "#0ea5e9",
+      });
     }
   };
 
@@ -111,16 +129,33 @@ const TeamEmpty = () => {
       console.log("생성된 팀 아이디:: ", teamId);
 
       if (teamId) {
-        alert("팀 생성에 성공했습니다.");
-        navigate(`/team/${teamId}`);
+        setShowModal(false); // 모달 닫기
+        Swal.fire({
+          title: "팀 생성 성공!",
+          text: "새로운 팀이 성공적으로 생성되었습니다.",
+          icon: "success",
+          confirmButtonColor: "#0ea5e9",
+        }).then(() => {
+          navigate(`/team/${teamId}`);
+        });
       } else {
         throw new Error("teamId 없음");
       }
     } catch (err) {
       if (err.response?.status === 409) {
-        alert("이미 존재하는 초대 코드입니다. 다시 시도해주세요.");
+        Swal.fire({
+          title: "초대 코드 중복",
+          text: "이미 존재하는 초대 코드입니다. 다시 시도해주세요.",
+          icon: "warning",
+          confirmButtonColor: "#0ea5e9",
+        });
       } else {
-        alert("팀 생성에 실패했습니다.");
+        Swal.fire({
+          title: "팀 생성 실패",
+          text: "팀 생성 중 문제가 발생했습니다.",
+          icon: "error",
+          confirmButtonColor: "#0ea5e9",
+        });
       }
     }
   };
